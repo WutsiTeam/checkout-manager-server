@@ -6,21 +6,18 @@ import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
 import com.wutsi.checkout.manager.event.EventURN
 import com.wutsi.checkout.manager.event.PaymentMethodEventPayload
 import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.regulation.CountryRegulations
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
-import com.wutsi.workflow.rule.account.CountrySupportsBusinessAccountRule
 import org.springframework.stereotype.Service
 
 @Service
 class AddPaymentMethodWorkflow(
-    private val countryRegulations: CountryRegulations,
     eventStream: EventStream
 ) : AbstractPaymentMethodWorkflow(eventStream) {
     override fun getEventType() = EventURN.PAYMENT_METHOD_ADDED.urn
 
-    override fun toMemberEventPayload(context: WorkflowContext) = PaymentMethodEventPayload(
+    override fun toEventPayload(context: WorkflowContext) = PaymentMethodEventPayload(
         accountId = getCurrentAccountId(context),
         paymentMethodToken = (context.response as AddPaymentMethodResponse).paymentMethodToken
     )
@@ -29,8 +26,7 @@ class AddPaymentMethodWorkflow(
         val account = getCurrentAccount(context)
         return RuleSet(
             listOf(
-                AccountShouldBeActiveRule(account),
-                CountrySupportsBusinessAccountRule(account, countryRegulations)
+                AccountShouldBeActiveRule(account)
             )
         )
     }

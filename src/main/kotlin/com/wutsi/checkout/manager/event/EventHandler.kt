@@ -13,6 +13,7 @@ class EventHandler(
     fun handleEvent(event: Event) {
         when (event.type) {
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
+            EventURN.BUSINESS_ACCOUNT_ENABLED.urn -> membership.onBusinessAccountEnabled(event)
             else -> {}
         }
     }

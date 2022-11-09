@@ -6,6 +6,7 @@ import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
+import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.manager.event.MemberEventPayload
 import com.wutsi.platform.core.logging.KVLogger
@@ -19,28 +20,30 @@ class MembershipEventHandler(
     private val logger: KVLogger,
     private val membershipAccessApi: MembershipAccessApi,
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val workflow: AddPaymentMethodWorkflow
+    private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
+    private val createBusinessWorkflow: CreateBusinessWorkflow
 ) {
     fun onMemberRegistered(event: Event) {
         val payload = toMemberPayload(event)
         log(payload)
 
         val account = membershipAccessApi.getAccount(payload.accountId).account
+        val type = PaymentMethodType.MOBILE_MONEY
         val providers = checkoutAccessApi.searchPaymentProvider(
             SearchPaymentProviderRequest(
                 country = account.phone.country,
                 number = account.phone.number,
-                type = PaymentMethodType.MOBILE_MONEY.name
+                type = type.name
             )
         ).paymentProviders
 
         if (providers.size == 1) {
-            workflow.execute(
+            addPaymentMethodWorkflow.execute(
                 WorkflowContext(
                     accountId = payload.accountId,
                     request = AddPaymentMethodRequest(
                         providerId = providers[0].id,
-                        type = PaymentMethodType.MOBILE_MONEY.name,
+                        type = type.name,
                         number = account.phone.number,
                         country = account.phone.country,
                         ownerName = account.displayName
@@ -48,6 +51,17 @@ class MembershipEventHandler(
                 )
             )
         }
+    }
+
+    fun onBusinessAccountEnabled(event: Event) {
+        val payload = toMemberPayload(event)
+        log(payload)
+
+        createBusinessWorkflow.execute(
+            WorkflowContext(
+                accountId = payload.accountId
+            )
+        )
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =

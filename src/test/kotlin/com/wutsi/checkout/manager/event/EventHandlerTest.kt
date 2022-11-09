@@ -21,22 +21,35 @@ internal class EventHandlerTest {
     @Autowired
     private lateinit var mapper: ObjectMapper
 
+    private val memberEventPayload = MemberEventPayload(
+        phoneNumber = "+237670000010",
+        accountId = 111L,
+        pin = "123456"
+    )
+
     @Test
     fun onMemberRegistered() {
         // WHEN
         val event = Event(
             type = EventURN.MEMBER_REGISTERED.urn,
-            payload = mapper.writeValueAsString(
-                MemberEventPayload(
-                    phoneNumber = "+237670000010",
-                    accountId = 111L,
-                    pin = "123456"
-                )
-            )
+            payload = mapper.writeValueAsString(memberEventPayload)
         )
         handler.handleEvent(event)
 
         // THEN
         verify(membership).onMemberRegistered(event)
+    }
+
+    @Test
+    fun onBusinessEnabled() {
+        // WHEN
+        val event = Event(
+            type = EventURN.BUSINESS_ACCOUNT_ENABLED.urn,
+            payload = mapper.writeValueAsString(memberEventPayload)
+        )
+        handler.handleEvent(event)
+
+        // THEN
+        verify(membership).onBusinessAccountEnabled(event)
     }
 }

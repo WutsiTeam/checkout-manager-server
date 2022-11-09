@@ -5,7 +5,7 @@ import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
 import com.wutsi.checkout.manager.event.EventURN
 import com.wutsi.checkout.manager.event.PaymentMethodEventPayload
-import com.wutsi.membership.manager.util.SecurityUtil
+import com.wutsi.checkout.manager.util.SecurityUtil
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.CountryRegulations
 import com.wutsi.workflow.RuleSet
@@ -27,7 +27,7 @@ class AddPaymentMethodWorkflow(
     )
 
     override fun getValidationRules(context: WorkflowContext): RuleSet {
-        val account = getCurrentAccount()
+        val account = getCurrentAccount(context)
         return RuleSet(
             listOf(
                 AccountShouldBeActiveRule(account),
@@ -40,7 +40,7 @@ class AddPaymentMethodWorkflow(
         val request = context.request as AddPaymentMethodRequest
         val token = checkoutAccess.createPaymentMethod(
             request = CreatePaymentMethodRequest(
-                accountId = SecurityUtil.getAccountId(),
+                accountId = context.accountId ?: SecurityUtil.getAccountId(),
                 type = request.type,
                 number = request.number,
                 country = request.country,

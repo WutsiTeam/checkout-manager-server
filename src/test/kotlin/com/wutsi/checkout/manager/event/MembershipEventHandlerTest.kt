@@ -40,7 +40,7 @@ internal class MembershipEventHandlerTest {
     @Autowired
     private lateinit var handler: MembershipEventHandler
 
-    val account = Fixtures.createAccount(phoneNumber = "+237670000010")
+    val account = Fixtures.createAccount(id = 123L, phoneNumber = "+237670000010")
 
     val payload = MemberEventPayload(
         phoneNumber = account.phone.number,
@@ -69,6 +69,8 @@ internal class MembershipEventHandlerTest {
         // THEN
         val context = argumentCaptor<WorkflowContext>()
         verify(workflow).execute(context.capture())
+
+        assertEquals(payload.accountId, context.firstValue.accountId)
 
         val request = context.firstValue.request as AddPaymentMethodRequest
         assertEquals(account.phone.country, request.country)

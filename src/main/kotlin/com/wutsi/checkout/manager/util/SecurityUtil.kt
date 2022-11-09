@@ -1,4 +1,4 @@
-package com.wutsi.membership.manager.util
+package com.wutsi.checkout.manager.util
 
 import com.wutsi.platform.core.security.SubjectType
 import com.wutsi.platform.core.security.WutsiPrincipal

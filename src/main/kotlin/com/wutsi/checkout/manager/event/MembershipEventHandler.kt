@@ -37,6 +37,7 @@ class MembershipEventHandler(
         if (providers.size == 1) {
             workflow.execute(
                 WorkflowContext(
+                    accountId = payload.accountId,
                     request = AddPaymentMethodRequest(
                         providerId = providers[0].id,
                         type = PaymentMethodType.MOBILE_MONEY.name,

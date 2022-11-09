@@ -18,6 +18,7 @@ import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.GetAccountResponse
+import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.membership.manager.event.MemberEventPayload
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.platform.core.stream.EventStream
@@ -149,6 +150,14 @@ internal class MembershipEventHandlerTest {
             )
         )
 
+        verify(membershipAccessApi).updateAccountAttribute(
+            account.id,
+            UpdateAccountAttributeRequest(
+                name = "business-id",
+                value = businessId.toString()
+            )
+        )
+
         verify(eventStream).publish(
             EventURN.BUSINESS_CREATED.urn,
             BusinessEventPayload(
@@ -176,6 +185,14 @@ internal class MembershipEventHandlerTest {
             )
         )
 
+        verify(membershipAccessApi).updateAccountAttribute(
+            account.id,
+            UpdateAccountAttributeRequest(
+                name = "business-id",
+                value = null
+            )
+        )
+
         verify(eventStream).publish(
             EventURN.BUSINESS_SUSPENDED.urn,
             BusinessEventPayload(
@@ -192,6 +209,7 @@ internal class MembershipEventHandlerTest {
 
         // THEN
         verify(checkoutAccessApi, never()).updateBusinessStatus(any(), any())
+        verify(membershipAccessApi, never()).updateAccountAttribute(any(), any())
         verify(eventStream, never()).publish(any(), any())
     }
 }

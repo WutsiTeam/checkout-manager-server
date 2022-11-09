@@ -3,6 +3,7 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.access.dto.CreateBusinessRequest
 import com.wutsi.checkout.manager.event.BusinessEventPayload
 import com.wutsi.checkout.manager.event.EventURN
+import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.CountryRegulations
 import com.wutsi.workflow.RuleSet
@@ -42,6 +43,14 @@ class CreateBusinessWorkflow(
                 currency = countryRegulations.get(account.country).currency
             )
         ).businessId
+
+        membershipAccess.updateAccountAttribute(
+            id = account.id,
+            request = UpdateAccountAttributeRequest(
+                name = "business-id",
+                value = businessId.toString()
+            )
+        )
 
         context.response = businessId
     }

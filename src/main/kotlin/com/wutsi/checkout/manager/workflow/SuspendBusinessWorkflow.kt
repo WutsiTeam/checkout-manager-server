@@ -4,6 +4,7 @@ import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
 import com.wutsi.checkout.access.enums.BusinessStatus
 import com.wutsi.checkout.manager.event.BusinessEventPayload
 import com.wutsi.checkout.manager.event.EventURN
+import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
@@ -33,6 +34,15 @@ class SuspendBusinessWorkflow(
                     status = BusinessStatus.SUSPENDED.name
                 )
             )
+
+            membershipAccess.updateAccountAttribute(
+                id = account.id,
+                request = UpdateAccountAttributeRequest(
+                    name = "business-id",
+                    value = null
+                )
+            )
+
             context.response = account.businessId
         }
     }

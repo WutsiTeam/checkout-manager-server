@@ -22,6 +22,9 @@ abstract class AbstractPaymentMethodWorkflow(eventStream: EventStream) :
     @Autowired
     protected lateinit var membershipAccess: MembershipAccessApi
 
+    protected fun getCurrentAccountId(context: WorkflowContext): Long =
+        context.accountId ?: SecurityUtil.getAccountId()
+
     protected fun getCurrentAccount(context: WorkflowContext): Account {
         val accountId = context.accountId ?: SecurityUtil.getAccountId()
         try {

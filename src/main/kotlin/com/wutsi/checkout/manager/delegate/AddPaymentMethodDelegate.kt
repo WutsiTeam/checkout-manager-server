@@ -15,7 +15,7 @@ class AddPaymentMethodDelegate(
     fun invoke(request: AddPaymentMethodRequest): AddPaymentMethodResponse {
         logger.add("request_provider_id", request.providerId)
         logger.add("request_country", request.country)
-        logger.add("request_number", "*****" + request.number.takeLast(4))
+        logger.add("request_number", "...." + request.number.takeLast(4))
         logger.add("request_type", request.type)
         logger.add("request_owner_name", request.ownerName)
 

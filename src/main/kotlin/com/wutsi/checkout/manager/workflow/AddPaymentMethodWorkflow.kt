@@ -5,7 +5,6 @@ import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
 import com.wutsi.checkout.manager.event.EventURN
 import com.wutsi.checkout.manager.event.PaymentMethodEventPayload
-import com.wutsi.checkout.manager.util.SecurityUtil
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.CountryRegulations
 import com.wutsi.workflow.RuleSet
@@ -22,7 +21,7 @@ class AddPaymentMethodWorkflow(
     override fun getEventType() = EventURN.PAYMENT_METHOD_ADDED.urn
 
     override fun toMemberEventPayload(context: WorkflowContext) = PaymentMethodEventPayload(
-        accountId = SecurityUtil.getAccountId(),
+        accountId = getCurrentAccountId(context),
         paymentMethodToken = (context.response as AddPaymentMethodResponse).paymentMethodToken
     )
 
@@ -40,7 +39,7 @@ class AddPaymentMethodWorkflow(
         val request = context.request as AddPaymentMethodRequest
         val token = checkoutAccess.createPaymentMethod(
             request = CreatePaymentMethodRequest(
-                accountId = context.accountId ?: SecurityUtil.getAccountId(),
+                accountId = getCurrentAccountId(context),
                 type = request.type,
                 number = request.number,
                 country = request.country,

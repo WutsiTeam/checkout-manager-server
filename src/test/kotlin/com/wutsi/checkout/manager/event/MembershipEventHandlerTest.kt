@@ -12,6 +12,8 @@ import com.wutsi.checkout.access.dto.CreateBusinessResponse
 import com.wutsi.checkout.access.dto.CreatePaymentMethodRequest
 import com.wutsi.checkout.access.dto.CreatePaymentMethodResponse
 import com.wutsi.checkout.access.dto.SearchPaymentProviderResponse
+import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
+import com.wutsi.checkout.access.enums.BusinessStatus
 import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.membership.access.MembershipAccessApi
@@ -154,5 +156,42 @@ internal class MembershipEventHandlerTest {
                 accountId = account.id
             )
         )
+    }
+
+    @Test
+    fun onBusinessDisabled() {
+        // GIVEN
+        val businessId = 111L
+        val account = Fixtures.createAccount(id = 123L, phoneNumber = "+237670000010", businessId = businessId)
+        doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
+
+        // WHEN
+        handler.onBusinessAccountDisabled(event)
+
+        // THEN
+        verify(checkoutAccessApi).updateBusinessStatus(
+            businessId,
+            UpdateBusinessStatusRequest(
+                status = BusinessStatus.SUSPENDED.name
+            )
+        )
+
+        verify(eventStream).publish(
+            EventURN.BUSINESS_SUSPENDED.urn,
+            BusinessEventPayload(
+                businessId = businessId,
+                accountId = account.id
+            )
+        )
+    }
+
+    @Test
+    fun onBusinessDisabledWithAccountNotHavingBusinessId() {
+        // WHEN
+        handler.onBusinessAccountDisabled(event)
+
+        // THEN
+        verify(checkoutAccessApi, never()).updateBusinessStatus(any(), any())
+        verify(eventStream, never()).publish(any(), any())
     }
 }

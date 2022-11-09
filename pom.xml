@@ -19,8 +19,8 @@
   </parent>
 
   <properties>
-    <jacoco.threshold.line>0.93</jacoco.threshold.line>
-    <jacoco.threshold.class>0.93</jacoco.threshold.class>
+    <jacoco.threshold.line>0.95</jacoco.threshold.line>
+    <jacoco.threshold.class>0.95</jacoco.threshold.class>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jdk.version>11</jdk.version>
 
@@ -32,7 +32,7 @@
     <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 
     <wutsi-platform-core.version>0.0.186</wutsi-platform-core.version>
-    <wutsi-membership-access.version>1.0.12</wutsi-membership-access.version>
+    <wutsi-membership-access.version>1.0.13</wutsi-membership-access.version>
     <wutsi-membership-manager.version>1.0.8</wutsi-membership-manager.version>
     <wutsi-checkout-access.version>1.0.4</wutsi-checkout-access.version>
     <wutsi-workflow.version>1.0.6</wutsi-workflow.version>

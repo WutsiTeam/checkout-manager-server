@@ -14,6 +14,7 @@ class EventHandler(
         when (event.type) {
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
             EventURN.BUSINESS_ACCOUNT_ENABLED.urn -> membership.onBusinessAccountEnabled(event)
+            EventURN.BUSINESS_ACCOUNT_DISABLED.urn -> membership.onBusinessAccountDisabled(event)
             else -> {}
         }
     }

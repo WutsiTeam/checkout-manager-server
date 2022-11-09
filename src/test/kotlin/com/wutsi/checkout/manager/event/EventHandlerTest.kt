@@ -52,4 +52,17 @@ internal class EventHandlerTest {
         // THEN
         verify(membership).onBusinessAccountEnabled(event)
     }
+
+    @Test
+    fun onBusinessDisabled() {
+        // WHEN
+        val event = Event(
+            type = EventURN.BUSINESS_ACCOUNT_DISABLED.urn,
+            payload = mapper.writeValueAsString(memberEventPayload)
+        )
+        handler.handleEvent(event)
+
+        // THEN
+        verify(membership).onBusinessAccountDisabled(event)
+    }
 }

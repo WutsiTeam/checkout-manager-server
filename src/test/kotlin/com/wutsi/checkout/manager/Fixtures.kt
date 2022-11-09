@@ -11,6 +11,7 @@ object Fixtures {
         id: Long = System.currentTimeMillis(),
         status: AccountStatus = AccountStatus.ACTIVE,
         business: Boolean = false,
+        businessId: Long? = null,
         country: String = "CM",
         phoneNumber: String = "+237670000010",
         displayName: String = "Ray Sponsible"
@@ -20,6 +21,7 @@ object Fixtures {
         status = status.name,
         business = business,
         country = country,
+        businessId = businessId,
         phone = Phone(
             number = phoneNumber,
             country = country

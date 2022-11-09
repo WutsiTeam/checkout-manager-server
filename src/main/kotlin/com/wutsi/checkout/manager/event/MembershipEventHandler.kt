@@ -7,6 +7,7 @@ import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
 import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
+import com.wutsi.checkout.manager.workflow.SuspendBusinessWorkflow
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.manager.event.MemberEventPayload
 import com.wutsi.platform.core.logging.KVLogger
@@ -21,7 +22,8 @@ class MembershipEventHandler(
     private val membershipAccessApi: MembershipAccessApi,
     private val checkoutAccessApi: CheckoutAccessApi,
     private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
-    private val createBusinessWorkflow: CreateBusinessWorkflow
+    private val createBusinessWorkflow: CreateBusinessWorkflow,
+    private val suspendBusinessWorkflow: SuspendBusinessWorkflow
 ) {
     fun onMemberRegistered(event: Event) {
         val payload = toMemberPayload(event)
@@ -58,6 +60,17 @@ class MembershipEventHandler(
         log(payload)
 
         createBusinessWorkflow.execute(
+            WorkflowContext(
+                accountId = payload.accountId
+            )
+        )
+    }
+
+    fun onBusinessAccountDisabled(event: Event) {
+        val payload = toMemberPayload(event)
+        log(payload)
+
+        suspendBusinessWorkflow.execute(
             WorkflowContext(
                 accountId = payload.accountId
             )

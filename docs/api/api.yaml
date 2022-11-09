@@ -49,6 +49,7 @@ components:
         number:
           type: string
           description: Phone or Bank account number
+          maxLength: 30
         country:
           type: string
           description: country 2 letter ISO code

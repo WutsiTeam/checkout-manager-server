@@ -10,6 +10,7 @@ public data class AddPaymentMethodRequest(
     @get:NotBlank
     public val type: String = "",
     @get:NotBlank
+    @get:Size(max = 30)
     public val number: String = "",
     @get:NotBlank
     @get:Size(

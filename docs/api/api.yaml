@@ -1,0 +1,73 @@
+openapi: "3.0.0"
+info:
+  title: "Wutsi Checkout Manager API"
+  description: Checkout Business Layer
+  version: "1.0.0"
+
+servers:
+  - url: https://checkout-manager-server-test.herokuapp.com
+    description: Sandbox
+  - url: https://checkout-manager-server-prod.herokuapp.com
+    description: Production
+
+paths:
+  /v1/payment-methods:
+    post:
+      operationId: "add-payment-method"
+      description: Add payment method to the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPaymentMethodRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentMethodResponse'
+      tags:
+        - Checkout
+
+components:
+  schemas:
+    AddPaymentMethodRequest:
+      type: object
+      properties:
+        providerId:
+          type: integer
+          format: int64
+          description: ID of the payment provider
+        type:
+          type: string
+          description: Type of payment method
+          enum:
+            - MOBILE_MONEY
+            - BANK
+        number:
+          type: string
+          description: Phone or Bank account number
+        country:
+          type: string
+          description: country 2 letter ISO code
+          minLength: 2
+          maxLength: 2
+        ownerName:
+          type: string
+          description: Name of the owner of the payment method
+          maxLength: 100
+      required:
+        - number
+        - ownerName
+        - type
+        - country
+
+    AddPaymentMethodResponse:
+      type: object
+      properties:
+        paymentMethodToken:
+          type: string
+          format: uuid
+          description: Payment method token

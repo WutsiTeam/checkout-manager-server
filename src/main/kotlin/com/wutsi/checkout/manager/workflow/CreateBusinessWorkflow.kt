@@ -5,42 +5,42 @@ import com.wutsi.checkout.manager.event.BusinessEventPayload
 import com.wutsi.checkout.manager.event.EventURN
 import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.regulation.CountryRegulations
+import com.wutsi.regulation.RegulationEngine
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
-import com.wutsi.workflow.rule.account.CountrySupportsBusinessAccountRule
+import com.wutsi.workflow.rule.account.CountryShouldSupportBusinessAccountRule
 import org.springframework.stereotype.Service
 
 @Service
 class CreateBusinessWorkflow(
-    private val countryRegulations: CountryRegulations,
+    private val regulationEngine: RegulationEngine,
     eventStream: EventStream
-) : AbstractBusinessWorkflow(eventStream) {
+) : AbstractBusinessWorkflow<Void?, Long>(eventStream) {
     override fun getEventType() = EventURN.BUSINESS_CREATED.urn
 
-    override fun toEventPayload(context: WorkflowContext) = BusinessEventPayload(
+    override fun toEventPayload(request: Void?, businessId: Long, context: WorkflowContext) = BusinessEventPayload(
         accountId = getCurrentAccountId(context),
-        businessId = context.response as Long
+        businessId = businessId
     )
 
-    override fun getValidationRules(context: WorkflowContext): RuleSet {
+    override fun getValidationRules(request: Void?, context: WorkflowContext): RuleSet {
         val account = getCurrentAccount(context)
         return RuleSet(
             listOf(
                 AccountShouldBeActiveRule(account),
-                CountrySupportsBusinessAccountRule(account, countryRegulations)
+                CountryShouldSupportBusinessAccountRule(account, regulationEngine)
             )
         )
     }
 
-    override fun doExecute(context: WorkflowContext) {
+    override fun doExecute(request: Void?, context: WorkflowContext): Long {
         val account = getCurrentAccount(context)
         val businessId = checkoutAccess.createBusiness(
             request = CreateBusinessRequest(
                 accountId = account.id,
                 country = account.country,
-                currency = countryRegulations.get(account.country).currency
+                currency = regulationEngine.country(account.country).currency
             )
         ).businessId
 
@@ -52,6 +52,6 @@ class CreateBusinessWorkflow(
             )
         )
 
-        context.response = businessId
+        return businessId
     }
 }

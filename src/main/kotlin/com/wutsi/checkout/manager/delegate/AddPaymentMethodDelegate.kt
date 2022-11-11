@@ -19,9 +19,6 @@ class AddPaymentMethodDelegate(
         logger.add("request_type", request.type)
         logger.add("request_owner_name", request.ownerName)
 
-        val context = WorkflowContext(request)
-        workflow.execute(context)
-
-        return context.response as AddPaymentMethodResponse
+        return workflow.execute(request, WorkflowContext())
     }
 }

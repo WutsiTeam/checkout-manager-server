@@ -5,7 +5,6 @@ import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
-import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
 import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
 import com.wutsi.checkout.manager.workflow.SuspendBusinessWorkflow
@@ -41,18 +40,15 @@ class MembershipEventHandler(
         ).paymentProviders
 
         if (providers.size == 1) {
-            val context = WorkflowContext(
-                accountId = payload.accountId,
-                request = AddPaymentMethodRequest(
-                    providerId = providers[0].id,
-                    type = type.name,
-                    number = account.phone.number,
-                    country = account.phone.country,
-                    ownerName = account.displayName
-                )
+            val request = AddPaymentMethodRequest(
+                providerId = providers[0].id,
+                type = type.name,
+                number = account.phone.number,
+                country = account.phone.country,
+                ownerName = account.displayName
             )
-            addPaymentMethodWorkflow.execute(context)
-            val response = context.response as AddPaymentMethodResponse
+            val context = WorkflowContext(accountId = payload.accountId)
+            val response = addPaymentMethodWorkflow.execute(request, context)
             logger.add("payment_method_token", response.paymentMethodToken)
         }
     }
@@ -61,22 +57,18 @@ class MembershipEventHandler(
         val payload = toMemberPayload(event)
         log(payload)
 
-        val context = WorkflowContext(
-            accountId = payload.accountId
-        )
-        createBusinessWorkflow.execute(context)
-        logger.add("business_id", context.response)
+        val context = WorkflowContext(accountId = payload.accountId)
+        val businessId = createBusinessWorkflow.execute(null, context)
+        logger.add("business_id", businessId)
     }
 
     fun onBusinessAccountDisabled(event: Event) {
         val payload = toMemberPayload(event)
         log(payload)
 
-        val context = WorkflowContext(
-            accountId = payload.accountId
-        )
-        suspendBusinessWorkflow.execute(context)
-        logger.add("business_id", context.response)
+        val context = WorkflowContext(accountId = payload.accountId)
+        val businessId = suspendBusinessWorkflow.execute(null, context)
+        logger.add("business_id", businessId)
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =

@@ -13,7 +13,8 @@ import com.wutsi.workflow.error.ErrorURN
 import feign.FeignException
 import org.springframework.beans.factory.annotation.Autowired
 
-abstract class AbstractCheckoutWorkflow<T>(eventStream: EventStream) : AbstractWorkflow<T>(eventStream) {
+abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream) :
+    AbstractWorkflow<Req, Resp, Ev>(eventStream) {
     @Autowired
     protected lateinit var checkoutAccess: CheckoutAccessApi
 

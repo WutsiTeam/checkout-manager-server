@@ -13,19 +13,19 @@ import org.springframework.stereotype.Service
 @Service
 class SuspendBusinessWorkflow(
     eventStream: EventStream
-) : AbstractBusinessWorkflow(eventStream) {
+) : AbstractBusinessWorkflow<Void?, Long?>(eventStream) {
     override fun getEventType() = EventURN.BUSINESS_SUSPENDED.urn
 
-    override fun toEventPayload(context: WorkflowContext) = context.response?.let {
+    override fun toEventPayload(request: Void?, businessId: Long?, context: WorkflowContext) = businessId?.let {
         BusinessEventPayload(
             accountId = getCurrentAccountId(context),
-            businessId = it as Long
+            businessId = it
         )
     }
 
-    override fun getValidationRules(context: WorkflowContext) = RuleSet.NONE
+    override fun getValidationRules(request: Void?, context: WorkflowContext) = RuleSet.NONE
 
-    override fun doExecute(context: WorkflowContext) {
+    override fun doExecute(request: Void?, context: WorkflowContext): Long? {
         val account = getCurrentAccount(context)
         if (account.businessId != null) {
             checkoutAccess.updateBusinessStatus(
@@ -42,8 +42,7 @@ class SuspendBusinessWorkflow(
                     value = null
                 )
             )
-
-            context.response = account.businessId
         }
+        return account.businessId
     }
 }

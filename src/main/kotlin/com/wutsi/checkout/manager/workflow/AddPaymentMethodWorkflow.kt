@@ -14,15 +14,19 @@ import org.springframework.stereotype.Service
 @Service
 class AddPaymentMethodWorkflow(
     eventStream: EventStream
-) : AbstractPaymentMethodWorkflow(eventStream) {
+) : AbstractPaymentMethodWorkflow<AddPaymentMethodRequest, AddPaymentMethodResponse>(eventStream) {
     override fun getEventType() = EventURN.PAYMENT_METHOD_ADDED.urn
 
-    override fun toEventPayload(context: WorkflowContext) = PaymentMethodEventPayload(
+    override fun toEventPayload(
+        request: AddPaymentMethodRequest,
+        response: AddPaymentMethodResponse,
+        context: WorkflowContext
+    ) = PaymentMethodEventPayload(
         accountId = getCurrentAccountId(context),
-        paymentMethodToken = (context.response as AddPaymentMethodResponse).paymentMethodToken
+        paymentMethodToken = response.paymentMethodToken
     )
 
-    override fun getValidationRules(context: WorkflowContext): RuleSet {
+    override fun getValidationRules(request: AddPaymentMethodRequest, context: WorkflowContext): RuleSet {
         val account = getCurrentAccount(context)
         return RuleSet(
             listOf(
@@ -31,21 +35,17 @@ class AddPaymentMethodWorkflow(
         )
     }
 
-    override fun doExecute(context: WorkflowContext) {
-        val request = context.request as AddPaymentMethodRequest
-        val token = checkoutAccess.createPaymentMethod(
-            request = CreatePaymentMethodRequest(
-                accountId = getCurrentAccountId(context),
-                type = request.type,
-                number = request.number,
-                country = request.country,
-                ownerName = request.ownerName,
-                providerId = request.providerId
-            )
-        ).paymentMethodToken
-
-        context.response = AddPaymentMethodResponse(
-            paymentMethodToken = token
+    override fun doExecute(request: AddPaymentMethodRequest, context: WorkflowContext): AddPaymentMethodResponse =
+        AddPaymentMethodResponse(
+            paymentMethodToken = checkoutAccess.createPaymentMethod(
+                request = CreatePaymentMethodRequest(
+                    accountId = getCurrentAccountId(context),
+                    type = request.type,
+                    number = request.number,
+                    country = request.country,
+                    ownerName = request.ownerName,
+                    providerId = request.providerId
+                )
+            ).paymentMethodToken
         )
-    }
 }

@@ -5,12 +5,6 @@ wutsi:
   platform:
     security:
       type: jwt
-    cache:
-      type: memcached
-      memcached:
-        username: ${MEMCACHIER_USERNAME}
-        password: ${MEMCACHIER_PASSWORD}
-        servers: ${MEMCACHIER_SERVERS}
     stream:
       type: rabbitmq
       rabbitmq:

@@ -5,9 +5,9 @@ info:
   version: "1.0.0"
 
 servers:
-  - url: https://checkout-manager-server-test.herokuapp.com
+  - url: https://checkout-manager-test.herokuapp.com
     description: Sandbox
-  - url: https://checkout-manager-server-prod.herokuapp.com
+  - url: https://checkout-manager-prod.herokuapp.com
     description: Production
 
 paths:

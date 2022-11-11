@@ -7,10 +7,12 @@ import com.wutsi.platform.core.security.feign.FeignApiKeyRequestInterceptor
 import com.wutsi.platform.core.security.feign.FeignAuthorizationRequestInterceptor
 import com.wutsi.platform.core.tracing.feign.FeignTracingRequestInterceptor
 import com.wutsi.platform.core.util.feign.Custom5XXErrorDecoder
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
+import javax.annotation.PostConstruct
 
 @Configuration
 class MembershipAccessApiConfiguration(
@@ -20,6 +22,16 @@ class MembershipAccessApiConfiguration(
     private val mapper: ObjectMapper,
     private val env: Environment
 ) {
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(MembershipAccessApiConfiguration::class.java)
+    }
+
+    @PostConstruct
+    fun init() {
+        val environment = environment()
+        LOGGER.info("Endpoint: ${environment.name} = ${environment.url}")
+    }
+
     @Bean
     fun membershipAccessApi(): MembershipAccessApi =
         MembershipAccessApiBuilder().build(

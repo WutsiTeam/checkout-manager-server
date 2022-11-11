@@ -53,7 +53,7 @@ jobs:
       - name: Heroku-Deploy-Test
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_TEST}}
-          HEROKU_APP: checkout-manager-server-test
+          HEROKU_APP: checkout-manager-test
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_TEST}}
           LOG4J_SLACK_WEBHOOK_URL: ${{secrets.LOG4J_SLACK_WEBHOOK_URL_TEST}}
         run: |
@@ -68,7 +68,7 @@ jobs:
 
       - name: Health check
         env:
-          HEROKU_APP: checkout-manager-server-test
+          HEROKU_APP: checkout-manager-test
         run: |
           sleep 90
           curl -sSf https://${HEROKU_APP}.herokuapp.com/actuator/health >> /dev/null
@@ -78,7 +78,7 @@ jobs:
         if: ${{always()}}
         env:
           SLACK_COLOR: ${{job.status}}
-          SLACK_TITLE: checkout-manager-server-test
+          SLACK_TITLE: checkout-manager-test
           SLACK_MESSAGE: Heroku Deployment in TEST
           MSG_MINIMAL: true
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}
@@ -109,7 +109,7 @@ jobs:
       - name: Heroku-Deploy-Prod
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_PROD}}
-          HEROKU_APP: checkout-manager-server-prod
+          HEROKU_APP: checkout-manager-prod
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_PROD}}
           LOG4J_SLACK_WEBHOOK_URL: ${{secrets.LOG4J_SLACK_WEBHOOK_URL_PROD}}
         run: |
@@ -124,7 +124,7 @@ jobs:
 
       - name: Health check
         env:
-          HEROKU_APP: checkout-manager-server-prod
+          HEROKU_APP: checkout-manager-prod
         run: |
           sleep 90
           curl -sSf https://${HEROKU_APP}.herokuapp.com/actuator/health >> /dev/null
@@ -134,7 +134,7 @@ jobs:
         if: ${{always()}}
         env:
           SLACK_COLOR: ${{job.status}}
-          SLACK_TITLE: checkout-manager-server-prod
+          SLACK_TITLE: checkout-manager-prod
           SLACK_MESSAGE: Heroku Deployment in PROD
           MSG_MINIMAL: true
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}

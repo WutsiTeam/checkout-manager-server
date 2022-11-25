@@ -37,7 +37,7 @@ class AddPaymentMethodWorkflow(
 
     override fun doExecute(request: AddPaymentMethodRequest, context: WorkflowContext): AddPaymentMethodResponse =
         AddPaymentMethodResponse(
-            paymentMethodToken = checkoutAccess.createPaymentMethod(
+            paymentMethodToken = checkoutAccessApi.createPaymentMethod(
                 request = CreatePaymentMethodRequest(
                     accountId = getCurrentAccountId(context),
                     type = request.type,

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream) :
     AbstractWorkflow<Req, Resp, Ev>(eventStream) {
     @Autowired
-    protected lateinit var checkoutAccess: CheckoutAccessApi
+    protected lateinit var checkoutAccessApi: CheckoutAccessApi
 
     @Autowired
     protected lateinit var membershipAccess: MembershipAccessApi

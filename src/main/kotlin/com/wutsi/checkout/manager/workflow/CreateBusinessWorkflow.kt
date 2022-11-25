@@ -36,7 +36,7 @@ class CreateBusinessWorkflow(
 
     override fun doExecute(request: Void?, context: WorkflowContext): Long {
         val account = getCurrentAccount(context)
-        val businessId = checkoutAccess.createBusiness(
+        val businessId = checkoutAccessApi.createBusiness(
             request = CreateBusinessRequest(
                 accountId = account.id,
                 country = account.country,

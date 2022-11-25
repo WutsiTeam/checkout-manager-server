@@ -28,7 +28,7 @@ class SuspendBusinessWorkflow(
     override fun doExecute(request: Void?, context: WorkflowContext): Long? {
         val account = getCurrentAccount(context)
         if (account.businessId != null) {
-            checkoutAccess.updateBusinessStatus(
+            checkoutAccessApi.updateBusinessStatus(
                 account.businessId!!,
                 UpdateBusinessStatusRequest(
                     status = BusinessStatus.SUSPENDED.name

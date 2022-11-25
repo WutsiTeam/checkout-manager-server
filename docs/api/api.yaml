@@ -1,80 +1,271 @@
 openapi: "3.0.0"
 info:
-    title: "Wutsi Checkout Manager API"
-    description: Checkout Business Layer
-    version: "1.0.0"
+  title: "Wutsi Checkout Manager API"
+  description: Checkout Business Layer
+  version: "1.0.0"
 
 servers:
-    -   url: https://checkout-manager-test.herokuapp.com
-        description: Sandbox
-    -   url: https://checkout-manager-prod.herokuapp.com
-        description: Production
+  - url: https://checkout-manager-test.herokuapp.com
+    description: Sandbox
+  - url: https://checkout-manager-prod.herokuapp.com
+    description: Production
 
 paths:
-    /v1/payment-methods:
-        post:
-            operationId: "add-payment-method"
-            description: Add payment method to the current user
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/AddPaymentMethodRequest'
-            responses:
-                200:
-                    description: Success
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/AddPaymentMethodResponse'
-            tags:
-                - Checkout
+  /v1/payment-methods:
+    post:
+      operationId: "add-payment-method"
+      description: Add payment method to the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPaymentMethodRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentMethodResponse'
+      tags:
+        - Checkout
+
+  /v1/payment-methods/search:
+    post:
+      operationId: "search-payment-method"
+      description: Search payment methods
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchPaymentMethodRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPaymentMethodResponse'
+      tags:
+        - Payment Method
+
+  /v1/payment-methods/{token}:
+    get:
+      operationId: "get-payment-method"
+      description: Get a payment method
+      parameters:
+        - in: path
+          name: token
+          description: Payment method token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentMethodResponse'
+        404:
+          description: Payment method not found
+      tags:
+        - Payment Method
 
 components:
-    securitySchemes:
-        api_key:
-            type: apiKey
-            in: header
-            name: Authorization
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization
 
-    schemas:
-        AddPaymentMethodRequest:
-            type: object
-            properties:
-                providerId:
-                    type: integer
-                    format: int64
-                    description: ID of the payment provider
-                type:
-                    type: string
-                    description: Type of payment method
-                    enum:
-                        - MOBILE_MONEY
-                        - BANK
-                number:
-                    type: string
-                    description: Phone or Bank account number
-                    maxLength: 30
-                country:
-                    type: string
-                    description: country 2 letter ISO code
-                    minLength: 2
-                    maxLength: 2
-                ownerName:
-                    type: string
-                    description: Name of the owner of the payment method
-                    maxLength: 100
-            required:
-                - number
-                - ownerName
-                - type
-                - country
+  schemas:
+    AddPaymentMethodRequest:
+      type: object
+      properties:
+        providerId:
+          type: integer
+          format: int64
+          description: ID of the payment provider
+        type:
+          type: string
+          description: Type of payment method
+          enum:
+            - MOBILE_MONEY
+            - BANK
+        number:
+          type: string
+          description: Phone or Bank account number
+          maxLength: 30
+        country:
+          type: string
+          description: country 2 letter ISO code
+          minLength: 2
+          maxLength: 2
+        ownerName:
+          type: string
+          description: Name of the owner of the payment method
+          maxLength: 100
+      required:
+        - number
+        - ownerName
+        - type
+        - country
 
-        AddPaymentMethodResponse:
-            type: object
-            properties:
-                paymentMethodToken:
-                    type: string
-                    format: uuid
-                    description: Payment method token
+    AddPaymentMethodResponse:
+      type: object
+      properties:
+        paymentMethodToken:
+          type: string
+          format: uuid
+          description: Payment method token
+
+    GetPaymentMethodResponse:
+      type: object
+      properties:
+        paymentMethod:
+          type: object
+          $ref: "#/components/schemas/PaymentMethod"
+
+    GetPaymentMethodRequest:
+      type: object
+      properties:
+        paymentMethod:
+          type: object
+          $ref: "#/components/schemas/PaymentMethod"
+
+    SearchPaymentMethodRequest:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the associated account
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          nullable: true
+        limit:
+          type: integer
+          default: 100
+        offset:
+          type: integer
+          default: 0
+
+    SearchPaymentMethodResponse:
+      type: object
+      properties:
+        paymentMethods:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentMethodSummary"
+
+    PaymentMethod:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the associated account
+        token:
+          type: string
+          description: Payment Method's token
+        type:
+          type: string
+          description: Type of payment method
+        ownerName:
+          type: string
+          description: Name of the owner of the payment method
+        number:
+          type: string
+          description: Payment method account number
+        country:
+          type: string
+          description: country code - required for bank accounts
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+        created:
+          type: string
+          format: date-time
+          description: Creation date/time
+        updated:
+          type: string
+          format: date-time
+          description: Updated date/time
+        deactivated:
+          type: string
+          format: date-time
+          description: Date/time when the payment method was deactivated
+          nullable: true
+        provider:
+          type: object
+          $ref: "#/components/schemas/PaymentProviderSummary"
+
+    PaymentMethodSummary:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the associated account
+        token:
+          type: string
+          description: Payment Method's token
+        type:
+          type: string
+          description: Type of payment method
+        number:
+          type: string
+          description: Payment method account number
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+        created:
+          type: string
+          format: date-time
+          description: Creation date/time
+        updated:
+          type: string
+          format: date-time
+          description: Updated date/time
+        deactivated:
+          type: string
+          format: date-time
+          description: Date/time when the payment method was deactivated
+          nullable: true
+        provider:
+          type: object
+          $ref: "#/components/schemas/PaymentProviderSummary"
+
+    PaymentProviderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the provider
+        code:
+          type: string
+          description: Provider Code
+        name:
+          type: string
+          description: Provider name
+        type:
+          type: string
+          description: Type of payment method
+          enum:
+            - MOBILE_MONEY
+            - BANK
+        logoUrl:
+          type: string
+          format: url
+          description: URL of the logo

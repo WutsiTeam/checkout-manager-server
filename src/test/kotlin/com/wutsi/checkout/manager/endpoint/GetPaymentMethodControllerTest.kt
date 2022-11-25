@@ -2,6 +2,7 @@ package com.wutsi.checkout.manager.endpoint
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.checkout.access.dto.GetPaymentMethodResponse
 import com.wutsi.checkout.manager.Fixtures
@@ -28,6 +29,8 @@ public class GetPaymentMethodControllerTest : AbstractSecuredControllerTest() {
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
+
+        verify(checkoutAccess).getPaymentMethod("1111")
 
         val payment = response.body!!.paymentMethod
         assertEquals(paymentMethod.type, payment.type)

@@ -1,6 +1,7 @@
 package com.wutsi.checkout.manager
 
 import com.wutsi.checkout.access.dto.PaymentMethod
+import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
 import com.wutsi.checkout.access.enums.PaymentMethodStatus
 import com.wutsi.checkout.access.enums.PaymentMethodType
@@ -51,5 +52,16 @@ object Fixtures {
         status = PaymentMethodStatus.ACTIVE.name,
         accountId = 111L,
         country = "CM"
+    )
+
+    fun createPaymentMethodSummary(
+        token: String
+    ) = PaymentMethodSummary(
+        token = token,
+        provider = createPaymentProvider(),
+        number = "+237670000010",
+        type = PaymentMethodType.MOBILE_MONEY.name,
+        status = PaymentMethodStatus.ACTIVE.name,
+        accountId = 111L
     )
 }

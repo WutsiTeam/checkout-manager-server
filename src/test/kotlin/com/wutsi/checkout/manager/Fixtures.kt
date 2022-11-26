@@ -3,11 +3,11 @@ package com.wutsi.checkout.manager
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
-import com.wutsi.checkout.access.enums.PaymentMethodStatus
-import com.wutsi.checkout.access.enums.PaymentMethodType
+import com.wutsi.enums.AccountStatus
+import com.wutsi.enums.PaymentMethodStatus
+import com.wutsi.enums.PaymentMethodType
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Phone
-import com.wutsi.membership.access.enums.AccountStatus
 
 object Fixtures {
     fun createAccount(

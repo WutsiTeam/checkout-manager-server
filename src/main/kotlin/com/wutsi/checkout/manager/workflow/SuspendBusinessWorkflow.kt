@@ -1,9 +1,9 @@
 package com.wutsi.checkout.manager.workflow
 
 import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
-import com.wutsi.checkout.access.enums.BusinessStatus
-import com.wutsi.checkout.manager.event.BusinessEventPayload
-import com.wutsi.checkout.manager.event.EventURN
+import com.wutsi.enums.BusinessStatus
+import com.wutsi.event.BusinessEventPayload
+import com.wutsi.event.EventURN
 import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet

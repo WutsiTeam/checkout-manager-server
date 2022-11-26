@@ -1,6 +1,6 @@
 package com.wutsi.checkout.manager.event
 
-import com.wutsi.membership.manager.event.EventURN
+import com.wutsi.event.EventURN
 import com.wutsi.platform.core.stream.Event
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service

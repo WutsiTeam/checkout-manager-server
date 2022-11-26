@@ -3,7 +3,7 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.manager.dto.GetPaymentMethodResponse
 import com.wutsi.checkout.manager.dto.PaymentMethod
 import com.wutsi.checkout.manager.dto.PaymentProviderSummary
-import com.wutsi.checkout.manager.event.PaymentMethodEventPayload
+import com.wutsi.event.PaymentMethodEventPayload
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext

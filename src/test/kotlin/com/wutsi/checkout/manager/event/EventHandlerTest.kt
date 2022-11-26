@@ -2,8 +2,8 @@ package com.wutsi.checkout.manager.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.verify
-import com.wutsi.membership.manager.event.EventURN
-import com.wutsi.membership.manager.event.MemberEventPayload
+import com.wutsi.event.EventURN
+import com.wutsi.event.MemberEventPayload
 import com.wutsi.platform.core.stream.Event
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

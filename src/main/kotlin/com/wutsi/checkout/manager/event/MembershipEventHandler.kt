@@ -3,13 +3,13 @@ package com.wutsi.checkout.manager.event
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
-import com.wutsi.checkout.access.enums.PaymentMethodType
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
 import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
 import com.wutsi.checkout.manager.workflow.SuspendBusinessWorkflow
+import com.wutsi.enums.PaymentMethodType
+import com.wutsi.event.MemberEventPayload
 import com.wutsi.membership.access.MembershipAccessApi
-import com.wutsi.membership.manager.event.MemberEventPayload
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.workflow.WorkflowContext

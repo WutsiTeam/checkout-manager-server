@@ -11,6 +11,27 @@ servers:
     description: Production
 
 paths:
+  /v1/payment-providers/search:
+    post:
+      operationId: "search-payment-provider"
+      description: Search payment providers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchPaymentProviderRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPaymentProviderResponse'
+      tags:
+        - Payment Method
+
+
   /v1/payment-methods:
     post:
       operationId: "add-payment-method"
@@ -82,6 +103,58 @@ components:
       name: Authorization
 
   schemas:
+    SearchPaymentProviderRequest:
+      type: object
+      properties:
+        country:
+          type: string
+          description: Country code
+        number:
+          type: string
+          description: Phone or Bank account number
+          nullable: true
+        type:
+          type: string
+          description: Type of payment method
+          enum:
+            - MOBILE_MONEY
+            - BANK
+          nullable: true
+      required:
+        - country
+
+    SearchPaymentProviderResponse:
+      type: object
+      properties:
+        paymentProviders:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentProviderSummary"
+
+    PaymentProviderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the provider
+        code:
+          type: string
+          description: Provider Code
+        name:
+          type: string
+          description: Provider name
+        type:
+          type: string
+          description: Type of payment method
+          enum:
+            - MOBILE_MONEY
+            - BANK
+        logoUrl:
+          type: string
+          format: url
+          description: URL of the logo
+
     AddPaymentMethodRequest:
       type: object
       properties:
@@ -139,16 +212,13 @@ components:
     SearchPaymentMethodRequest:
       type: object
       properties:
-        accountId:
-          type: integer
-          format: int64
-          description: ID of the associated account
         status:
           type: string
           enum:
             - ACTIVE
             - INACTIVE
           nullable: true
+          default: "ACTIVE"
         limit:
           type: integer
           default: 100
@@ -245,27 +315,3 @@ components:
         provider:
           type: object
           $ref: "#/components/schemas/PaymentProviderSummary"
-
-    PaymentProviderSummary:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: ID of the provider
-        code:
-          type: string
-          description: Provider Code
-        name:
-          type: string
-          description: Provider name
-        type:
-          type: string
-          description: Type of payment method
-          enum:
-            - MOBILE_MONEY
-            - BANK
-        logoUrl:
-          type: string
-          format: url
-          description: URL of the logo

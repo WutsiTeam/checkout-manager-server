@@ -14,11 +14,11 @@ import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
 import com.wutsi.enums.AccountStatus
 import com.wutsi.enums.PaymentMethodType
+import com.wutsi.error.ErrorURN
 import com.wutsi.event.EventURN
 import com.wutsi.event.PaymentMethodEventPayload
 import com.wutsi.membership.access.dto.GetAccountResponse
 import com.wutsi.platform.core.error.ErrorResponse
-import com.wutsi.workflow.error.ErrorURN
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest

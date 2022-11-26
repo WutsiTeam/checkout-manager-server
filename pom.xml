@@ -37,7 +37,7 @@
     <wutsi-marketplace-access.version>1.0.12</wutsi-marketplace-access.version>
     <wutsi-membership-access.version>1.0.18</wutsi-membership-access.version>
     <wutsi-checkout-access.version>1.0.11</wutsi-checkout-access.version>
-    <wutsi-workflow.version>1.0.17</wutsi-workflow.version>
+    <wutsi-workflow.version>1.0.18</wutsi-workflow.version>
     <wutsi-regulation.version>1.0.7</wutsi-regulation.version>
   </properties>
 

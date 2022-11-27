@@ -2,7 +2,6 @@ package com.wutsi.checkout.manager.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.verify
-import com.wutsi.event.CheckoutEventPayload
 import com.wutsi.event.EventURN
 import com.wutsi.event.MemberEventPayload
 import com.wutsi.platform.core.stream.Event
@@ -17,7 +16,7 @@ internal class EventHandlerTest {
     private lateinit var membership: MembershipEventHandler
 
     @MockBean
-    private lateinit var checkout: CheckoutEventHandler
+    private lateinit var checkout: TransactionEventHandler
 
     @Autowired
     private lateinit var handler: EventHandler
@@ -31,9 +30,9 @@ internal class EventHandlerTest {
         pin = "123456"
     )
 
-    private val checkoutEventPayload = CheckoutEventPayload(
+    private val transactionEventPayload = TransactionEventPayload(
         orderId = "1111",
-        reservationId = 111L
+        transactionId = "33333"
     )
 
     @Test
@@ -76,11 +75,11 @@ internal class EventHandlerTest {
     }
 
     @Test
-    fun onChargeSuccessfull() {
+    fun onChargeSuccessful() {
         // WHEN
         val event = Event(
             type = InternalEventURN.CHARGE_SUCESSFULL.urn,
-            payload = mapper.writeValueAsString(checkoutEventPayload)
+            payload = mapper.writeValueAsString(transactionEventPayload)
         )
         handler.handleEvent(event)
 
@@ -89,15 +88,15 @@ internal class EventHandlerTest {
     }
 
     @Test
-    fun onChargeFailed() {
+    fun onTransactionPending() {
         // WHEN
         val event = Event(
-            type = InternalEventURN.CHARGE_FAILED.urn,
-            payload = mapper.writeValueAsString(checkoutEventPayload)
+            type = InternalEventURN.TRANSACTION_PENDING.urn,
+            payload = mapper.writeValueAsString(transactionEventPayload)
         )
         handler.handleEvent(event)
 
         // THEN
-        verify(checkout).onChargeFailed(event)
+        verify(checkout).onTransactionPending(event)
     }
 }

@@ -17,11 +17,11 @@ import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.checkout.manager.dto.CheckoutRequest
 import com.wutsi.checkout.manager.dto.CheckoutResponse
 import com.wutsi.checkout.manager.event.InternalEventURN
+import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
 import com.wutsi.enums.OfferType
 import com.wutsi.enums.PaymentMethodType
-import com.wutsi.event.CheckoutEventPayload
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.GetProductResponse
@@ -225,7 +225,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
         verify(eventStream, never()).publish(any(), any())
         verify(eventStream).enqueue(
             InternalEventURN.CHARGE_SUCESSFULL.urn,
-            CheckoutEventPayload(order.id, reservationId)
+            TransactionEventPayload(transactionResponse.transactionId, order.id)
         )
     }
 
@@ -234,6 +234,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
         // GIVEN
         order = Fixtures.createOrder(id = orderId, totalPrice = 0)
         doReturn(GetOrderResponse(order)).whenever(checkoutAccess).getOrder(any())
+
         // WHEN
         val response = rest.postForEntity(url(), request, CheckoutResponse::class.java)
 
@@ -248,7 +249,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
         verify(eventStream, never()).publish(any(), any())
         verify(eventStream).enqueue(
             InternalEventURN.CHARGE_SUCESSFULL.urn,
-            CheckoutEventPayload(order.id, reservationId)
+            TransactionEventPayload("", order.id)
         )
     }
 
@@ -316,7 +317,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
         verify(checkoutAccess).createCharge(any())
 
         verify(eventStream, never()).publish(any(), any())
-        verify(eventStream).enqueue(InternalEventURN.CHARGE_FAILED.urn, CheckoutEventPayload(order.id, reservationId))
+        verify(eventStream, never()).enqueue(any(), any())
     }
 
     private fun url(): String = "http://localhost:$port/v1/checkout"

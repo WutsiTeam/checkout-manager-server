@@ -38,6 +38,9 @@ wutsi:
   client-id: checkout-manager
   application:
     name: checkout-manager
+    jobs:
+      pending-transaction:
+        cron: "0 0 * * * *"  # Runs every hour
   platform:
     security:
       type: jwt

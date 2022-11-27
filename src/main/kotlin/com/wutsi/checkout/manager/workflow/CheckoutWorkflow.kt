@@ -9,6 +9,7 @@ import com.wutsi.checkout.access.dto.CreateOrderRequest
 import com.wutsi.checkout.manager.dto.CheckoutRequest
 import com.wutsi.checkout.manager.dto.CheckoutResponse
 import com.wutsi.checkout.manager.event.InternalEventURN
+import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.enums.OfferType
 import com.wutsi.error.ErrorURN
 import com.wutsi.event.CheckoutEventPayload
@@ -74,15 +75,15 @@ class CheckoutWorkflow(
         logger.add("reservation_id", reservationId)
 
         // Charge customer
-        val charge = createCharge(request, business, orderId, reservationId)
+        val charge = createCharge(request, business, orderId)
         logger.add("transaction_id", charge.transactionId)
         logger.add("transaction_status", charge.status)
         if (charge.status == Status.SUCCESSFUL.name) {
             eventStream.enqueue(
                 InternalEventURN.CHARGE_SUCESSFULL.urn,
-                CheckoutEventPayload(
-                    orderId = orderId,
-                    reservationId = reservationId
+                TransactionEventPayload(
+                    transactionId = charge.transactionId,
+                    orderId = orderId
                 )
             )
         }
@@ -158,8 +159,7 @@ class CheckoutWorkflow(
     private fun createCharge(
         request: CheckoutRequest,
         business: Business,
-        orderId: String,
-        reservationId: Long
+        orderId: String
     ): CreateChargeResponse {
         val order = checkoutAccessApi.getOrder(orderId).order
 
@@ -188,13 +188,6 @@ class CheckoutWorkflow(
                 )
             )
         } catch (ex: FeignException) {
-            eventStream.enqueue(
-                InternalEventURN.CHARGE_FAILED.urn,
-                CheckoutEventPayload(
-                    orderId = orderId,
-                    reservationId = reservationId
-                )
-            )
             throw handleChargeException(ex)
         }
     }

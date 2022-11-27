@@ -6,11 +6,13 @@ import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
+import com.wutsi.checkout.access.dto.Transaction
 import com.wutsi.enums.AccountStatus
 import com.wutsi.enums.BusinessStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.enums.ProductStatus
+import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.CategorySummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
@@ -129,5 +131,12 @@ object Fixtures {
     fun createPictureSummary(id: Long = -1) = PictureSummary(
         id = id,
         url = "https://img.com/$id.png"
+    )
+
+    fun createTransaction(id: String, type: TransactionType, status: Status, orderId: String? = null) = Transaction(
+        id = id,
+        type = type.name,
+        orderId = orderId,
+        status = status.name
     )
 }

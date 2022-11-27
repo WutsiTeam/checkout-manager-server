@@ -164,7 +164,7 @@ class CheckoutWorkflow(
         val order = checkoutAccessApi.getOrder(orderId).order
 
         // Free?
-        if (order.totalPrice == null || order.totalPrice == 0L) {
+        if (order.totalPrice == 0L) {
             return CreateChargeResponse(
                 transactionId = "",
                 status = Status.SUCCESSFUL.name

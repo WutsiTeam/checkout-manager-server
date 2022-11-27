@@ -415,6 +415,18 @@ components:
     CheckoutRequest:
       type: object
       properties:
+        deviceType:
+          type: string
+          description: Type of the device
+          nullable: true
+        channelType:
+          type: string
+          description: Sales channel
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the business
         customerId:
           type: integer
           format: int64
@@ -451,6 +463,10 @@ components:
           type: integer
           format: int64
           description: ID of the product to checkout
+        quantity:
+          type: integer
+          description: Number of products
+          minimum: 1
         notes:
           type: string
           description: Note to the merchant
@@ -475,7 +491,7 @@ components:
           type: string
           format: uuid
           description: ID of the payment transaction
-        paymentStatus:
+        transactionStatus:
           type: string
           enum:
             - SUCCESSFULL

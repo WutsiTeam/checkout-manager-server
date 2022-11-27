@@ -141,6 +141,7 @@ paths:
       tags:
         - Checkout
 
+
   /v1/orders:
     post:
       operationId: "create-order"
@@ -160,6 +161,27 @@ paths:
                 $ref: '#/components/schemas/CreateOrderResponse'
       tags:
         - Order
+
+
+  /v1/transactions/charge:
+    post:
+      operationId: "create-charge"
+      description: Charge a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChargeRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChargeResponse'
+      tags:
+        - Transactions
 
 
 
@@ -582,3 +604,68 @@ components:
           type: string
           description: Status of the order
 
+    CreateChargeRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email of the customer
+          maxLength: 100
+        paymentMethodType:
+          type: string
+          description: Type of payment method
+          nullable: true
+        paymentMethodOwnerName:
+          type: string
+          description: Name of the payer
+          nullable: true
+          maxLength: 100
+        paymentProviderId:
+          type: integer
+          format: int64
+          description: ID of the payment provider
+          nullable: true
+        paymentMethodToken:
+          type: string
+          description: Payment token of the customer
+          nullable: true
+        paymenMethodNumber:
+          type: string
+          description: Payment method number
+          nullable: true
+          maxLength: 30
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the business that will be creditted
+        orderId:
+          type: string
+          description: ID of the order associated with the charge
+        description:
+          type: string
+          description: Description of the transaction
+          nullable: true
+          maxLength: 100
+        idempotencyKey:
+          type: string
+          description: Idemportent Key
+          maxLength: 36
+      required:
+        - idempotencyKey
+        - orderId
+        - email
+
+    CreateChargeResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+          description: ID of the transaction
+        status:
+          description: Status of the charge
+          type: string
+          enum:
+            - PENDING
+            - SUCESS

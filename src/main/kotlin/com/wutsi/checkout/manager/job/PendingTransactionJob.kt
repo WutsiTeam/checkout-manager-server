@@ -39,7 +39,9 @@ class PendingTransactionJob(
             txs.forEach {
                 eventStream.enqueue(
                     type = InternalEventURN.TRANSACTION_PENDING.urn,
-                    payload = TransactionEventPayload(transactionId = it.id)
+                    payload = TransactionEventPayload(
+                        transactionId = it.id
+                    )
                 )
                 count++
             }

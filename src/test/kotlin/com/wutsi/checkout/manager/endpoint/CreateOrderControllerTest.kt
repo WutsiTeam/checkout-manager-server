@@ -1,17 +1,17 @@
 package com.wutsi.checkout.manager.endpoint
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.doThrow
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.wutsi.checkout.access.dto.CreateOrderResponse
 import com.wutsi.checkout.access.dto.GetBusinessResponse
 import com.wutsi.checkout.manager.Fixtures
-import com.wutsi.checkout.manager.dto.CheckoutResponse
 import com.wutsi.checkout.manager.dto.CreateOrderItemRequest
 import com.wutsi.checkout.manager.dto.CreateOrderRequest
+import com.wutsi.checkout.manager.dto.CreateOrderResponse
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
 import com.wutsi.enums.OrderStatus
@@ -23,6 +23,7 @@ import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.ReservationItem
 import com.wutsi.marketplace.access.dto.SearchProductResponse
 import com.wutsi.membership.access.dto.GetAccountResponse
+import com.wutsi.platform.core.error.ErrorResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -84,10 +85,12 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     fun opened() {
         // GIVEN
         val orderStatus = OrderStatus.OPENED
-        doReturn(CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess).createOrder(any())
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess)
+            .createOrder(any())
 
         // WHEN
-        val response = rest.postForEntity(url(), request, CheckoutResponse::class.java)
+        val response =
+            rest.postForEntity(url(), request, com.wutsi.checkout.manager.dto.CreateOrderResponse::class.java)
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
@@ -159,10 +162,11 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     fun pending() {
         // GIVEN
         val orderStatus = OrderStatus.UNKNOWN
-        doReturn(CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess).createOrder(any())
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess)
+            .createOrder(any())
 
         // WHEN
-        val response = rest.postForEntity(url(), request, CheckoutResponse::class.java)
+        val response = rest.postForEntity(url(), request, CreateOrderResponse::class.java)
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
@@ -181,7 +185,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
 
         // WHEN
         val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url(), request, CheckoutResponse::class.java)
+            rest.postForEntity(url(), request, CreateOrderResponse::class.java)
         }
 
         // THEN
@@ -191,6 +195,9 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         verify(marketplaceAccessApi, never()).createReservation(any())
 
         verify(eventStream, never()).publish(any(), any())
+
+        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
+        assertEquals(com.wutsi.error.ErrorURN.PRODUCT_NOT_AVAILABLE.urn, response.error.code)
     }
 
     private fun url(): String = "http://localhost:$port/v1/orders"

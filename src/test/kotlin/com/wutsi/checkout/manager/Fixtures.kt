@@ -7,8 +7,10 @@ import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
 import com.wutsi.checkout.access.dto.Transaction
+import com.wutsi.checkout.access.dto.TransactionSummary
 import com.wutsi.enums.AccountStatus
 import com.wutsi.enums.BusinessStatus
+import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.enums.ProductStatus
@@ -96,10 +98,13 @@ object Fixtures {
 
     fun createOrder(
         id: String,
-        totalPrice: Long = 100000L
+        totalPrice: Long = 100000L,
+        status: OrderStatus = OrderStatus.UNKNOWN
     ) = Order(
         id = id,
-        totalPrice = totalPrice
+        totalPrice = totalPrice,
+        balance = totalPrice,
+        status = status.name
     )
 
     fun createChargeResponse(status: Status = Status.PENDING) =
@@ -143,7 +148,7 @@ object Fixtures {
         status = ProductStatus.DRAFT.name,
         thumbnailUrl = "http://img.com/$id.png",
         currency = "XAF",
-        title = "This is the title #$id",
+        title = "This is the title #$id"
     )
 
     fun createPictureSummary(id: Long = -1) = PictureSummary(
@@ -152,6 +157,18 @@ object Fixtures {
     )
 
     fun createTransaction(id: String, type: TransactionType, status: Status, orderId: String? = null) = Transaction(
+        id = id,
+        type = type.name,
+        orderId = orderId,
+        status = status.name
+    )
+
+    fun createTransactionSummary(
+        id: String,
+        type: TransactionType,
+        status: Status = Status.SUCCESSFUL,
+        orderId: String? = null
+    ) = TransactionSummary(
         id = id,
         type = type.name,
         orderId = orderId,

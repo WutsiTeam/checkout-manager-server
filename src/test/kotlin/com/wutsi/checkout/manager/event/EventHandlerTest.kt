@@ -31,7 +31,6 @@ internal class EventHandlerTest {
     )
 
     private val transactionEventPayload = TransactionEventPayload(
-        orderId = "1111",
         transactionId = "33333"
     )
 
@@ -72,19 +71,6 @@ internal class EventHandlerTest {
 
         // THEN
         verify(membership).onBusinessAccountDisabled(event)
-    }
-
-    @Test
-    fun onChargeSuccessful() {
-        // WHEN
-        val event = Event(
-            type = InternalEventURN.CHARGE_SUCESSFULL.urn,
-            payload = mapper.writeValueAsString(transactionEventPayload)
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(checkout).onChargeSuccessful(event)
     }
 
     @Test

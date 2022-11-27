@@ -16,7 +16,6 @@ class EventHandler(
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
             EventURN.BUSINESS_ACCOUNT_ENABLED.urn -> membership.onBusinessAccountEnabled(event)
             EventURN.BUSINESS_ACCOUNT_DISABLED.urn -> membership.onBusinessAccountDisabled(event)
-            InternalEventURN.CHARGE_SUCESSFULL.urn -> transaction.onChargeSuccessful(event)
             InternalEventURN.TRANSACTION_PENDING.urn -> transaction.onTransactionPending(event)
             else -> {}
         }

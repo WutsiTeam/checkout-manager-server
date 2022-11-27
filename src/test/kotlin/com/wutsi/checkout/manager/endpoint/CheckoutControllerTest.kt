@@ -20,7 +20,6 @@ import com.wutsi.checkout.manager.event.InternalEventURN
 import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
-import com.wutsi.enums.OfferType
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
@@ -54,7 +53,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
     private val business = Fixtures.createBusiness(id = BUSINESS_ID, accountId = businessAccountId)
     private var transactionResponse = Fixtures.createChargeResponse()
     private val request = CheckoutRequest(
-        channelType = ChannelType.WEBAPP.name,
+        channelType = ChannelType.WEB.name,
         deviceType = DeviceType.MOBILE.name,
         businessId = BUSINESS_ID,
         idempotencyKey = UUID.randomUUID().toString(),
@@ -108,8 +107,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
                 currency = business.currency,
                 items = listOf(
                     CreateOrderItemRequest(
-                        offerId = productId,
-                        offerType = OfferType.PRODUCT.name,
+                        productId = productId,
                         title = product.title,
                         pictureUrl = product.thumbnail?.url,
                         quantity = request.quantity,
@@ -179,8 +177,7 @@ public class CheckoutControllerTest : AbstractSecuredControllerTest() {
                 currency = business.currency,
                 items = listOf(
                     CreateOrderItemRequest(
-                        offerId = productId,
-                        offerType = OfferType.PRODUCT.name,
+                        productId = productId,
                         title = product.title,
                         pictureUrl = product.thumbnail?.url,
                         quantity = request.quantity,

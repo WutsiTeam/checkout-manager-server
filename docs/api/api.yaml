@@ -141,6 +141,27 @@ paths:
       tags:
         - Checkout
 
+  /v1/orders:
+    post:
+      operationId: "create-order"
+      description: Create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+      tags:
+        - Order
+
+
 
 components:
   securitySchemes:
@@ -498,3 +519,66 @@ components:
             - FAILED
             - PENDING
           description: Status of the payment
+
+    CreateOrderRequest:
+      type: object
+      properties:
+        deviceType:
+          type: string
+          description: Type of the device
+          nullable: true
+        channelType:
+          type: string
+          description: Sales channel
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the store
+        notes:
+          type: string
+          description: Customer Notes
+          nullable: true
+        customerId:
+          type: integer
+          format: int64
+          description: Customer's account ID
+          nullable: true
+        customerName:
+          type: string
+          description: Customer's display name
+        customerEmail:
+          type: string
+          description: Customer's email
+          maxLength: 100
+        items:
+          type: array
+          description: Items of order
+          items:
+            $ref: "#/components/schemas/CreateOrderItemRequest"
+      required:
+        - items
+        - customerName
+        - customerEmail
+
+    CreateOrderItemRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: ID of the product
+        quantity:
+          type: integer
+          description: Number of offers
+
+    CreateOrderResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: ID of the order
+        orderStatus:
+          type: string
+          description: Status of the order
+

@@ -10,10 +10,8 @@ import com.wutsi.checkout.manager.dto.CheckoutRequest
 import com.wutsi.checkout.manager.dto.CheckoutResponse
 import com.wutsi.checkout.manager.event.InternalEventURN
 import com.wutsi.checkout.manager.event.TransactionEventPayload
-import com.wutsi.enums.OfferType
 import com.wutsi.error.ErrorURN
-import com.wutsi.event.CheckoutEventPayload
-import com.wutsi.event.EventURN
+import com.wutsi.event.OrderEventPayload
 import com.wutsi.marketplace.access.dto.CheckProductAvailabilityRequest
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.ReservationItem
@@ -35,14 +33,14 @@ class CheckoutWorkflow(
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
     eventStream: EventStream
-) : AbstractCheckoutWorkflow<CheckoutRequest, CheckoutResponse, CheckoutEventPayload>(eventStream) {
-    override fun getEventType() = EventURN.BUSINESS_CREATED.urn
+) : AbstractCheckoutWorkflow<CheckoutRequest, CheckoutResponse, OrderEventPayload>(eventStream) {
+    override fun getEventType(): String? = null
 
     override fun toEventPayload(
         request: CheckoutRequest,
         response: CheckoutResponse,
         context: WorkflowContext
-    ): CheckoutEventPayload? =
+    ): OrderEventPayload? =
         null
 
     override fun getValidationRules(request: CheckoutRequest, context: WorkflowContext): RuleSet {
@@ -126,8 +124,7 @@ class CheckoutWorkflow(
                 channelType = request.channelType,
                 items = listOf(
                     CreateOrderItemRequest(
-                        offerId = request.productId,
-                        offerType = OfferType.PRODUCT.name,
+                        productId = request.productId,
                         title = product.title,
                         pictureUrl = product.thumbnail?.url,
                         unitPrice = product.price ?: 0,

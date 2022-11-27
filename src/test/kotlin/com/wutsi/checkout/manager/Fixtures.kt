@@ -16,6 +16,7 @@ import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.CategorySummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
+import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Phone
 import com.wutsi.platform.payment.core.Status
@@ -126,6 +127,23 @@ object Fixtures {
             id = 1,
             title = "Art"
         )
+    )
+
+    fun createProductSummary(
+        id: Long = -1,
+        storeId: Long = -1,
+        quantity: Int? = 11
+    ) = ProductSummary(
+        id = id,
+        storeId = storeId,
+        summary = "This is a summary",
+        price = 100000L,
+        comparablePrice = 150000L,
+        quantity = quantity,
+        status = ProductStatus.DRAFT.name,
+        thumbnailUrl = "http://img.com/$id.png",
+        currency = "XAF",
+        title = "This is the title #$id",
     )
 
     fun createPictureSummary(id: Long = -1) = PictureSummary(

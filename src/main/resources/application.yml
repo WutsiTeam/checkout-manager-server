@@ -45,7 +45,8 @@ wutsi:
     security:
       type: jwt
       public-endpoints:
-        - "POST /v1/checkout"
+        - "POST /v1/orders"
+        - "POST /v1/transactions/charges"
     cache:
       name: ${wutsi.application.name}
       type: local

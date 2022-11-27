@@ -1,9 +1,11 @@
 package com.wutsi.checkout.manager
 
+import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
 import com.wutsi.enums.AccountStatus
+import com.wutsi.enums.BusinessStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.membership.access.dto.Account
@@ -63,5 +65,21 @@ object Fixtures {
         type = PaymentMethodType.MOBILE_MONEY.name,
         status = PaymentMethodStatus.ACTIVE.name,
         accountId = 111L
+    )
+
+    fun createBusiness(
+        id: Long,
+        accountId: Long,
+        balance: Long = 100000,
+        currency: String = "XAF",
+        country: String = "CM",
+        status: BusinessStatus = BusinessStatus.ACTIVE
+    ) = Business(
+        id = id,
+        balance = balance,
+        currency = currency,
+        country = country,
+        status = status.name,
+        accountId = accountId
     )
 }

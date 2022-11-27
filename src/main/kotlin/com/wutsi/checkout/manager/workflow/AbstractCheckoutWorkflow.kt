@@ -3,6 +3,7 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.manager.util.SecurityUtil
 import com.wutsi.error.ErrorURN
+import com.wutsi.marketplace.access.MarketplaceAccessApi
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.platform.core.error.Error
@@ -20,6 +21,9 @@ abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream)
 
     @Autowired
     protected lateinit var membershipAccess: MembershipAccessApi
+
+    @Autowired
+    protected lateinit var marketplaceAccessApi: MarketplaceAccessApi
 
     protected fun getCurrentAccountId(context: WorkflowContext): Long =
         context.accountId ?: SecurityUtil.getAccountId()

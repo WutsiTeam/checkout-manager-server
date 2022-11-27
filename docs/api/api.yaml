@@ -95,6 +95,31 @@ paths:
       tags:
         - Payment Method
 
+  /v1/businesses/{id}:
+    get:
+      operationId: "get-business"
+      description: Return information of a business
+      parameters:
+        - in: path
+          name: id
+          description: ID of the business
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBusinessResponse'
+        404:
+          description: The business not found
+      tags:
+        - Business
+
+
 components:
   securitySchemes:
     api_key:
@@ -315,3 +340,52 @@ components:
         provider:
           type: object
           $ref: "#/components/schemas/PaymentProviderSummary"
+
+    GetBusinessResponse:
+      type: object
+      properties:
+        business:
+          type: object
+          $ref: "#/components/schemas/Business"
+
+    Business:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the business
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the associated account
+        balance:
+          type: integer
+          format: int64
+          description: Balance of the business
+        country:
+          type: string
+          description: 2 letter country code
+        currency:
+          type: string
+          description: 3 letter currency code
+        status:
+          type: string
+          description: Status of the business
+          enum:
+            - UNDER_REVIEW
+            - ACTIVE
+            - SUSPENDED
+        created:
+          type: string
+          format: date-time
+          description: Registration Date/Time
+        updated:
+          type: string
+          format: date-time
+          description: Last modification Date/Time
+        suspended:
+          type: string
+          format: date-time
+          description: Suspension Date/Time
+          nullable: true

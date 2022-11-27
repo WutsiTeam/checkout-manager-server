@@ -11,6 +11,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor
 abstract class AbstractSecuredControllerTest : AbstractControllerTest() {
     companion object {
         const val ACCOUNT_ID = 555L
+        const val BUSINESS_ID = 333L
     }
 
     @BeforeEach

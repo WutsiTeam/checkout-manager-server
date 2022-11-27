@@ -50,7 +50,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddPaymentMethodResponse'
       tags:
-        - Checkout
+        - Payment Method
 
   /v1/payment-methods/search:
     post:
@@ -95,6 +95,7 @@ paths:
       tags:
         - Payment Method
 
+
   /v1/businesses/{id}:
     get:
       operationId: "get-business"
@@ -118,6 +119,27 @@ paths:
           description: The business not found
       tags:
         - Business
+
+
+  /v1/checkout:
+    post:
+      operationId: "checkout"
+      description: "Checkout a product"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+      tags:
+        - Checkout
 
 
 components:
@@ -389,3 +411,74 @@ components:
           format: date-time
           description: Suspension Date/Time
           nullable: true
+
+    CheckoutRequest:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int64
+          description: ID of the customer
+          nullable: true
+        customerName:
+          type: string
+          description: Name of the customer
+          maxLength: 100
+        customerEmail:
+          type: string
+          format: email
+          description: Email of the customer
+          maxLength: 100
+        paymentMethodToken:
+          type: string
+          description: Payment token of the customer
+          nullable: true
+        paymentMethodType:
+          type: string
+          description: Type of payment method
+          nullable: true
+        paymentProviderId:
+          type: integer
+          format: int64
+          description: ID of the payment provider
+          nullable: true
+        paymenMethodNumber:
+          type: string
+          description: Payment method number
+          nullable: true
+          maxLength: 30
+        productId:
+          type: integer
+          format: int64
+          description: ID of the product to checkout
+        notes:
+          type: string
+          description: Note to the merchant
+          nullable: true
+        idempotencyKey:
+          type: string
+          description: Idemportent Key
+          maxLength: 36
+      required:
+        - idempotencyKey
+        - customerName
+        - customerEmail
+
+    CheckoutResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          description: ID of the order
+        transactionId:
+          type: string
+          format: uuid
+          description: ID of the payment transaction
+        paymentStatus:
+          type: string
+          enum:
+            - SUCCESSFULL
+            - FAILED
+            - PENDING
+          description: Status of the payment

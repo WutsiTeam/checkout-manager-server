@@ -15,7 +15,7 @@ abstract class AbstractSecuredControllerTest : AbstractControllerTest() {
     }
 
     @BeforeEach
-    fun setUp() {
+    open fun setUp() {
         rest.interceptors.add(createAuthorizationInterceptor(ACCOUNT_ID))
     }
 

@@ -1,6 +1,7 @@
 package com.wutsi.checkout.manager.endpoint
 
 import com.wutsi.checkout.access.CheckoutAccessApi
+import com.wutsi.marketplace.access.MarketplaceAccessApi
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.platform.core.stream.EventStream
 import feign.FeignException
@@ -18,13 +19,38 @@ abstract class AbstractControllerTest {
     protected lateinit var checkoutAccess: CheckoutAccessApi
 
     @MockBean
+    protected lateinit var marketplaceAccessApi: MarketplaceAccessApi
+
+    @MockBean
     protected lateinit var eventStream: EventStream
 
     protected var rest = RestTemplate()
 
-    protected fun createFeignNotException(
+    protected fun createFeignNotFoundException(
         errorCode: String
     ) = FeignException.NotFound(
+        "",
+        Request.create(
+            Request.HttpMethod.POST,
+            "https://www.google.ca",
+            emptyMap(),
+            "".toByteArray(),
+            Charset.defaultCharset(),
+            RequestTemplate()
+        ),
+        """
+            {
+                "error":{
+                    "code": "$errorCode"
+                }
+            }
+        """.trimIndent().toByteArray(),
+        emptyMap()
+    )
+
+    protected fun createFeignConflictException(
+        errorCode: String
+    ) = FeignException.Conflict(
         "",
         Request.create(
             Request.HttpMethod.POST,

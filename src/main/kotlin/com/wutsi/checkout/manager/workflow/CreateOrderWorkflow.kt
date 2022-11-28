@@ -30,7 +30,7 @@ class CreateOrderWorkflow(
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
     eventStream: EventStream
-) : AbstractCheckoutWorkflow<CreateOrderRequest, CreateOrderResponse, OrderEventPayload>(eventStream) {
+) : AbstractOrderWorkflow<CreateOrderRequest, CreateOrderResponse>(eventStream) {
     override fun getEventType() = EventURN.ORDER_OPENED.urn
 
     override fun toEventPayload(

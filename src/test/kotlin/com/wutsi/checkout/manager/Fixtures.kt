@@ -2,7 +2,9 @@ package com.wutsi.checkout.manager
 
 import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.CreateChargeResponse
+import com.wutsi.checkout.access.dto.Discount
 import com.wutsi.checkout.access.dto.Order
+import com.wutsi.checkout.access.dto.OrderItem
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
@@ -10,6 +12,9 @@ import com.wutsi.checkout.access.dto.Transaction
 import com.wutsi.checkout.access.dto.TransactionSummary
 import com.wutsi.enums.AccountStatus
 import com.wutsi.enums.BusinessStatus
+import com.wutsi.enums.ChannelType
+import com.wutsi.enums.DeviceType
+import com.wutsi.enums.DiscountType
 import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
@@ -22,6 +27,8 @@ import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Phone
 import com.wutsi.platform.payment.core.Status
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 object Fixtures {
@@ -98,13 +105,51 @@ object Fixtures {
 
     fun createOrder(
         id: String,
+        businessId: Long = -1,
         totalPrice: Long = 100000L,
         status: OrderStatus = OrderStatus.UNKNOWN
     ) = Order(
         id = id,
+        businessId = businessId,
         totalPrice = totalPrice,
         balance = totalPrice,
-        status = status.name
+        status = status.name,
+        customerName = "Ray Sponsible",
+        customerEmail = "ray.sponsible@gmail.com",
+        deviceType = DeviceType.MOBILE.name,
+        channelType = ChannelType.WEB.name,
+        currency = "XAF",
+        notes = "Yo man",
+        deviceId = "4309403-43094039-43094309",
+        discounts = listOf(
+            Discount(
+                code = "111",
+                amount = 1000,
+                rate = 0,
+                type = DiscountType.DYNAMIC.name
+            )
+        ),
+        items = listOf(
+            OrderItem(
+                productId = 999,
+                quantity = 3,
+                title = "This is a product",
+                pictureUrl = "https://img.com/1.png",
+                totalPrice = totalPrice,
+                unitPrice = totalPrice / 3,
+                totalDiscount = 100,
+                discounts = listOf(
+                    Discount(
+                        code = "111",
+                        amount = 1000,
+                        rate = 0,
+                        type = DiscountType.DYNAMIC.name
+                    )
+                )
+            )
+        ),
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
     )
 
     fun createChargeResponse(status: Status = Status.PENDING) =

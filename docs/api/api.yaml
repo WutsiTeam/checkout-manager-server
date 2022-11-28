@@ -121,27 +121,6 @@ paths:
         - Business
 
 
-  /v1/checkout:
-    post:
-      operationId: "checkout"
-      description: "Checkout a product"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CheckoutRequest'
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CheckoutResponse'
-      tags:
-        - Checkout
-
-
   /v1/orders:
     post:
       operationId: "create-order"
@@ -159,6 +138,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateOrderResponse'
+      tags:
+        - Order
+
+  /v1/orders/{id}:
+    get:
+      operationId: "get-order"
+      description: Get an order
+      parameters:
+        - in: path
+          name: id
+          description: ID of the order
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderResponse'
       tags:
         - Order
 
@@ -455,93 +456,6 @@ components:
           description: Suspension Date/Time
           nullable: true
 
-    CheckoutRequest:
-      type: object
-      properties:
-        deviceType:
-          type: string
-          description: Type of the device
-          nullable: true
-        channelType:
-          type: string
-          description: Sales channel
-          nullable: true
-        businessId:
-          type: integer
-          format: int64
-          description: ID of the business
-        customerId:
-          type: integer
-          format: int64
-          description: ID of the customer
-          nullable: true
-        customerName:
-          type: string
-          description: Name of the customer
-          maxLength: 100
-        customerEmail:
-          type: string
-          format: email
-          description: Email of the customer
-          maxLength: 100
-        paymentMethodToken:
-          type: string
-          description: Payment token of the customer
-          nullable: true
-        paymentMethodType:
-          type: string
-          description: Type of payment method
-          nullable: true
-        paymentProviderId:
-          type: integer
-          format: int64
-          description: ID of the payment provider
-          nullable: true
-        paymenMethodNumber:
-          type: string
-          description: Payment method number
-          nullable: true
-          maxLength: 30
-        productId:
-          type: integer
-          format: int64
-          description: ID of the product to checkout
-        quantity:
-          type: integer
-          description: Number of products
-          minimum: 1
-        notes:
-          type: string
-          description: Note to the merchant
-          nullable: true
-        idempotencyKey:
-          type: string
-          description: Idemportent Key
-          maxLength: 36
-      required:
-        - idempotencyKey
-        - customerName
-        - customerEmail
-
-    CheckoutResponse:
-      type: object
-      properties:
-        orderId:
-          type: string
-          format: uuid
-          description: ID of the order
-        transactionId:
-          type: string
-          format: uuid
-          description: ID of the payment transaction
-        transactionStatus:
-          type: string
-          enum:
-            - SUCCESSFULL
-            - FAILED
-            - PENDING
-          description: Status of the payment
-
     CreateOrderRequest:
       type: object
       properties:
@@ -669,3 +583,168 @@ components:
           enum:
             - PENDING
             - SUCESS
+
+    GetOrderResponse:
+      type: object
+      properties:
+        order:
+          type: object
+          $ref: "#/components/schemas/Order"
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the order
+        shortId:
+          type: string
+          description: Store version of the ID
+        deviceId:
+          type: string
+          description: ID of the device
+          nullable: true
+        deviceType:
+          type: string
+          description: Type of the device
+          nullable: true
+        channelType:
+          type: string
+          description: Sales channel
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the merchant
+        status:
+          type: string
+          description: Description of the order
+          enum:
+            - OPENED
+            - CANCELLED
+            - CLOSED
+        subTotalPrice:
+          type: integer
+          format: int64
+          description: Sub total price
+        totalDiscount:
+          type: integer
+          format: int64
+          description: Total Discount amount
+        totalPrice:
+          type: integer
+          format: int64
+          description: Total price
+        totalPaid:
+          type: integer
+          format: int64
+          description: Total amount paid by the customer
+        balance:
+          type: integer
+          format: int64
+          description: Balance to pay
+        currency:
+          type: string
+          description: Currency
+        created:
+          type: string
+          format: date-time
+          description: Creation datetime
+        updated:
+          type: string
+          format: date-time
+          description: Last update
+        cancelled:
+          type: string
+          format: date-time
+          description: Cancellation date
+          nullable: true
+        cancellationReason:
+          type: string
+          nullable: true
+        closed:
+          type: string
+          format: date-time
+          description: Closed date
+          nullable: true
+        notes:
+          type: string
+          description: Note from customer
+          nullable: true
+        customerId:
+          type: integer
+          format: int64
+          description: Customer's account ID
+          nullable: true
+        customerName:
+          type: string
+          description: Customer's display name
+        customerEmail:
+          type: string
+          description: Customer's email
+          maxLength: 100
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Discount"
+
+    OrderItem:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: ID of the product
+        title:
+          type: string
+          description: Title of the product
+        quantity:
+          type: integer
+          description: Number of offers
+        pictureUrl:
+          type: string
+          format: url
+          description: Offer picture URL
+          nullable: true
+        unitPrice:
+          type: integer
+          format: int64
+          description: Unit price
+        subTotalPrice:
+          type: integer
+          format: int64
+          description: Sub total price
+        totalDiscount:
+          type: integer
+          format: int64
+          description: Total Discount amount
+        totalPrice:
+          type: integer
+          format: int64
+          description: Total price
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Discount"
+
+    Discount:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Discount code
+        amount:
+          type: integer
+          format: int64
+          description: Discount amount
+        rate:
+          type: integer
+          description: Discount rate (0 - 100)
+        type:
+          type: string
+          description: Type of discount

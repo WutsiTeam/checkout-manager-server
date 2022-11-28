@@ -46,6 +46,7 @@ wutsi:
       type: jwt
       public-endpoints:
         - "POST /v1/orders"
+        - "GET /v1/orders/*"
         - "POST /v1/transactions/charges"
     cache:
       name: ${wutsi.application.name}

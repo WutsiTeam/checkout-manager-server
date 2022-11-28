@@ -34,7 +34,6 @@ public class GetOrderControllerTest : AbstractSecuredControllerTest() {
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
 
-
         val value = response.body!!.order
         val writer = mapper.writerWithDefaultPrettyPrinter()
         assertEquals(

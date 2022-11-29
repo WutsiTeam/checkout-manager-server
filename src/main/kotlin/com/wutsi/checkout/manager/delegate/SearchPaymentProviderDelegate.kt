@@ -17,7 +17,10 @@ public class SearchPaymentProviderDelegate(
         logger.add("request_number", request.number)
         logger.add("request_type", request.type)
 
-        return workflow.execute(request, WorkflowContext())
+        val response = workflow.execute(request, WorkflowContext())
+        logger.add("count", response.paymentProviders.size)
+
+        return response
     }
 
 }

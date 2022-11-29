@@ -111,7 +111,6 @@ class CreateOrderWorkflow(
                 currency = business.currency,
                 customerEmail = request.customerEmail,
                 customerName = request.customerName,
-                customerId = request.customerId,
                 deviceType = request.deviceType,
                 channelType = request.channelType,
                 items = request.items.map {

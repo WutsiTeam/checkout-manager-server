@@ -17,6 +17,9 @@ public class SearchPaymentMethodDelegate(
         logger.add("request_limit", request.limit)
         logger.add("request_offset", request.offset)
 
-        return workflow.execute(request, WorkflowContext())
+        val response = workflow.execute(request, WorkflowContext())
+        logger.add("response_count", response.paymentMethods.size)
+
+        return response
     }
 }

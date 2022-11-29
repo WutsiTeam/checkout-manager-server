@@ -200,6 +200,7 @@ components:
         country:
           type: string
           description: Country code
+          nullable: true
         number:
           type: string
           description: Phone or Bank account number
@@ -211,8 +212,6 @@ components:
             - MOBILE_MONEY
             - BANK
           nullable: true
-      required:
-        - country
 
     SearchPaymentProviderResponse:
       type: object

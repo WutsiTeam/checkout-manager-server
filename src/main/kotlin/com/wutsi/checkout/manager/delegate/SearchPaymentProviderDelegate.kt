@@ -22,5 +22,4 @@ public class SearchPaymentProviderDelegate(
 
         return response
     }
-
 }

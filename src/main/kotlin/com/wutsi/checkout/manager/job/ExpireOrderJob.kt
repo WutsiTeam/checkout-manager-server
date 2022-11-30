@@ -2,11 +2,11 @@ package com.wutsi.checkout.manager.job
 
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchOrderRequest
-import com.wutsi.checkout.manager.event.InternalEventURN
-import com.wutsi.event.OrderEventPayload
+import com.wutsi.checkout.manager.workflow.ExpireOrderWorkflow
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
-import com.wutsi.platform.core.stream.EventStream
+import com.wutsi.platform.core.logging.DefaultKVLogger
+import com.wutsi.workflow.WorkflowContext
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -14,8 +14,8 @@ import java.time.OffsetDateTime
 @Service
 class ExpireOrderJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val eventStream: EventStream,
-    lockManager: CronLockManager
+    private val expireOrderWorkflow: ExpireOrderWorkflow,
+    lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "expire-order"
 
@@ -38,13 +38,9 @@ class ExpireOrderJob(
                 )
             ).orders
             orders.forEach {
-                eventStream.enqueue(
-                    type = InternalEventURN.ORDER_EXPIRED.urn,
-                    payload = OrderEventPayload(
-                        orderId = it.id
-                    )
-                )
-                count++
+                if (expire(it.id)) {
+                    count++
+                }
             }
 
             if (orders.size < limit) {
@@ -52,5 +48,20 @@ class ExpireOrderJob(
             }
         }
         return count
+    }
+
+    private fun expire(orderId: String): Boolean {
+        val logger = DefaultKVLogger()
+        logger.add("job", getJobName())
+        logger.add("order_id", orderId)
+        try {
+            expireOrderWorkflow.execute(orderId, WorkflowContext())
+            return true
+        } catch (ex: Exception) {
+            logger.setException(ex)
+            return false
+        } finally {
+            logger.log()
+        }
     }
 }

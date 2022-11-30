@@ -17,7 +17,6 @@ import com.wutsi.enums.DeviceType
 import com.wutsi.enums.OrderStatus
 import com.wutsi.event.EventURN
 import com.wutsi.event.OrderEventPayload
-import com.wutsi.marketplace.access.dto.CheckProductAvailabilityRequest
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.ReservationItem
@@ -82,9 +81,10 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
 
     @Test
     fun opened() {
-        // GIVEN
-        val orderStatus = OrderStatus.OPENED
-        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess)
+        // OPENED
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.OPENED.name)).whenever(
+            checkoutAccess
+        )
             .createOrder(any())
 
         // WHEN
@@ -93,21 +93,6 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
-
-        verify(marketplaceAccessApi).checkProductAvailability(
-            request = CheckProductAvailabilityRequest(
-                items = listOf(
-                    ReservationItem(
-                        productId = request.items[0].productId,
-                        quantity = request.items[0].quantity
-                    ),
-                    ReservationItem(
-                        productId = request.items[1].productId,
-                        quantity = request.items[1].quantity
-                    )
-                )
-            )
-        )
 
         verify(checkoutAccess).createOrder(
             request = com.wutsi.checkout.access.dto.CreateOrderRequest(
@@ -159,8 +144,9 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     @Test
     fun pending() {
         // GIVEN
-        val orderStatus = OrderStatus.UNKNOWN
-        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, orderStatus.name)).whenever(checkoutAccess)
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.UNKNOWN.name)).whenever(
+            checkoutAccess
+        )
             .createOrder(any())
 
         // WHEN
@@ -178,8 +164,14 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     @Test
     fun `availability error`() {
         // GIVEN
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.UNKNOWN.name)).whenever(
+            checkoutAccess
+        )
+            .createOrder(any())
+
+        // GIVEN
         val cause = createFeignNotFoundException(com.wutsi.marketplace.access.error.ErrorURN.PRODUCT_NOT_AVAILABLE.urn)
-        doThrow(cause).whenever(marketplaceAccessApi).checkProductAvailability(any())
+        doThrow(cause).whenever(marketplaceAccessApi).createReservation(any())
 
         // WHEN
         val ex = assertThrows<HttpClientErrorException> {
@@ -189,7 +181,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         // THEN
         assertEquals(HttpStatus.CONFLICT, ex.statusCode)
 
-        verify(checkoutAccess, never()).createOrder(any())
+        verify(checkoutAccess).createOrder(any())
         verify(marketplaceAccessApi, never()).createReservation(any())
 
         verify(eventStream, never()).publish(any(), any())

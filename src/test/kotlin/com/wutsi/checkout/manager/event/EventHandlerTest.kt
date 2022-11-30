@@ -19,9 +19,6 @@ internal class EventHandlerTest {
     @MockBean
     private lateinit var checkout: TransactionEventHandler
 
-    @MockBean
-    private lateinit var order: OrderEventHandler
-
     @Autowired
     private lateinit var handler: EventHandler
 
@@ -92,18 +89,5 @@ internal class EventHandlerTest {
 
         // THEN
         verify(checkout).onTransactionPending(event)
-    }
-
-    @Test
-    fun onOrderExpired() {
-        // WHEN
-        val event = Event(
-            type = InternalEventURN.ORDER_EXPIRED.urn,
-            payload = mapper.writeValueAsString(orderEventPayload)
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(order).onOrderExpired(event)
     }
 }

@@ -5,6 +5,7 @@ import com.wutsi.checkout.access.dto.CreateChargeResponse
 import com.wutsi.checkout.access.dto.Discount
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.access.dto.OrderItem
+import com.wutsi.checkout.access.dto.OrderSummary
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
@@ -151,6 +152,10 @@ object Fixtures {
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         expires = OffsetDateTime.of(2100, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
+    )
+
+    fun createOrderSummary(id: String) = OrderSummary(
+        id = id
     )
 
     fun createChargeResponse(status: Status = Status.PENDING) =

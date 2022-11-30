@@ -10,7 +10,6 @@ import com.wutsi.enums.ProductStatus
 import com.wutsi.error.ErrorURN
 import com.wutsi.event.EventURN
 import com.wutsi.event.OrderEventPayload
-import com.wutsi.marketplace.access.dto.CheckProductAvailabilityRequest
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.ReservationItem
 import com.wutsi.marketplace.access.dto.SearchProductRequest
@@ -57,9 +56,6 @@ class CreateOrderWorkflow(
     override fun doExecute(request: CreateOrderRequest, context: WorkflowContext): CreateOrderResponse {
         val business = checkoutAccessApi.getBusiness(request.businessId).business
 
-        // Check availability
-        checkAvailability(request)
-
         // Order
         val response = createOrder(request, business)
         logger.add("order_id", response.orderId)
@@ -73,23 +69,6 @@ class CreateOrderWorkflow(
             orderId = response.orderId,
             orderStatus = response.orderStatus
         )
-    }
-
-    private fun checkAvailability(request: CreateOrderRequest) {
-        try {
-            marketplaceAccessApi.checkProductAvailability(
-                request = CheckProductAvailabilityRequest(
-                    items = request.items.map {
-                        ReservationItem(
-                            productId = it.productId,
-                            quantity = it.quantity
-                        )
-                    }
-                )
-            )
-        } catch (ex: FeignException) {
-            throw handleAvailabilityException(ex)
-        }
     }
 
     private fun createOrder(

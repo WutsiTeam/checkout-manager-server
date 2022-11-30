@@ -17,6 +17,7 @@ import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
 import com.wutsi.workflow.rule.account.BusinessShouldBeActive
+import com.wutsi.workflow.rule.account.OrderShouldNotBeExpiredRule
 import com.wutsi.workflow.rule.account.PaymentMethodShouldBeActive
 import feign.FeignException
 import org.springframework.stereotype.Service
@@ -45,11 +46,13 @@ class CreateChargeWorkflow(
         val paymentMethod = request.paymentMethodToken?.let {
             checkoutAccessApi.getPaymentMethod(it).paymentMethod
         }
+        val order = checkoutAccessApi.getOrder(request.orderId).order
         return RuleSet(
             listOfNotNull(
                 AccountShouldBeActiveRule(account),
                 BusinessShouldBeActive(business),
-                paymentMethod?.let { PaymentMethodShouldBeActive(it) }
+                paymentMethod?.let { PaymentMethodShouldBeActive(it) },
+                OrderShouldNotBeExpiredRule(order)
             )
         )
     }

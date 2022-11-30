@@ -659,6 +659,15 @@ components:
           format: date-time
           description: Cancellation date
           nullable: true
+        expired:
+          type: string
+          format: date-time
+          description: Expiry date/time
+          nullable: true
+        expires:
+          type: string
+          format: date-time
+          description: Expiry date/time
         cancellationReason:
           type: string
           nullable: true

@@ -5,10 +5,8 @@ import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.CreateOrderItemRequest
 import com.wutsi.checkout.manager.dto.CreateOrderRequest
 import com.wutsi.checkout.manager.dto.CreateOrderResponse
-import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.ProductStatus
 import com.wutsi.error.ErrorURN
-import com.wutsi.event.EventURN
 import com.wutsi.event.OrderEventPayload
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.ReservationItem
@@ -30,17 +28,13 @@ class CreateOrderWorkflow(
     private val logger: KVLogger,
     eventStream: EventStream
 ) : AbstractOrderWorkflow<CreateOrderRequest, CreateOrderResponse>(eventStream) {
-    override fun getEventType() = EventURN.ORDER_OPENED.urn
+    override fun getEventType(): String? = null
 
     override fun toEventPayload(
         request: CreateOrderRequest,
         response: CreateOrderResponse,
         context: WorkflowContext
-    ): OrderEventPayload? = if (response.orderStatus == OrderStatus.OPENED.name) {
-        OrderEventPayload(orderId = response.orderId)
-    } else {
-        null
-    }
+    ): OrderEventPayload? = null
 
     override fun getValidationRules(request: CreateOrderRequest, context: WorkflowContext): RuleSet {
         val business = checkoutAccessApi.getBusiness(request.businessId).business

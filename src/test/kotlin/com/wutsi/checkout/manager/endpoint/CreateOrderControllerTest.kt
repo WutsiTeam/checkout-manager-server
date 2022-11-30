@@ -15,8 +15,6 @@ import com.wutsi.checkout.manager.dto.CreateOrderResponse
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
 import com.wutsi.enums.OrderStatus
-import com.wutsi.event.EventURN
-import com.wutsi.event.OrderEventPayload
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.ReservationItem
@@ -138,7 +136,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
             )
         )
 
-        verify(eventStream).publish(EventURN.ORDER_OPENED.urn, OrderEventPayload(orderId = orderId))
+        verify(eventStream, never()).publish(any(), any())
     }
 
     @Test
@@ -182,7 +180,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         assertEquals(HttpStatus.CONFLICT, ex.statusCode)
 
         verify(checkoutAccess).createOrder(any())
-        verify(marketplaceAccessApi, never()).createReservation(any())
+        verify(marketplaceAccessApi).createReservation(any())
 
         verify(eventStream, never()).publish(any(), any())
 

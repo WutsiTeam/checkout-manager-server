@@ -16,9 +16,6 @@ internal class EventHandlerTest {
     @MockBean
     private lateinit var membership: MembershipEventHandler
 
-    @MockBean
-    private lateinit var checkout: TransactionEventHandler
-
     @Autowired
     private lateinit var handler: EventHandler
 
@@ -76,18 +73,5 @@ internal class EventHandlerTest {
 
         // THEN
         verify(membership).onBusinessAccountDisabled(event)
-    }
-
-    @Test
-    fun onTransactionPending() {
-        // WHEN
-        val event = Event(
-            type = InternalEventURN.TRANSACTION_PENDING.urn,
-            payload = mapper.writeValueAsString(transactionEventPayload)
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(checkout).onTransactionPending(event)
     }
 }

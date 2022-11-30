@@ -2,19 +2,20 @@ package com.wutsi.checkout.manager.job
 
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchTransactionRequest
-import com.wutsi.checkout.manager.event.InternalEventURN
-import com.wutsi.checkout.manager.event.TransactionEventPayload
+import com.wutsi.checkout.access.dto.TransactionSummary
+import com.wutsi.checkout.manager.workflow.SyncPendingTransactionWorkflow
+import com.wutsi.enums.TransactionType
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
-import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.payment.core.Status
+import com.wutsi.workflow.WorkflowContext
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
 class PendingTransactionJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val eventStream: EventStream,
+    private val workflow: SyncPendingTransactionWorkflow,
     lockManager: CronLockManager
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "pending-transaction"
@@ -37,12 +38,7 @@ class PendingTransactionJob(
                 )
             ).transactions
             txs.forEach {
-                eventStream.enqueue(
-                    type = InternalEventURN.TRANSACTION_PENDING.urn,
-                    payload = TransactionEventPayload(
-                        transactionId = it.id
-                    )
-                )
+                sync(it)
                 count++
             }
 
@@ -51,5 +47,11 @@ class PendingTransactionJob(
             }
         }
         return count
+    }
+
+    private fun sync(tx: TransactionSummary) {
+        if (tx.type == TransactionType.CHARGE.name) {
+            workflow.execute(tx.id, WorkflowContext())
+        }
     }
 }

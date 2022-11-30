@@ -14,8 +14,8 @@ import java.time.OffsetDateTime
 @Service
 class ExpireOrderJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val expireOrderWorkflow: ExpireOrderWorkflow,
-    lockManager: CronLockManager,
+    private val workflow: ExpireOrderWorkflow,
+    lockManager: CronLockManager
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "expire-order"
 
@@ -55,7 +55,7 @@ class ExpireOrderJob(
         logger.add("job", getJobName())
         logger.add("order_id", orderId)
         try {
-            expireOrderWorkflow.execute(orderId, WorkflowContext())
+            workflow.execute(orderId, WorkflowContext())
             return true
         } catch (ex: Exception) {
             logger.setException(ex)

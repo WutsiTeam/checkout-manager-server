@@ -6,13 +6,10 @@ import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
 import com.wutsi.error.ErrorURN
-import com.wutsi.event.EventURN
-import com.wutsi.event.OrderEventPayload
 import com.wutsi.platform.core.error.ErrorResponse
 import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
@@ -27,18 +24,14 @@ class CreateChargeWorkflow(
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
     eventStream: EventStream
-) : AbstractCheckoutWorkflow<CreateChargeRequest, CreateChargeResponse, OrderEventPayload>(eventStream) {
-    override fun getEventType() = EventURN.ORDER_OPENED.urn
+) : AbstractCheckoutWorkflow<CreateChargeRequest, CreateChargeResponse, Void>(eventStream) {
+    override fun getEventType(): String? = null
 
     override fun toEventPayload(
         request: CreateChargeRequest,
         response: CreateChargeResponse,
         context: WorkflowContext
-    ): OrderEventPayload? = if (response.status == Status.SUCCESSFUL.name) {
-        OrderEventPayload(orderId = request.orderId)
-    } else {
-        null
-    }
+    ): Void? = null
 
     override fun getValidationRules(request: CreateChargeRequest, context: WorkflowContext): RuleSet {
         val business = checkoutAccessApi.getBusiness(request.businessId).business

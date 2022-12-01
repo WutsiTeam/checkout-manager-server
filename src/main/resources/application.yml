@@ -40,7 +40,7 @@ wutsi:
     name: checkout-manager
     jobs:
       pending-transaction:
-        cron: "0 */10 * * * *"  # Runs every 10 mins
+        cron: "0 0 * * * *"  # Runs every hour
       expire-orders:
         cron: "0 */30 * * * *"  # Runs every 30 mins
   platform:
@@ -50,6 +50,7 @@ wutsi:
         - "GET /v1/businesses/*"
         - "POST /v1/orders"
         - "GET /v1/orders/*"
+        - "GET /v1/transactions/*"
         - "POST /v1/payment-providers/search"
         - "POST /v1/transactions/charge"
         - "POST /flutterwave/webhook"

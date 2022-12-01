@@ -9,6 +9,7 @@ public data class PaymentMethodSummary(
     public val accountId: Long = 0,
     public val token: String = "",
     public val type: String = "",
+    public val ownerName: String = "",
     public val number: String = "",
     public val status: String = "",
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")

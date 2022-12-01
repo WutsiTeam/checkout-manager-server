@@ -184,7 +184,29 @@ paths:
       tags:
         - Transactions
 
-
+  /v1/transactions/{id}:
+    get:
+      operationId: "get-transaction"
+      description: Return a transaction
+      parameters:
+        - in: path
+          name: id
+          description: ID of the transaction
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTransactionResponse'
+        404:
+          description: Transaction not found
+      tags:
+        - Transactions
 
 components:
   securitySchemes:
@@ -381,6 +403,9 @@ components:
         type:
           type: string
           description: Type of payment method
+        ownerName:
+          type: string
+          description: Name of the owner of the payment method
         number:
           type: string
           description: Payment method account number
@@ -756,3 +781,101 @@ components:
         type:
           type: string
           description: Type of discount
+
+    GetTransactionResponse:
+      type: object
+      properties:
+        transaction:
+          type: object
+          $ref: "#/components/schemas/Transaction"
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the transaction
+        customerId:
+          type: integer
+          format: int64
+          description: ID of the customer associated with the transaction
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the business associated with the transaction
+        type:
+          type: string
+          enum:
+            - CHARGE
+            - CASHOUT
+          description: Type of transaction
+        description:
+          type: string
+          description: Description of the transaction
+          nullable: true
+        amount:
+          type: integer
+          format: int64
+          description: Amount of the transaction
+        fees:
+          type: integer
+          format: int64
+          description: Fees
+        gatewayFees:
+          type: integer
+          format: int64
+          description: Fees from Payment Gateway
+        net:
+          type: integer
+          format: int64
+          description: Net amount
+        currency:
+          type: string
+          description: 3 letter currency code
+        status:
+          type: string
+          enum:
+            - SUCCESSFULL
+            - PENDING
+            - FAILED
+          description: Status of the transaction
+        gatewayTransactionId:
+          type: string
+          description: Transaction ID from the payment gateway
+          nullable: true
+        financialTransactionId:
+          type: string
+          description: Transaction ID from the financial institution
+          nullable: true
+        errorCode:
+          type: string
+          description: Error code
+          nullable: true
+        supplierErrorCode:
+          type: string
+          description: Error code from supplier
+          nullable: true
+        created:
+          type: string
+          description: Creation data-time
+          format: date-time
+        updated:
+          type: string
+          description: Creation data-time
+          format: date-time
+        orderId:
+          type: string
+          description: ID of the order associated with the transaction
+          nullable: true
+        gatewayType:
+          type: string
+          description: Gateway used for performing the transaction
+        email:
+          type: string
+          description: Email
+          nullable: true
+        paymentMethod:
+          type: object
+          $ref: "#/components/schemas/PaymentMethodSummary"

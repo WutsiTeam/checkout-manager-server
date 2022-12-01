@@ -27,6 +27,8 @@ import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Phone
+import com.wutsi.platform.payment.GatewayType
+import com.wutsi.platform.payment.core.ErrorCode
 import com.wutsi.platform.payment.core.Status
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -85,7 +87,8 @@ object Fixtures {
         number = "+237670000010",
         type = PaymentMethodType.MOBILE_MONEY.name,
         status = PaymentMethodStatus.ACTIVE.name,
-        accountId = 111L
+        accountId = 111L,
+        ownerName = "Ray Sponsible"
     )
 
     fun createBusiness(
@@ -211,7 +214,24 @@ object Fixtures {
         id = id,
         type = type.name,
         orderId = orderId,
-        status = status.name
+        status = status.name,
+        description = "This is description",
+        currency = "XAF",
+        businessId = 111,
+        email = "ray.sponsble@gmail.com",
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        amount = 10500,
+        errorCode = ErrorCode.APPROVAL_REJECTED.name,
+        customerId = 1111L,
+        paymentMethod = Fixtures.createPaymentMethodSummary(""),
+        financialTransactionId = "1111-111",
+        gatewayTransactionId = "2222-222",
+        supplierErrorCode = "xyz",
+        net = 10000,
+        fees = 500,
+        gatewayFees = 250,
+        gatewayType = GatewayType.FLUTTERWAVE.name
     )
 
     fun createTransactionSummary(

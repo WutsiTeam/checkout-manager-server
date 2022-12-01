@@ -5,11 +5,14 @@ import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
+import com.wutsi.checkout.manager.event.InternalEventURN
+import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.error.ErrorURN
 import com.wutsi.platform.core.error.ErrorResponse
 import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.EventStream
+import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
@@ -57,6 +60,12 @@ class CreateChargeWorkflow(
         logger.add("transaction_id", charge.transactionId)
         logger.add("transaction_status", charge.status)
 
+        if (charge.status == Status.SUCCESSFUL.name) {
+            eventStream.enqueue(
+                InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
+                TransactionEventPayload(transactionId = charge.transactionId)
+            )
+        }
         return CreateChargeResponse(
             transactionId = charge.transactionId,
             status = charge.status

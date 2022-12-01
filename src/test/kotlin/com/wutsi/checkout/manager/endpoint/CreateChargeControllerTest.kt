@@ -13,6 +13,8 @@ import com.wutsi.checkout.access.error.ErrorURN
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
+import com.wutsi.checkout.manager.event.InternalEventURN
+import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.membership.access.dto.GetAccountResponse
@@ -29,7 +31,7 @@ import java.util.UUID
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CreateChargeControllerTest : AbstractSecuredControllerTest() {
+class CreateChargeControllerTest : AbstractSecuredControllerTest() {
     @LocalServerPort
     public val port: Int = 0
 
@@ -67,7 +69,7 @@ public class CreateChargeControllerTest : AbstractSecuredControllerTest() {
     }
 
     @Test
-    public fun pending() {
+    fun pending() {
         // GIVEN
         val transactionResponse = Fixtures.createChargeResponse(status = Status.PENDING)
         doReturn(transactionResponse).whenever(checkoutAccess).createCharge(any())
@@ -98,11 +100,12 @@ public class CreateChargeControllerTest : AbstractSecuredControllerTest() {
         assertEquals(transactionResponse.transactionId, result.transactionId)
         assertEquals(transactionResponse.status, result.status)
 
+        verify(eventStream, never()).enqueue(any(), any())
         verify(eventStream, never()).publish(any(), any())
     }
 
     @Test
-    public fun success() {
+    fun success() {
         // GIVEN
         val transactionResponse = Fixtures.createChargeResponse(status = Status.SUCCESSFUL)
         doReturn(transactionResponse).whenever(checkoutAccess).createCharge(any())
@@ -133,6 +136,10 @@ public class CreateChargeControllerTest : AbstractSecuredControllerTest() {
         assertEquals(transactionResponse.transactionId, result.transactionId)
         assertEquals(transactionResponse.status, result.status)
 
+        verify(eventStream).enqueue(
+            InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
+            TransactionEventPayload(transactionResponse.transactionId)
+        )
         verify(eventStream, never()).publish(any(), any())
     }
 

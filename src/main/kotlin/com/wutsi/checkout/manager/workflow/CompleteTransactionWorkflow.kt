@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class CompleteTransactionWorkflow(
     eventStream: EventStream,
-    private val logger: KVLogger,
+    private val logger: KVLogger
 ) : AbstractCheckoutWorkflow<String, Unit, Void?>(eventStream) {
     override fun getEventType(): String? = null
 

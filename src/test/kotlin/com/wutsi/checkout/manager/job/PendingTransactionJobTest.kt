@@ -33,8 +33,18 @@ internal class PendingTransactionJobTest {
     fun pendingCharges() {
         // GIVEN
         val txs = listOf(
-            Fixtures.createTransactionSummary("1", type = TransactionType.CHARGE, orderId = "111"),
-            Fixtures.createTransactionSummary("2", type = TransactionType.CHARGE, orderId = "222")
+            Fixtures.createTransactionSummary(
+                "1",
+                type = TransactionType.CHARGE,
+                orderId = "111",
+                status = Status.PENDING
+            ),
+            Fixtures.createTransactionSummary(
+                "2",
+                type = TransactionType.CHARGE,
+                orderId = "222",
+                status = Status.PENDING
+            )
         )
         doReturn(SearchTransactionResponse(txs)).whenever(checkoutAccessApi).searchTransaction(any())
 

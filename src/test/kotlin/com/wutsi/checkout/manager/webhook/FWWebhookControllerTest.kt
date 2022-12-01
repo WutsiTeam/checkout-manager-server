@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
-import com.wutsi.checkout.manager.workflow.SyncPendingTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
 import com.wutsi.platform.payment.provider.flutterwave.model.FWResponseData
 import com.wutsi.platform.payment.provider.flutterwave.model.FWWebhookRequest
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
     public val port: Int = 0
 
     @MockBean
-    private lateinit var workflow: SyncPendingTransactionWorkflow
+    private lateinit var workflow: ProcessPendingTransactionWorkflow
 
     @Value("\${wutsi.flutterwave.secret-hash}")
     private lateinit var secretHash: String

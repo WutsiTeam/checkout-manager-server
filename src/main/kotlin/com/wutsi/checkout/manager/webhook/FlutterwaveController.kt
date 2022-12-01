@@ -1,6 +1,6 @@
 package com.wutsi.checkout.manager.webhook
 
-import com.wutsi.checkout.manager.workflow.SyncPendingTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.payment.provider.flutterwave.model.FWWebhookRequest
 import com.wutsi.workflow.WorkflowContext
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/flutterwave")
 public class FlutterwaveController(
     private val logger: KVLogger,
-    private val workflow: SyncPendingTransactionWorkflow,
+    private val workflow: ProcessPendingTransactionWorkflow,
     @Value("\${wutsi.flutterwave.secret-hash}") private val secretHash: String
 ) {
     @PostMapping("/webhook")

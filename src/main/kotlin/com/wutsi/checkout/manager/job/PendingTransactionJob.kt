@@ -3,10 +3,10 @@ package com.wutsi.checkout.manager.job
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchTransactionRequest
 import com.wutsi.checkout.access.dto.TransactionSummary
-import com.wutsi.checkout.manager.workflow.SyncPendingTransactionWorkflow
-import com.wutsi.enums.TransactionType
+import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
+import com.wutsi.platform.core.logging.DefaultKVLogger
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.WorkflowContext
 import org.springframework.scheduling.annotation.Scheduled
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 @Service
 class PendingTransactionJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val workflow: SyncPendingTransactionWorkflow,
+    private val workflow: ProcessPendingTransactionWorkflow,
     lockManager: CronLockManager
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "pending-transaction"
@@ -38,8 +38,9 @@ class PendingTransactionJob(
                 )
             ).transactions
             txs.forEach {
-                sync(it)
-                count++
+                if (sync(it)) {
+                    count++
+                }
             }
 
             if (txs.size < limit) {
@@ -49,9 +50,18 @@ class PendingTransactionJob(
         return count
     }
 
-    private fun sync(tx: TransactionSummary) {
-        if (tx.type == TransactionType.CHARGE.name) {
+    private fun sync(tx: TransactionSummary): Boolean {
+        val logger = DefaultKVLogger()
+        logger.add("job", getJobName())
+        logger.add("transaction_status", tx.id)
+        try {
             workflow.execute(tx.id, WorkflowContext())
+            return true
+        } catch (ex: Exception) {
+            logger.setException(ex)
+            return false
+        } finally {
+            logger.log()
         }
     }
 }

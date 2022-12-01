@@ -34,7 +34,7 @@ class ExpireOrderJob(
                 request = SearchOrderRequest(
                     limit = limit,
                     offset = offset++,
-                    expiredFrom = now
+                    expiresTo = now
                 )
             ).orders
             orders.forEach {

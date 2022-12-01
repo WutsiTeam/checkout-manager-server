@@ -16,4 +16,6 @@ wutsi:
       type: rabbitmq
       rabbitmq:
         url: ${CLOUDAMQP_URL}
+  flutterwave:
+    secret-hash: ${FLUTTERWAVE_SECRET_HASH}
 

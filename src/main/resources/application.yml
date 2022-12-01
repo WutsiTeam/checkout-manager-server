@@ -52,6 +52,7 @@ wutsi:
         - "GET /v1/orders/*"
         - "POST /v1/payment-providers/search"
         - "POST /v1/transactions/charge"
+        - "POST /flutterwave/webhook"
     cache:
       name: ${wutsi.application.name}
       type: local
@@ -64,6 +65,8 @@ wutsi:
       client-id: ${wutsi.application.name}
       device-id-provider:
         type: header
+  flutterwave:
+    secret-hash: "--- secret ----"
 
 logging:
   level:

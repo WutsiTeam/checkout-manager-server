@@ -1,6 +1,7 @@
 package com.wutsi.checkout.manager
 
 import com.wutsi.checkout.access.dto.Business
+import com.wutsi.checkout.access.dto.BusinessSummary
 import com.wutsi.checkout.access.dto.CreateChargeResponse
 import com.wutsi.checkout.access.dto.Discount
 import com.wutsi.checkout.access.dto.Order
@@ -107,14 +108,31 @@ object Fixtures {
         accountId = accountId
     )
 
+    fun createBusinessSummary(
+        id: Long,
+        accountId: Long,
+        balance: Long = 100000,
+        currency: String = "XAF",
+        country: String = "CM",
+        status: BusinessStatus = BusinessStatus.ACTIVE
+    ) = BusinessSummary(
+        id = id,
+        balance = balance,
+        currency = currency,
+        country = country,
+        status = status.name,
+        accountId = accountId
+    )
+
     fun createOrder(
         id: String,
         businessId: Long = -1,
+        accountId: Long = -1,
         totalPrice: Long = 100000L,
         status: OrderStatus = OrderStatus.UNKNOWN
     ) = Order(
         id = id,
-        businessId = businessId,
+        business = createBusinessSummary(businessId, accountId),
         totalPrice = totalPrice,
         balance = totalPrice,
         status = status.name,
@@ -210,14 +228,21 @@ object Fixtures {
         url = "https://img.com/$id.png"
     )
 
-    fun createTransaction(id: String, type: TransactionType, status: Status, orderId: String? = null) = Transaction(
+    fun createTransaction(
+        id: String,
+        type: TransactionType,
+        status: Status,
+        orderId: String? = null,
+        businessId: Long = -1,
+        accountId: Long = -1
+    ) = Transaction(
         id = id,
         type = type.name,
         orderId = orderId,
         status = status.name,
         description = "This is description",
         currency = "XAF",
-        businessId = 111,
+        business = createBusinessSummary(businessId, accountId),
         email = "ray.sponsble@gmail.com",
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),

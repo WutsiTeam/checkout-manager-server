@@ -480,6 +480,35 @@ components:
           description: Suspension Date/Time
           nullable: true
 
+    BusinessSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the business
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the associated account
+        balance:
+          type: integer
+          format: int64
+          description: Balance of the business
+        country:
+          type: string
+          description: 2 letter country code
+        currency:
+          type: string
+          description: 3 letter currency code
+        status:
+          type: string
+          description: Status of the business
+          enum:
+            - UNDER_REVIEW
+            - ACTIVE
+            - SUSPENDED
+
     CreateOrderRequest:
       type: object
       properties:
@@ -637,10 +666,9 @@ components:
           type: string
           description: Sales channel
           nullable: true
-        businessId:
-          type: integer
-          format: int64
-          description: ID of the merchant
+        business:
+          type: object
+          $ref: "#/components/schemas/BusinessSummary"
         status:
           type: string
           description: Description of the order
@@ -796,15 +824,14 @@ components:
           type: string
           format: uuid
           description: ID of the transaction
+        business:
+          type: object
+          $ref: "#/components/schemas/BusinessSummary"
         customerId:
           type: integer
           format: int64
           description: ID of the customer associated with the transaction
           nullable: true
-        businessId:
-          type: integer
-          format: int64
-          description: ID of the business associated with the transaction
         type:
           type: string
           enum:

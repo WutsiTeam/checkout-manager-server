@@ -31,7 +31,7 @@ class GetTransactionControllerTest : AbstractSecuredControllerTest() {
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
 
-        val value = response.body!!.transaction.copy(created = tx.created, updated = tx.updated)
+        val value = response.body!!.transaction
         assertEquals(tx.id, value.id)
         assertEquals(tx.customerId, value.customerId)
         assertEquals(tx.amount, value.amount)
@@ -46,7 +46,7 @@ class GetTransactionControllerTest : AbstractSecuredControllerTest() {
         assertEquals(tx.orderId, value.orderId)
         assertEquals(tx.status, value.status)
         assertEquals(tx.supplierErrorCode, value.supplierErrorCode)
-        assertEquals(tx.businessId, value.businessId)
+        assertEquals(tx.business.id, value.business.id)
         assertEquals(tx.updated, value.updated)
         assertEquals(tx.created, value.created)
         assertEquals(tx.paymentMethod.status, value.paymentMethod.status)

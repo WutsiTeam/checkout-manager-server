@@ -3,6 +3,7 @@ package com.wutsi.checkout.manager.job
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchOrderRequest
 import com.wutsi.checkout.manager.workflow.ExpireOrderWorkflow
+import com.wutsi.enums.OrderStatus
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
 import com.wutsi.platform.core.logging.DefaultKVLogger
@@ -34,7 +35,11 @@ class ExpireOrderJob(
                 request = SearchOrderRequest(
                     limit = limit,
                     offset = offset++,
-                    expiresTo = now
+                    expiresTo = now,
+                    status = listOf(
+                        OrderStatus.PENDING.name,
+                        OrderStatus.UNKNOWN.name
+                    )
                 )
             ).orders
             orders.forEach {

@@ -196,6 +196,14 @@ paths:
           schema:
             type: string
             format: uuid
+        - in: query
+          name: sync
+          description: if TRUE, the transaction will be synched with payment provider
+          required: false
+          schema:
+            type: boolean
+            required: false
+            nullable: true
       responses:
         200:
           description: Success

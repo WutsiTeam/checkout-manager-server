@@ -31,62 +31,20 @@
     <klint.version>0.47.1</klint.version>
     <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 
-    <wutsi-platform-core.version>0.0.188</wutsi-platform-core.version>
     <wutsi-platform-payment.version>0.0.105</wutsi-platform-payment.version>
-    <wutsi-enums.version>1.0.10</wutsi-enums.version>
-    <wutsi-events.version>1.0.8</wutsi-events.version>
-    <wutsi-marketplace-access.version>1.0.13</wutsi-marketplace-access.version>
-    <wutsi-membership-access.version>1.0.18</wutsi-membership-access.version>
-    <wutsi-checkout-access.version>1.0.21</wutsi-checkout-access.version>
-    <wutsi-workflow.version>1.0.23</wutsi-workflow.version>
-    <wutsi-regulation.version>1.0.7</wutsi-regulation.version>
+    <wutsi-workflow.version>1.0.25</wutsi-workflow.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>com.wutsi</groupId>
-      <artifactId>wutsi-platform-core</artifactId>
-      <version>${wutsi-platform-core.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.wutsi</groupId>
       <artifactId>wutsi-platform-payment</artifactId>
       <version>${wutsi-platform-payment.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.wutsi</groupId>
-      <artifactId>wutsi-enums</artifactId>
-      <version>${wutsi-enums.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi</groupId>
-      <artifactId>wutsi-events</artifactId>
-      <version>${wutsi-events.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.wutsi.workflow</groupId>
       <artifactId>workflow-engine</artifactId>
       <version>${wutsi-workflow.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi.regulation</groupId>
-      <artifactId>regulation-engine</artifactId>
-      <version>${wutsi-regulation.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi.marketplace.access</groupId>
-      <artifactId>marketplace-access-sdk-kotlin</artifactId>
-      <version>${wutsi-marketplace-access.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi.membership.access</groupId>
-      <artifactId>membership-access-sdk-kotlin</artifactId>
-      <version>${wutsi-membership-access.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi.checkout.access</groupId>
-      <artifactId>checkout-access-sdk-kotlin</artifactId>
-      <version>${wutsi-checkout-access.version}</version>
     </dependency>
 
     <dependency>

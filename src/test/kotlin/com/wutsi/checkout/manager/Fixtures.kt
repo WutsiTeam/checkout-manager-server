@@ -26,6 +26,7 @@ import com.wutsi.marketplace.access.dto.CategorySummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
+import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Phone
 import com.wutsi.platform.payment.GatewayType
@@ -182,6 +183,13 @@ object Fixtures {
     fun createChargeResponse(status: Status = Status.PENDING) =
         CreateChargeResponse(transactionId = UUID.randomUUID().toString(), status = status.name)
 
+    fun createStoreSummary(
+        id: Long = -1
+    ) = StoreSummary(
+        id = id,
+        currency = "XAF"
+    )
+
     fun createProduct(
         id: Long = -1,
         storeId: Long = -1,
@@ -189,7 +197,7 @@ object Fixtures {
         pictures: List<PictureSummary> = emptyList()
     ) = Product(
         id = id,
-        storeId = storeId,
+        store = Fixtures.createStoreSummary(storeId),
         pictures = pictures,
         summary = "This is a summary",
         description = "This is the description",

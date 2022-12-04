@@ -7,6 +7,7 @@ import com.wutsi.platform.core.stream.EventStream
 import feign.FeignException
 import feign.Request
 import feign.RequestTemplate
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.web.client.RestTemplate
 import java.nio.charset.Charset
@@ -25,6 +26,10 @@ abstract class AbstractControllerTest {
     protected lateinit var eventStream: EventStream
 
     protected var rest = RestTemplate()
+
+    @BeforeEach
+    open fun setUp() {
+    }
 
     protected fun createFeignNotFoundException(
         errorCode: String

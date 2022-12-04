@@ -38,7 +38,7 @@ class CreateChargeWorkflow(
 
     override fun getValidationRules(request: CreateChargeRequest, context: WorkflowContext): RuleSet {
         val business = checkoutAccessApi.getBusiness(request.businessId).business
-        val account = membershipAccess.getAccount(business.accountId).account
+        val account = membershipAccessApi.getAccount(business.accountId).account
         val paymentMethod = request.paymentMethodToken?.let {
             checkoutAccessApi.getPaymentMethod(it).paymentMethod
         }

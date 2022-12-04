@@ -16,7 +16,7 @@ abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream)
     protected lateinit var checkoutAccessApi: CheckoutAccessApi
 
     @Autowired
-    protected lateinit var membershipAccess: MembershipAccessApi
+    protected lateinit var membershipAccessApi: MembershipAccessApi
 
     @Autowired
     protected lateinit var marketplaceAccessApi: MarketplaceAccessApi
@@ -26,6 +26,6 @@ abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream)
 
     protected fun getCurrentAccount(context: WorkflowContext): Account {
         val accountId = context.accountId ?: SecurityUtil.getAccountId()
-        return membershipAccess.getAccount(accountId).account
+        return membershipAccessApi.getAccount(accountId).account
     }
 }

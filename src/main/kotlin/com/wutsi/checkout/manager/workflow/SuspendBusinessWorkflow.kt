@@ -35,7 +35,7 @@ class SuspendBusinessWorkflow(
                 )
             )
 
-            membershipAccess.updateAccountAttribute(
+            membershipAccessApi.updateAccountAttribute(
                 id = account.id,
                 request = UpdateAccountAttributeRequest(
                     name = "business-id",

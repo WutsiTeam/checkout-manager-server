@@ -34,10 +34,28 @@ spring:
       ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
     default-property-inclusion: non_null
 
+  mail:
+    default-encoding: UTF-8
+    host: localhost
+    port: 2525
+    username: username
+    password: secret
+    properties:
+      mail:
+        debug: true
+        smtp:
+          from: no-reply@wutsi.com
+          auth: true
+          starttls:
+            enable: true
+    test-connection: false
+
 wutsi:
   client-id: checkout-manager
   application:
     name: checkout-manager
+    asset-url: https://int-wutsi.s3.amazonaws.com/static/wutsi-web
+    webapp-url: https://wutsi-web-test.herokuapp.com
     jobs:
       pending-transaction:
         cron: "0 0 * * * *"  # Runs every hour
@@ -57,6 +75,15 @@ wutsi:
     cache:
       name: ${wutsi.application.name}
       type: local
+    messaging:
+      sms:
+        type: none
+      push:
+        type: none
+      url-shortener:
+        type: none
+      whatsapp:
+        type: none
     stream:
       name: ${wutsi.application.name}
       type: local

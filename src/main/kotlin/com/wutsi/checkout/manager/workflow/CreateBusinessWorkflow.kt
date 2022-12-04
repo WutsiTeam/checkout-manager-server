@@ -44,7 +44,7 @@ class CreateBusinessWorkflow(
             )
         ).businessId
 
-        membershipAccess.updateAccountAttribute(
+        membershipAccessApi.updateAccountAttribute(
             id = account.id,
             request = UpdateAccountAttributeRequest(
                 name = "business-id",

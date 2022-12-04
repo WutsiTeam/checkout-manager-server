@@ -1,7 +1,7 @@
 package com.wutsi.checkout.manager.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.wutsi.checkout.manager.workflow.CompleteTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.HandleSuccessfulTransactionWorkflow
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.workflow.WorkflowContext
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 class TransactionEventHandler(
     private val mapper: ObjectMapper,
     private val logger: KVLogger,
-    private val workflow: CompleteTransactionWorkflow
+    private val workflow: HandleSuccessfulTransactionWorkflow
 ) {
     fun onTransactionSuccessful(event: Event) {
         val payload = toTransactionEventPayload(event)

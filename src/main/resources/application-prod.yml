@@ -1,7 +1,18 @@
 spring:
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        debug: false
 
 wutsi:
   client-id: checkout-manager
+  application:
+    asset-url: https://prod-wutsi.s3.amazonaws.com/static/wutsi-web
+    webapp-url: https://www.wutsi.me
   platform:
     cache:
       type: memcached
@@ -10,6 +21,24 @@ wutsi:
         password: ${MEMCACHIER_PASSWORD}
         servers: ${MEMCACHIER_SERVERS}
         ttl: 86400
+    messaging:
+      sms:
+        type: aws
+        aws:
+          region: us-east-1
+      push:
+        type: firebase
+        firebase:
+          credentials: ${FIREBASE_CREDENTIALS}
+      url-shortener:
+        type: bitly
+        bitly:
+          access-token: ${BITLY_ACCESS_TOKEN}
+      whatsapp:
+        type: cloud
+        cloud:
+          access-token: ${WHATSAPP_ACCESS_TOKEN}
+          phone-id: ${WHATSAPP_PHONE_ID}
     security:
       type: jwt
     stream:

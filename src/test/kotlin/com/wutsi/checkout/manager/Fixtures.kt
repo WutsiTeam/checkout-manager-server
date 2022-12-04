@@ -28,7 +28,9 @@ import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
+import com.wutsi.membership.access.dto.Category
 import com.wutsi.membership.access.dto.Phone
+import com.wutsi.membership.access.dto.Place
 import com.wutsi.platform.payment.GatewayType
 import com.wutsi.platform.payment.core.ErrorCode
 import com.wutsi.platform.payment.core.Status
@@ -55,6 +57,16 @@ object Fixtures {
         phone = Phone(
             number = phoneNumber,
             country = country
+        ),
+        pictureUrl = "https://www.img.com/$id.png",
+        category = Category(
+            id = 100L,
+            title = "Art"
+        ),
+        city = Place(
+            id = 1000L,
+            name = "Douala",
+            longName = "Douala, Cameroun"
         )
     )
 
@@ -135,7 +147,10 @@ object Fixtures {
         id = id,
         business = createBusinessSummary(businessId, accountId),
         totalPrice = totalPrice,
-        balance = totalPrice,
+        totalDiscount = 20000,
+        subTotalPrice = totalPrice + 20000,
+        totalPaid = totalPrice,
+        balance = 0,
         status = status.name,
         customerName = "Ray Sponsible",
         customerEmail = "ray.sponsible@gmail.com",
@@ -160,11 +175,12 @@ object Fixtures {
                 pictureUrl = "https://img.com/1.png",
                 totalPrice = totalPrice,
                 unitPrice = totalPrice / 3,
+                subTotalPrice = totalPrice - 100,
                 totalDiscount = 100,
                 discounts = listOf(
                     Discount(
                         code = "111",
-                        amount = 1000,
+                        amount = 100,
                         rate = 0,
                         type = DiscountType.DYNAMIC.name
                     )

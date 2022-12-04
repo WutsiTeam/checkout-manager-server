@@ -13,6 +13,8 @@ wutsi:
   application:
     asset-url: https://prod-wutsi.s3.amazonaws.com/static/wutsi-web
     webapp-url: https://www.wutsi.me
+    notification:
+      debug: false
   platform:
     cache:
       type: memcached

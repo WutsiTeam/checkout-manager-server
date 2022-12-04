@@ -15,24 +15,36 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 
 @Service
-class SendOrderToCustomerWorkflow(
+class SendOrderToMerchantWorkflow(
     eventStream: EventStream,
     private val mapper: MailMapper,
     private val templateEngine: TemplateEngine,
     private val regulationEngine: RegulationEngine,
     private val mailFilterSet: MailFilterSet
 ) : AbstractSendOrderWorkflow(eventStream) {
+
     override fun createMessage(order: Order, merchant: Account, type: MessagingType): Message? =
         when (type) {
-            MessagingType.EMAIL -> Message(
-                recipient = Party(
-                    email = order.customerEmail,
-                    displayName = order.customerName
-                ),
-                subject = getText("email.notify-customer.subject"),
-                body = generateBody(order, merchant),
-                mimeType = "text/html"
-            )
+            MessagingType.EMAIL -> merchant.email?.let {
+                Message(
+                    recipient = Party(
+                        email = it,
+                        displayName = merchant.displayName
+                    ),
+                    subject = getText("email.notify-merchant.subject"),
+                    body = generateBody(order, merchant),
+                    mimeType = "text/html"
+                )
+            }
+            MessagingType.PUSH_NOTIFICATION -> getDeviceToken(merchant)?.let {
+                Message(
+                    recipient = Party(
+                        deviceToken = it,
+                        displayName = merchant.displayName
+                    ),
+                    body = getText("push-notification.notify-merchant.body")
+                )
+            }
             else -> null
         }
 
@@ -41,10 +53,17 @@ class SendOrderToCustomerWorkflow(
         val country = regulationEngine.country(order.business.country)
         ctx.setVariable("order", mapper.toOrderModel(order, country))
 
-        val body = templateEngine.process("order-customer.html", ctx)
+        val body = templateEngine.process("order-merchant.html", ctx)
         return mailFilterSet.filter(
             body = body,
             context = createMailContext(merchant)
         )
     }
+
+    private fun getDeviceToken(merchant: Account): String? =
+        try {
+            membershipAccessApi.getAccountDevice(merchant.id).device.token
+        } catch (ex: Exception) {
+            null
+        }
 }

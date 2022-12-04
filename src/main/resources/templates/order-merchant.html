@@ -1,17 +1,34 @@
 <div class="margin-bottom" th:text="${order.customerName}">Ray Sponsible</div>
-<div th:text="#{email.notify-customer.body.intro}">
+<div th:text="#{email.notify-merchant.body.intro}">
     Thank your for your order. Here is your invoice details:
 </div>
+
+<div class="padding">&nbsp;</div>
+
+<table cellpadding="0" cellspacing="0" class="border">
+    <tr>
+        <td class="border-bottom padding" th:text="#{email.notify-merchant.body.order-id}">Order ID</td>
+        <td class="border-bottom padding" th:text="${order.id}">11111</td>
+    </tr>
+    <tr>
+        <td class="border-bottom padding" th:text="#{email.notify-merchant.body.customer-name}">Customer
+        </td>
+        <td class="border-bottom padding">
+            <div th:text="${order.customerName}">Ray Sponsible</div>
+            <div th:text="${order.customerEmail}">ray.sponsible@gmail.com</div>
+        </td>
+    </tr>
+</table>
 
 <div class="padding">&nbsp;</div>
 
 <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
         <th class="padding border-bottom" width="50%"></th>
-        <th align="right" class="padding border-bottom" th:text="#{email.notify-customer.body.quantity}" width="20%">
+        <th align="right" class="padding border-bottom" th:text="#{email.notify-merchant.body.quantity}" width="20%">
             Quantity
         </th>
-        <th align="right" class="padding border-bottom" th:text="#{email.notify-customer.body.price}" width="30%">
+        <th align="right" class="padding border-bottom" th:text="#{email.notify-merchant.body.price}" width="30%">
             Price
         </th>
     </tr>
@@ -19,7 +36,7 @@
         <td class="padding">
             <div th:text="${item.title}">Title of the product</div>
             <div class="text-small">
-                <span th:text="#{email.notify-customer.body.unit-price}">Unit Price</span>:
+                <span th:text="#{email.notify-merchant.body.unit-price}">Unit Price</span>:
                 <span th:text="${item.unitPrice}">1000</span>
             </div>
         </td>
@@ -27,7 +44,7 @@
         <td align="right" class="padding" th:text="${item.totalPrice}">10,000 FCFA</td>
     </tr>
     <tr>
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.sub-total}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.sub-total}">
             SUB TOTAL:
         </td>
         <td align="right" class="padding border-top">
@@ -35,7 +52,7 @@
         </td>
     </tr>
     <tr th:if="${order.totalDiscount}">
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.discount}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.discount}">
             Discounts:
         </td>
         <td align="right" class="padding border-top success">
@@ -43,7 +60,7 @@
         </td>
     </tr>
     <tr>
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.total}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.total}">
             TOTAL:
         </td>
         <td align="right" class="padding border-top text-larger highlight">
@@ -51,7 +68,7 @@
         </td>
     </tr>
     <tr>
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.total-paid}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.total-paid}">
             TOTAL:
         </td>
         <td align="right" class="padding border-top">
@@ -59,7 +76,7 @@
         </td>
     </tr>
     <tr>
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.balance}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.balance}">
             TOTAL:
         </td>
         <td align="right" class="padding border-top text-larger highlight">

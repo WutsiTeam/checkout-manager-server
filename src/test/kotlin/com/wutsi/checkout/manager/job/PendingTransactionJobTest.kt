@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.checkout.access.CheckoutAccessApi
@@ -18,6 +19,7 @@ import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.TransactionType
 import com.wutsi.membership.access.MembershipAccessApi
+import com.wutsi.membership.access.dto.GetAccountDeviceResponse
 import com.wutsi.membership.access.dto.GetAccountResponse
 import com.wutsi.platform.core.messaging.Message
 import com.wutsi.platform.core.messaging.MessagingService
@@ -45,14 +47,20 @@ internal class PendingTransactionJobTest {
 
     protected lateinit var mail: MessagingService
 
+    protected lateinit var push: MessagingService
+
     @Autowired
     protected lateinit var job: PendingTransactionJob
 
     @BeforeEach
     fun setUp() {
         mail = mock()
+        push = mock()
         doReturn(mail).whenever(messagingServiceProvider).get(MessagingType.EMAIL)
         doReturn(UUID.randomUUID().toString()).whenever(mail).send(any())
+
+        doReturn(push).whenever(messagingServiceProvider).get(MessagingType.PUSH_NOTIFICATION)
+        doReturn(UUID.randomUUID().toString()).whenever(push).send(any())
     }
 
     @Test
@@ -98,9 +106,13 @@ internal class PendingTransactionJobTest {
         val merchant = Fixtures.createAccount(
             id = order.business.accountId,
             businessId = order.business.id,
-            displayName = "House of Pleasure"
+            displayName = "House of Pleasure",
+            email = "house.of.plaesure@gmail.com"
         )
         doReturn(GetAccountResponse(merchant)).whenever(membershipMemberApi).getAccount(merchant.id)
+
+        val device = Fixtures.createDevice()
+        doReturn(GetAccountDeviceResponse(device)).whenever(membershipMemberApi).getAccountDevice(merchant.id)
 
         // WHEN
         job.run()
@@ -110,13 +122,13 @@ internal class PendingTransactionJobTest {
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.OPENED.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
-        // Customer notification
+        // Email notification
         Thread.sleep(20000)
-        val message = argumentCaptor<Message>()
-        verify(mail).send(message.capture())
-        assertEquals(order.customerEmail, message.firstValue.recipient.email)
-        assertEquals(order.customerName, message.firstValue.recipient.displayName)
+        val email = argumentCaptor<Message>()
+        verify(mail, times(2)).send(email.capture())
 
-        // Merchant notification
+        val pushNotification = argumentCaptor<Message>()
+        verify(push).send(pushNotification.capture())
+        assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
     }
 }

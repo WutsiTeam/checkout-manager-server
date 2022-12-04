@@ -29,6 +29,7 @@ import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Category
+import com.wutsi.membership.access.dto.Device
 import com.wutsi.membership.access.dto.Phone
 import com.wutsi.membership.access.dto.Place
 import com.wutsi.platform.payment.GatewayType
@@ -46,7 +47,8 @@ object Fixtures {
         businessId: Long? = null,
         country: String = "CM",
         phoneNumber: String = "+237670000010",
-        displayName: String = "Ray Sponsible"
+        displayName: String = "Ray Sponsible",
+        email: String? = null
     ) = Account(
         id = id,
         displayName = displayName,
@@ -54,6 +56,7 @@ object Fixtures {
         business = business,
         country = country,
         businessId = businessId,
+        email = email,
         phone = Phone(
             number = phoneNumber,
             country = country
@@ -293,5 +296,9 @@ object Fixtures {
         type = type.name,
         orderId = orderId,
         status = status.name
+    )
+
+    fun createDevice() = Device(
+        token = UUID.randomUUID().toString()
     )
 }

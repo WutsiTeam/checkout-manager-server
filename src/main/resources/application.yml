@@ -56,6 +56,8 @@ wutsi:
     name: checkout-manager
     asset-url: https://int-wutsi.s3.amazonaws.com/static/wutsi-web
     webapp-url: https://wutsi-web-test.herokuapp.com
+    notification:
+      debug: true
     jobs:
       pending-transaction:
         cron: "0 0 * * * *"  # Runs every hour

@@ -56,6 +56,14 @@ jobs:
           HEROKU_APP: checkout-manager-test
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_TEST}}
           LOG4J_SLACK_WEBHOOK_URL: ${{secrets.LOG4J_SLACK_WEBHOOK_URL_TEST}}
+          BITLY_ACCESS_TOKEN: ${{secrets.BITLY_ACCESS_TOKEN_TEST}}
+          SMTP_USER: ${{secrets.SMTP_USER_TEST}}
+          SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD_TEST}}
+          SMTP_HOST: ${{secrets.SMTP_HOST_TEST}}
+          SMTP_PORT: ${{secrets.SMTP_PORT_TEST}}
+          WHATSAPP_ACCESS_TOKEN: ${{secrets.WHATSAPP_ACCESS_TOKEN_TEST}}
+          WHATSAPP_PHONE_ID: ${{secrets.WHATSAPP_PHONE_ID_TEST}}
+          FIREBASE_CREDENTIALS: ${{secrets.FIREBASE_CREDENTIALS_TEST}}
         run: |
           heroku apps | grep ${HEROKU_APP} && echo 'app: ${HEROKU_APP} exists' ||  heroku apps:create ${HEROKU_APP}
           heroku buildpacks:clear --app ${HEROKU_APP}
@@ -63,6 +71,14 @@ jobs:
           heroku config:set --app ${HEROKU_APP} APP_PROFILE=test
           heroku config:set --app ${HEROKU_APP} CLOUDAMQP_URL=${CLOUDAMQP_URL}
           heroku config:set --app ${HEROKU_APP} LOG4J_SLACK_WEBHOOK_URL=${LOG4J_SLACK_WEBHOOK_URL}
+          heroku config:set --app ${HEROKU_APP} BITLY_ACCESS_TOKEN=${BITLY_ACCESS_TOKEN}
+          heroku config:set --app ${HEROKU_APP} SMTP_USER=${SMTP_USER}
+          heroku config:set --app ${HEROKU_APP} SMTP_PASSWORD=${SMTP_PASSWORD}
+          heroku config:set --app ${HEROKU_APP} SMTP_HOST=${SMTP_HOST}
+          heroku config:set --app ${HEROKU_APP} SMTP_PORT=${SMTP_PORT}
+          heroku config:set --app ${HEROKU_APP} WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+          heroku config:set --app ${HEROKU_APP} WHATSAPP_PHONE_ID=${WHATSAPP_PHONE_ID}
+          heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
           heroku deploy:jar checkout-manager-server.jar --app ${HEROKU_APP}
@@ -113,6 +129,14 @@ jobs:
           HEROKU_APP: checkout-manager-prod
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_PROD}}
           LOG4J_SLACK_WEBHOOK_URL: ${{secrets.LOG4J_SLACK_WEBHOOK_URL_PROD}}
+          BITLY_ACCESS_TOKEN: ${{secrets.BITLY_ACCESS_TOKEN_PROD}}
+          SMTP_USER: ${{secrets.SMTP_USER_PROD}}
+          SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD_PROD}}
+          SMTP_HOST: ${{secrets.SMTP_HOST_PROD}}
+          SMTP_PORT: ${{secrets.SMTP_PORT_PROD}}
+          WHATSAPP_ACCESS_TOKEN: ${{secrets.WHATSAPP_ACCESS_TOKEN_PROD}}
+          WHATSAPP_PHONE_ID: ${{secrets.WHATSAPP_PHONE_ID_PROD}}
+          FIREBASE_CREDENTIALS: ${{secrets.FIREBASE_CREDENTIALS_PROD}}
         run: |
           heroku apps | grep ${HEROKU_APP} && echo 'app: ${HEROKU_APP} exists' ||  heroku apps:create ${HEROKU_APP}
           heroku buildpacks:clear --app ${HEROKU_APP}
@@ -120,6 +144,14 @@ jobs:
           heroku config:set --app ${HEROKU_APP} APP_PROFILE=prod
           heroku config:set --app ${HEROKU_APP} CLOUDAMQP_URL=${CLOUDAMQP_URL}
           heroku config:set --app ${HEROKU_APP} LOG4J_SLACK_WEBHOOK_URL=${LOG4J_SLACK_WEBHOOK_URL}
+          heroku config:set --app ${HEROKU_APP} BITLY_ACCESS_TOKEN=${BITLY_ACCESS_TOKEN}
+          heroku config:set --app ${HEROKU_APP} SMTP_USER=${SMTP_USER}
+          heroku config:set --app ${HEROKU_APP} SMTP_PASSWORD=${SMTP_PASSWORD}
+          heroku config:set --app ${HEROKU_APP} SMTP_HOST=${SMTP_HOST}
+          heroku config:set --app ${HEROKU_APP} SMTP_PORT=${SMTP_PORT}
+          heroku config:set --app ${HEROKU_APP} WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+          heroku config:set --app ${HEROKU_APP} WHATSAPP_PHONE_ID=${WHATSAPP_PHONE_ID}
+          heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
           heroku deploy:jar checkout-manager-server.jar --app ${HEROKU_APP}

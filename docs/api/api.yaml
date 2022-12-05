@@ -163,6 +163,26 @@ paths:
       tags:
         - Order
 
+  /v1/orders/search:
+    post:
+      operationId: "search-order"
+      description: Search Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchOrderRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchOrderResponse'
+      tags:
+        - Order
+
 
   /v1/transactions/charge:
     post:
@@ -761,6 +781,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Discount"
+        itemCount:
+          type: integer
+          default: Number of items in the order
 
     OrderItem:
       type: object
@@ -914,3 +937,103 @@ components:
         paymentMethod:
           type: object
           $ref: "#/components/schemas/PaymentMethodSummary"
+
+    SearchOrderRequest:
+      type: object
+      properties:
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the store
+          nullable: true
+        customerId:
+          type: integer
+          format: int64
+          description: ID of the customer
+          nullable: true
+        status:
+          type: array
+          items:
+            type: string
+          description: Status of the order
+        createdFrom:
+          type: string
+          format: date-time
+          description: Creation datetime start date
+          nullable: true
+        createdTo:
+          type: string
+          format: date-time
+          description: Creation datetime start date
+          nullable: true
+        expiresTo:
+          type: string
+          format: date-time
+          description: Expiry threshold date
+          nullable: true
+        limit:
+          type: integer
+          default: 100
+        offset:
+          type: integer
+          default: 0
+
+    SearchOrderResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderSummary"
+
+    OrderSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the order
+        shortId:
+          type: string
+          description: Store version of the ID
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the merchant
+        status:
+          type: string
+          description: Description of the order
+          enum:
+            - OPENED
+            - CANCELLED
+            - CLOSED
+            - EXPIRED
+        totalPrice:
+          type: integer
+          format: int64
+          description: Total price
+        balance:
+          type: integer
+          format: int64
+          description: Balance to pay
+        currency:
+          type: string
+          description: Currency
+        created:
+          type: string
+          format: date-time
+          description: Creation datetime
+        customerId:
+          type: integer
+          format: int64
+          description: Customer's account ID
+          nullable: true
+        customerName:
+          type: string
+          description: Customer's display name
+        customerEmail:
+          type: string
+          description: Customer's email
+        itemCount:
+          type: integer
+          default: Number of items in the order

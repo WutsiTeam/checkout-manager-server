@@ -5,6 +5,7 @@ import java.time.OffsetDateTime
 import kotlin.Int
 import kotlin.Long
 import kotlin.String
+import kotlin.collections.List
 
 public data class OrderSummary(
     public val id: String = "",
@@ -19,5 +20,6 @@ public data class OrderSummary(
     public val customerId: Long? = null,
     public val customerName: String = "",
     public val customerEmail: String = "",
-    public val itemCount: Int = 0
+    public val itemCount: Int = 0,
+    public val productPictureUrls: List<String> = emptyList()
 )

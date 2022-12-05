@@ -1037,3 +1037,7 @@ components:
         itemCount:
           type: integer
           default: Number of items in the order
+        productPictureUrls:
+          type: array
+          items:
+            type: string

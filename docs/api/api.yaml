@@ -784,6 +784,10 @@ components:
         itemCount:
           type: integer
           default: Number of items in the order
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionSummary"
 
     OrderItem:
       type: object
@@ -934,6 +938,71 @@ components:
           type: string
           description: Email
           nullable: true
+        paymentMethod:
+          type: object
+          $ref: "#/components/schemas/PaymentMethodSummary"
+
+
+    TransactionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the transaction
+        customerId:
+          type: integer
+          format: int64
+          description: ID of the customer associated with the transaction
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          description: ID of the business associated with the transaction
+        type:
+          type: string
+          enum:
+            - CHARGE
+            - CASHOUT
+          description: Type of transaction
+        amount:
+          type: integer
+          format: int64
+          description: Amount of the transaction
+        fees:
+          type: integer
+          format: int64
+          description: Fees
+        gatewayFees:
+          type: integer
+          format: int64
+          description: Fees from Payment Gateway
+        net:
+          type: integer
+          format: int64
+          description: Net amount
+        currency:
+          type: string
+          description: 3 letter currency code
+        status:
+          type: string
+          enum:
+            - SUCCESSFULL
+            - PENDING
+            - FAILED
+          description: Status of the transaction
+        orderId:
+          type: string
+          description: ID of the order associated with the transaction
+          nullable: true
+        created:
+          type: string
+          description: Creation data-time
+          format: date-time
+        updated:
+          type: string
+          description: Creation data-time
+          format: date-time
         paymentMethod:
           type: object
           $ref: "#/components/schemas/PaymentMethodSummary"

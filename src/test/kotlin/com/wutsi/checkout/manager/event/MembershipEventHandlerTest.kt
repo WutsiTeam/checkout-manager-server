@@ -2,8 +2,11 @@ package com.wutsi.checkout.manager.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.checkout.access.CheckoutAccessApi
@@ -11,10 +14,14 @@ import com.wutsi.checkout.access.dto.CreateBusinessRequest
 import com.wutsi.checkout.access.dto.CreateBusinessResponse
 import com.wutsi.checkout.access.dto.CreatePaymentMethodRequest
 import com.wutsi.checkout.access.dto.CreatePaymentMethodResponse
+import com.wutsi.checkout.access.dto.GetPaymentMethodResponse
+import com.wutsi.checkout.access.dto.SearchPaymentMethodResponse
 import com.wutsi.checkout.access.dto.SearchPaymentProviderResponse
 import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
+import com.wutsi.checkout.access.dto.UpdatePaymentMethodStatusRequest
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.enums.BusinessStatus
+import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.event.BusinessEventPayload
 import com.wutsi.event.EventURN
@@ -22,7 +29,6 @@ import com.wutsi.event.MemberEventPayload
 import com.wutsi.event.PaymentMethodEventPayload
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.GetAccountResponse
-import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.platform.core.stream.EventStream
 import org.junit.jupiter.api.BeforeEach
@@ -31,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.OffsetDateTime
+import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class MembershipEventHandlerTest {
@@ -136,13 +143,94 @@ internal class MembershipEventHandlerTest {
     }
 
     @Test
+    fun onBusinessMemberDeleted() {
+        // GIVEN
+        val account = Fixtures.createAccount(id = payload.accountId, business = true, businessId = 222)
+        doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
+
+        val paymentMethods = listOf(
+            Fixtures.createPaymentMethodSummary(token = "111"),
+            Fixtures.createPaymentMethodSummary(token = "222")
+        )
+        doReturn(SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccessApi).searchPaymentMethod(any())
+
+        val paymentMethod1 = Fixtures.createPaymentMethod(paymentMethods[0].token, accountId = account.id)
+        val paymentMethod2 = Fixtures.createPaymentMethod(paymentMethods[1].token, accountId = account.id)
+        doReturn(GetPaymentMethodResponse(paymentMethod1)).whenever(checkoutAccessApi)
+            .getPaymentMethod(paymentMethods[0].token)
+        doReturn(GetPaymentMethodResponse(paymentMethod2)).whenever(checkoutAccessApi)
+            .getPaymentMethod(paymentMethods[1].token)
+
+        // WHEN
+        handler.onMemberDeleted(event)
+
+        // THEN
+        verify(checkoutAccessApi).updateBusinessStatus(
+            account.businessId!!,
+            UpdateBusinessStatusRequest(status = BusinessStatus.INACTIVE.name)
+        )
+
+        val token = argumentCaptor<String>()
+        verify(checkoutAccessApi, times(2)).updatePaymentMethodStatus(
+            token.capture(),
+            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name))
+        )
+        assertEquals(paymentMethods[0].token, token.firstValue)
+        assertEquals(paymentMethods[1].token, token.secondValue)
+
+        verify(eventStream).publish(
+            EventURN.BUSINESS_DEACTIVATED.urn,
+            BusinessEventPayload(
+                businessId = account.businessId!!,
+                accountId = account.id
+            )
+        )
+    }
+
+    @Test
+    fun onMemberDeleted() {
+        // GIVEN
+        val account = Fixtures.createAccount(id = payload.accountId, business = false, businessId = null)
+        doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
+
+        val paymentMethods = listOf(
+            Fixtures.createPaymentMethodSummary(token = "111"),
+            Fixtures.createPaymentMethodSummary(token = "222")
+        )
+        doReturn(SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccessApi).searchPaymentMethod(any())
+
+        val paymentMethod1 = Fixtures.createPaymentMethod(paymentMethods[0].token, accountId = account.id)
+        val paymentMethod2 = Fixtures.createPaymentMethod(paymentMethods[1].token, accountId = account.id)
+        doReturn(GetPaymentMethodResponse(paymentMethod1)).whenever(checkoutAccessApi)
+            .getPaymentMethod(paymentMethods[0].token)
+        doReturn(GetPaymentMethodResponse(paymentMethod2)).whenever(checkoutAccessApi)
+            .getPaymentMethod(paymentMethods[1].token)
+
+        // WHEN
+        handler.onMemberDeleted(event)
+
+        // THEN
+        verify(checkoutAccessApi, never()).updateBusinessStatus(any(), any())
+
+        val token = argumentCaptor<String>()
+        verify(checkoutAccessApi, times(2)).updatePaymentMethodStatus(
+            token.capture(),
+            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name))
+        )
+        assertEquals(paymentMethods[0].token, token.firstValue)
+        assertEquals(paymentMethods[1].token, token.secondValue)
+
+        verify(eventStream, never()).publish(any(), any())
+    }
+
+    @Test
     fun onBusinessEnabled() {
         // GIVEN
         val businessId = 1111L
         doReturn(CreateBusinessResponse(businessId)).whenever(checkoutAccessApi).createBusiness(any())
 
         // WHEN
-        handler.onBusinessAccountEnabled(event)
+        handler.onBusinessActivated(event)
 
         // THEN
         verify(checkoutAccessApi).createBusiness(
@@ -150,14 +238,6 @@ internal class MembershipEventHandlerTest {
                 accountId = account.id,
                 country = account.country,
                 currency = "XAF"
-            )
-        )
-
-        verify(membershipAccessApi).updateAccountAttribute(
-            account.id,
-            UpdateAccountAttributeRequest(
-                name = "business-id",
-                value = businessId.toString()
             )
         )
 
@@ -171,33 +251,25 @@ internal class MembershipEventHandlerTest {
     }
 
     @Test
-    fun onBusinessDisabled() {
+    fun onBusinessSuspended() {
         // GIVEN
         val businessId = 111L
         val account = Fixtures.createAccount(id = 123L, phoneNumber = "+237670000010", businessId = businessId)
         doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
 
         // WHEN
-        handler.onBusinessAccountDisabled(event)
+        handler.onBusinesstDeactivated(event)
 
         // THEN
         verify(checkoutAccessApi).updateBusinessStatus(
             businessId,
             UpdateBusinessStatusRequest(
-                status = BusinessStatus.SUSPENDED.name
-            )
-        )
-
-        verify(membershipAccessApi).updateAccountAttribute(
-            account.id,
-            UpdateAccountAttributeRequest(
-                name = "business-id",
-                value = null
+                status = BusinessStatus.INACTIVE.name
             )
         )
 
         verify(eventStream).publish(
-            EventURN.BUSINESS_SUSPENDED.urn,
+            EventURN.BUSINESS_DEACTIVATED.urn,
             BusinessEventPayload(
                 businessId = businessId,
                 accountId = account.id
@@ -208,7 +280,7 @@ internal class MembershipEventHandlerTest {
     @Test
     fun onBusinessDisabledWithAccountNotHavingBusinessId() {
         // WHEN
-        handler.onBusinessAccountDisabled(event)
+        handler.onBusinesstDeactivated(event)
 
         // THEN
         verify(checkoutAccessApi, never()).updateBusinessStatus(any(), any())

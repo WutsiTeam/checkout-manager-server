@@ -77,7 +77,7 @@ class AddPaymentMethodControllerTest : AbstractSecuredControllerTest() {
     @Test
     fun notActive() {
         // GIVEN
-        val account = Fixtures.createAccount(status = AccountStatus.SUSPENDED)
+        val account = Fixtures.createAccount(status = AccountStatus.INACTIVE)
         doReturn(GetAccountResponse(account)).whenever(membershipAccess).getAccount(any())
 
         // WHEN

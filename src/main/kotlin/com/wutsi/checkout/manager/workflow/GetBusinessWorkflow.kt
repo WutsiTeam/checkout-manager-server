@@ -34,7 +34,7 @@ class GetBusinessWorkflow(
                 country = business.country,
                 created = business.created,
                 updated = business.updated,
-                suspended = business.suspended
+                deactivated = business.deactivated
             )
         )
     }

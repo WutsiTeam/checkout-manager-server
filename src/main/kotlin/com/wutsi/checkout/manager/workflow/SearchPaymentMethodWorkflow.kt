@@ -41,9 +41,7 @@ class SearchPaymentMethodWorkflow(
                     type = it.type,
                     number = it.number,
                     status = it.status,
-                    updated = it.updated,
                     created = it.created,
-                    deactivated = it.deactivated,
                     provider = PaymentProviderSummary(
                         id = it.provider.id,
                         name = it.provider.name,

@@ -84,7 +84,8 @@ object Fixtures {
     )
 
     fun createPaymentMethod(
-        token: String
+        token: String,
+        accountId: Long = -1
     ) = PaymentMethod(
         token = token,
         provider = createPaymentProvider(),
@@ -92,7 +93,7 @@ object Fixtures {
         number = "+237670000010",
         type = PaymentMethodType.MOBILE_MONEY.name,
         status = PaymentMethodStatus.ACTIVE.name,
-        accountId = 111L,
+        accountId = accountId,
         country = "CM"
     )
 
@@ -137,7 +138,8 @@ object Fixtures {
         currency = currency,
         country = country,
         status = status.name,
-        accountId = accountId
+        accountId = accountId,
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
     )
 
     fun createOrder(

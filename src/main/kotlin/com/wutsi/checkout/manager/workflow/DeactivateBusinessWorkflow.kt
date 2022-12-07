@@ -4,17 +4,16 @@ import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
 import com.wutsi.enums.BusinessStatus
 import com.wutsi.event.BusinessEventPayload
 import com.wutsi.event.EventURN
-import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import org.springframework.stereotype.Service
 
 @Service
-class SuspendBusinessWorkflow(
+class DeactivateBusinessWorkflow(
     eventStream: EventStream
 ) : AbstractBusinessWorkflow<Void?, Long?>(eventStream) {
-    override fun getEventType() = EventURN.BUSINESS_SUSPENDED.urn
+    override fun getEventType() = EventURN.BUSINESS_DEACTIVATED.urn
 
     override fun toEventPayload(request: Void?, businessId: Long?, context: WorkflowContext) = businessId?.let {
         BusinessEventPayload(
@@ -29,17 +28,9 @@ class SuspendBusinessWorkflow(
         val account = getCurrentAccount(context)
         if (account.businessId != null) {
             checkoutAccessApi.updateBusinessStatus(
-                account.businessId!!,
-                UpdateBusinessStatusRequest(
-                    status = BusinessStatus.SUSPENDED.name
-                )
-            )
-
-            membershipAccessApi.updateAccountAttribute(
-                id = account.id,
-                request = UpdateAccountAttributeRequest(
-                    name = "business-id",
-                    value = null
+                id = account.businessId!!,
+                request = UpdateBusinessStatusRequest(
+                    status = BusinessStatus.INACTIVE.name
                 )
             )
         }

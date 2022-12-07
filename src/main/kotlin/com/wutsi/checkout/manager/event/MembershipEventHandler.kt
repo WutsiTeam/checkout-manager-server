@@ -2,11 +2,14 @@ package com.wutsi.checkout.manager.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.checkout.access.CheckoutAccessApi
+import com.wutsi.checkout.access.dto.SearchPaymentMethodRequest
 import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
 import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
-import com.wutsi.checkout.manager.workflow.SuspendBusinessWorkflow
+import com.wutsi.checkout.manager.workflow.DeactivateBusinessWorkflow
+import com.wutsi.checkout.manager.workflow.DeactivatePaymentMethodWorkflow
+import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.event.MemberEventPayload
 import com.wutsi.membership.access.MembershipAccessApi
@@ -23,7 +26,8 @@ class MembershipEventHandler(
     private val checkoutAccessApi: CheckoutAccessApi,
     private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
     private val createBusinessWorkflow: CreateBusinessWorkflow,
-    private val suspendBusinessWorkflow: SuspendBusinessWorkflow
+    private val deactivateBusinessWorkflow: DeactivateBusinessWorkflow,
+    private val deactivatePaymentMethodWorkflow: DeactivatePaymentMethodWorkflow
 ) {
     fun onMemberRegistered(event: Event) {
         val payload = toMemberPayload(event)
@@ -53,7 +57,23 @@ class MembershipEventHandler(
         }
     }
 
-    fun onBusinessAccountEnabled(event: Event) {
+    fun onMemberDeleted(event: Event) {
+        val payload = toMemberPayload(event)
+        log(payload)
+
+        val context = WorkflowContext(accountId = payload.accountId)
+        deactivateBusinessWorkflow.execute(null, context)
+        checkoutAccessApi.searchPaymentMethod(
+            request = SearchPaymentMethodRequest(
+                accountId = payload.accountId,
+                status = PaymentMethodStatus.ACTIVE.name
+            )
+        ).paymentMethods.forEach {
+            deactivatePaymentMethodWorkflow.execute(it.token, context)
+        }
+    }
+
+    fun onBusinessActivated(event: Event) {
         val payload = toMemberPayload(event)
         log(payload)
 
@@ -62,12 +82,12 @@ class MembershipEventHandler(
         logger.add("business_id", businessId)
     }
 
-    fun onBusinessAccountDisabled(event: Event) {
+    fun onBusinesstDeactivated(event: Event) {
         val payload = toMemberPayload(event)
         log(payload)
 
         val context = WorkflowContext(accountId = payload.accountId)
-        val businessId = suspendBusinessWorkflow.execute(null, context)
+        val businessId = deactivateBusinessWorkflow.execute(null, context)
         logger.add("business_id", businessId)
     }
 

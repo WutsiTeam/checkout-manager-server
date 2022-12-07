@@ -15,8 +15,9 @@ class EventHandler(
     fun handleEvent(event: Event) {
         when (event.type) {
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
-            EventURN.BUSINESS_ACCOUNT_ENABLED.urn -> membership.onBusinessAccountEnabled(event)
-            EventURN.BUSINESS_ACCOUNT_DISABLED.urn -> membership.onBusinessAccountDisabled(event)
+            EventURN.MEMBER_DELETED.urn -> membership.onMemberDeleted(event)
+            EventURN.BUSINESS_ACTIVATED.urn -> membership.onBusinessActivated(event)
+            EventURN.BUSINESS_DEACTIVATED.urn -> membership.onBusinesstDeactivated(event)
             InternalEventURN.TRANSACTION_SUCCESSFUL.urn -> transaction.onTransactionSuccessful(event)
             InternalEventURN.ORDER_TO_CUSTOMER_SUBMITTED.urn -> order.onSendToCustomer(event)
             InternalEventURN.ORDER_TO_MERCHANT_SUBMITTED.urn -> order.onSendToMerchant(event)

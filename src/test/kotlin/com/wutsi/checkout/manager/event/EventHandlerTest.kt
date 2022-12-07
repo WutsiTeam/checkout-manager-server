@@ -50,28 +50,41 @@ internal class EventHandlerTest {
     }
 
     @Test
-    fun onBusinessEnabled() {
+    fun onMemberDeleted() {
         // WHEN
         val event = Event(
-            type = EventURN.BUSINESS_ACCOUNT_ENABLED.urn,
+            type = EventURN.MEMBER_DELETED.urn,
             payload = mapper.writeValueAsString(memberEventPayload)
         )
         handler.handleEvent(event)
 
         // THEN
-        verify(membership).onBusinessAccountEnabled(event)
+        verify(membership).onMemberDeleted(event)
+    }
+
+    @Test
+    fun onBusinessEnabled() {
+        // WHEN
+        val event = Event(
+            type = EventURN.BUSINESS_ACTIVATED.urn,
+            payload = mapper.writeValueAsString(memberEventPayload)
+        )
+        handler.handleEvent(event)
+
+        // THEN
+        verify(membership).onBusinessActivated(event)
     }
 
     @Test
     fun onBusinessDisabled() {
         // WHEN
         val event = Event(
-            type = EventURN.BUSINESS_ACCOUNT_DISABLED.urn,
+            type = EventURN.BUSINESS_DEACTIVATED.urn,
             payload = mapper.writeValueAsString(memberEventPayload)
         )
         handler.handleEvent(event)
 
         // THEN
-        verify(membership).onBusinessAccountDisabled(event)
+        verify(membership).onBusinesstDeactivated(event)
     }
 }

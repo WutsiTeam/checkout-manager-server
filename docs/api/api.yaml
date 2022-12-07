@@ -443,15 +443,6 @@ components:
           type: string
           format: date-time
           description: Creation date/time
-        updated:
-          type: string
-          format: date-time
-          description: Updated date/time
-        deactivated:
-          type: string
-          format: date-time
-          description: Date/time when the payment method was deactivated
-          nullable: true
         provider:
           type: object
           $ref: "#/components/schemas/PaymentProviderSummary"
@@ -490,7 +481,7 @@ components:
           enum:
             - UNDER_REVIEW
             - ACTIVE
-            - SUSPENDED
+            - INACTIVE
         created:
           type: string
           format: date-time
@@ -499,10 +490,10 @@ components:
           type: string
           format: date-time
           description: Last modification Date/Time
-        suspended:
+        deactivated:
           type: string
           format: date-time
-          description: Suspension Date/Time
+          description: Deactivation Date/Time
           nullable: true
 
     BusinessSummary:
@@ -532,7 +523,11 @@ components:
           enum:
             - UNDER_REVIEW
             - ACTIVE
-            - SUSPENDED
+            - INACTIVE
+        created:
+          type: string
+          format: date-time
+          description: Registration Date/Time
 
     CreateOrderRequest:
       type: object

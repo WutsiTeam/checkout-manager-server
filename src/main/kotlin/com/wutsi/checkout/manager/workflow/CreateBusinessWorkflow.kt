@@ -3,7 +3,6 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.access.dto.CreateBusinessRequest
 import com.wutsi.event.BusinessEventPayload
 import com.wutsi.event.EventURN
-import com.wutsi.membership.access.dto.UpdateAccountAttributeRequest
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.RegulationEngine
 import com.wutsi.workflow.RuleSet
@@ -36,22 +35,12 @@ class CreateBusinessWorkflow(
 
     override fun doExecute(request: Void?, context: WorkflowContext): Long {
         val account = getCurrentAccount(context)
-        val businessId = checkoutAccessApi.createBusiness(
+        return checkoutAccessApi.createBusiness(
             request = CreateBusinessRequest(
                 accountId = account.id,
                 country = account.country,
                 currency = regulationEngine.country(account.country).currency
             )
         ).businessId
-
-        membershipAccessApi.updateAccountAttribute(
-            id = account.id,
-            request = UpdateAccountAttributeRequest(
-                name = "business-id",
-                value = businessId.toString()
-            )
-        )
-
-        return businessId
     }
 }

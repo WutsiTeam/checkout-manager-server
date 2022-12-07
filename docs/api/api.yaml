@@ -315,8 +315,6 @@ components:
         country:
           type: string
           description: country 2 letter ISO code
-          minLength: 2
-          maxLength: 2
         ownerName:
           type: string
           description: Name of the owner of the payment method
@@ -325,7 +323,6 @@ components:
         - number
         - ownerName
         - type
-        - country
 
     AddPaymentMethodResponse:
       type: object

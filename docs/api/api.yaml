@@ -95,6 +95,22 @@ paths:
       tags:
         - Payment Method
 
+    delete:
+      operationId: "remove-payment-method"
+      description: Remove a payment method
+      parameters:
+        - in: path
+          name: token
+          description: Payment method token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+      tags:
+        - Payment Method
+
 
   /v1/businesses/{id}:
     get:

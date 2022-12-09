@@ -179,6 +179,22 @@ paths:
       tags:
         - Order
 
+  /v1/orders/status:
+    post:
+      operationId: "update-order-status"
+      description: Update order status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatus'
+      responses:
+        200:
+          description: Success
+      tags:
+        - Order
+
   /v1/orders/search:
     post:
       operationId: "search-order"
@@ -1118,3 +1134,20 @@ components:
           type: array
           items:
             type: string
+
+    UpdateOrderStatus:
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: ID of the order
+        status:
+          type: string
+          description: Status of the order
+        reason:
+          type: string
+          description: Reason of the change
+          nullable: true
+      required:
+        - orderId
+        - status

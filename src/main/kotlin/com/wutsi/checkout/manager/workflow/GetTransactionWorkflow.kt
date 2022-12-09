@@ -13,7 +13,11 @@ class GetTransactionWorkflow(
     private val objectMapper: ObjectMapper,
     eventStream: EventStream
 ) : AbstractCheckoutWorkflow<String, GetTransactionResponse, Void>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        transactionId: String,
+        response: GetTransactionResponse,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         transactionId: String,

@@ -28,7 +28,11 @@ class CreateOrderWorkflow(
     private val logger: KVLogger,
     eventStream: EventStream
 ) : AbstractOrderWorkflow<CreateOrderRequest, CreateOrderResponse>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        request: CreateOrderRequest,
+        response: CreateOrderResponse,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         request: CreateOrderRequest,

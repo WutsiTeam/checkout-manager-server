@@ -28,7 +28,11 @@ class CreateChargeWorkflow(
     private val logger: KVLogger,
     eventStream: EventStream
 ) : AbstractCheckoutWorkflow<CreateChargeRequest, CreateChargeResponse, Void>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        request: CreateChargeRequest,
+        response: CreateChargeResponse,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         request: CreateChargeRequest,

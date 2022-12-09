@@ -38,7 +38,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
             expiresTo = OffsetDateTime.of(2020, 1, 10, 10, 30, 0, 0, ZoneOffset.UTC),
             createdFrom = OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
             createdTo = OffsetDateTime.of(2020, 1, 30, 0, 0, 0, 0, ZoneOffset.UTC),
-            status = listOf(OrderStatus.EXPIRED.name, OrderStatus.CLOSED.name),
+            status = listOf(OrderStatus.EXPIRED.name, OrderStatus.COMPLETED.name),
             businessId = 111
         )
         val response =

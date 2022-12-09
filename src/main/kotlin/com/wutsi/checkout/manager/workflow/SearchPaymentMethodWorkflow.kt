@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service
 class SearchPaymentMethodWorkflow(
     eventStream: EventStream
 ) : AbstractPaymentMethodWorkflow<SearchPaymentMethodRequest, SearchPaymentMethodResponse>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        request: SearchPaymentMethodRequest,
+        response: SearchPaymentMethodResponse,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         request: SearchPaymentMethodRequest,

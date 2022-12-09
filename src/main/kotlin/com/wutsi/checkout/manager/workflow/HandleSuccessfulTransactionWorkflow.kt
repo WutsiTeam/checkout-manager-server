@@ -19,7 +19,7 @@ class HandleSuccessfulTransactionWorkflow(
     eventStream: EventStream,
     private val logger: KVLogger
 ) : AbstractCheckoutWorkflow<String, Unit, Void?>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(transactionId: String, response: Unit, context: WorkflowContext): String? = null
 
     override fun toEventPayload(transactionId: String, response: Unit, context: WorkflowContext): Void? = null
 

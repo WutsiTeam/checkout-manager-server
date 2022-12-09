@@ -14,7 +14,11 @@ class GetOrderWorkflow(
     private val objectMapper: ObjectMapper,
     eventStream: EventStream
 ) : AbstractOrderWorkflow<String, GetOrderResponse>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        orderId: String,
+        response: GetOrderResponse,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         orderId: String,

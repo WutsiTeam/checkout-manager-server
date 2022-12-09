@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service
 class DeactivatePaymentMethodWorkflow(
     eventStream: EventStream
 ) : AbstractPaymentMethodWorkflow<String, Unit>(eventStream) {
-    override fun getEventType(): String? = null
+    override fun getEventType(
+        request: String,
+        response: Unit,
+        context: WorkflowContext
+    ): String? = null
 
     override fun toEventPayload(
         request: String,

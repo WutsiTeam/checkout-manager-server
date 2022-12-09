@@ -42,7 +42,7 @@ abstract class AbstractSendOrderWorkflow(
 
     protected abstract fun createMessage(order: Order, merchant: Account, type: MessagingType): Message?
 
-    override fun getEventType(): String? = null
+    override fun getEventType(orderId: String, response: Unit, context: WorkflowContext): String? = null
 
     override fun toEventPayload(orderId: String, response: Unit, context: WorkflowContext): OrderEventPayload? = null
 

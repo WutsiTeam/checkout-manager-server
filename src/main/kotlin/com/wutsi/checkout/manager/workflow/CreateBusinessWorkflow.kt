@@ -16,7 +16,8 @@ class CreateBusinessWorkflow(
     private val regulationEngine: RegulationEngine,
     eventStream: EventStream
 ) : AbstractBusinessWorkflow<Void?, Long>(eventStream) {
-    override fun getEventType() = EventURN.BUSINESS_CREATED.urn
+    override fun getEventType(request: Void?, businessId: Long, context: WorkflowContext) =
+        EventURN.BUSINESS_CREATED.urn
 
     override fun toEventPayload(request: Void?, businessId: Long, context: WorkflowContext) = BusinessEventPayload(
         accountId = getCurrentAccountId(context),

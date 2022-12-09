@@ -15,7 +15,11 @@ import org.springframework.stereotype.Service
 class AddPaymentMethodWorkflow(
     eventStream: EventStream
 ) : AbstractPaymentMethodWorkflow<AddPaymentMethodRequest, AddPaymentMethodResponse>(eventStream) {
-    override fun getEventType() = EventURN.PAYMENT_METHOD_ADDED.urn
+    override fun getEventType(
+        request: AddPaymentMethodRequest,
+        response: AddPaymentMethodResponse,
+        context: WorkflowContext
+    ) = EventURN.PAYMENT_METHOD_ADDED.urn
 
     override fun toEventPayload(
         request: AddPaymentMethodRequest,

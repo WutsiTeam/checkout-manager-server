@@ -50,13 +50,31 @@
             <b th:text="${order.totalPrice}">30,000 FCFA</b>
         </td>
     </tr>
-    <tr>
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.total-paid}">
-            TOTAL:
+    <tr th:if="${order.payment}">
+        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.total-paid}">
+            TOTAL PAID:
         </td>
         <td align="right" class="padding border-top">
-            <span th:text="${order.totalPaid}">30,000 FCFA</span>
+            <span th:text="${order.payment.amount}">30,000 FCFA</span>
         </td>
+    </tr>
+    <tr th:if="${order.payment}">
+        <td align="right" class="padding-bottom" colspan="2">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        <img height="32" style="vertical-align: center"
+                             th:src="${order.payment.paymentMethod.provider.logoUrl}"
+                             width="32"/>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td th:text="${order.payment.paymentMethod.maskedNumber}">
+                        1111
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td class="padding-bottom">&nbsp;</td>
     </tr>
     <tr>
         <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.balance}">

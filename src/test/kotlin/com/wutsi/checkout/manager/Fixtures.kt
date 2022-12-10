@@ -80,7 +80,8 @@ object Fixtures {
     ) = PaymentProviderSummary(
         id = id,
         code = code,
-        type = type.name
+        type = type.name,
+        logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/checkout-access-server/logos/mtn.png"
     )
 
     fun createPaymentMethod(
@@ -194,7 +195,15 @@ object Fixtures {
         ),
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
-        expires = OffsetDateTime.of(2100, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
+        expires = OffsetDateTime.of(2100, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        transactions = listOf(
+            createTransactionSummary(
+                id = "111",
+                type = TransactionType.CHARGE,
+                status = Status.SUCCESSFUL,
+                amount = totalPrice
+            )
+        )
     )
 
     fun createOrderSummary(id: String) = OrderSummary(
@@ -292,12 +301,15 @@ object Fixtures {
         id: String,
         type: TransactionType,
         status: Status = Status.SUCCESSFUL,
-        orderId: String? = null
+        orderId: String? = null,
+        amount: Long = 10000
     ) = TransactionSummary(
         id = id,
         type = type.name,
         orderId = orderId,
-        status = status.name
+        status = status.name,
+        amount = amount,
+        paymentMethod = createPaymentMethodSummary("xxxx")
     )
 
     fun createDevice() = Device(

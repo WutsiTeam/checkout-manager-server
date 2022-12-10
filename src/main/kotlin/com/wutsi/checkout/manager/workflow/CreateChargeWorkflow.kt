@@ -104,12 +104,12 @@ class CreateChargeWorkflow(
 
     private fun handleChargeException(ex: FeignException): Throwable {
         val response = objectMapper.readValue(ex.contentUTF8(), ErrorResponse::class.java)
-        if (response.error.code == com.wutsi.checkout.access.error.ErrorURN.TRANSACTION_FAILED.urn) {
-            return ConflictException(
+        return if (response.error.code == com.wutsi.checkout.access.error.ErrorURN.TRANSACTION_FAILED.urn) {
+            ConflictException(
                 error = response.error.copy(code = ErrorURN.TRANSACTION_FAILED.urn)
             )
         } else {
-            return ex
+            ex
         }
     }
 }

@@ -10,6 +10,9 @@ spring:
 
 wutsi:
   client-id: checkout-manager
+  application:
+    notification:
+      debug: false
   platform:
     cache:
       type: memcached

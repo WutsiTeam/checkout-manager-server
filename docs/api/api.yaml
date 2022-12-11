@@ -188,7 +188,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateOrderStatus'
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
       responses:
         200:
           description: Success
@@ -233,6 +233,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateChargeResponse'
+      tags:
+        - Transactions
+
+  /v1/transactions/cashout:
+    post:
+      operationId: "create-cashout"
+      description: Transfer money from user's wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCashoutRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCashoutResponse'
+      tags:
+        - Transactions
+
+  /v1/transactions/search:
+    post:
+      operationId: "search-transaction"
+      description: Search transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTransactionRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTransactionResponse'
+        404:
+          description: Transaction not found
       tags:
         - Transactions
 
@@ -1135,7 +1177,7 @@ components:
           items:
             type: string
 
-    UpdateOrderStatus:
+    UpdateOrderStatusRequest:
       type: object
       properties:
         orderId:
@@ -1151,3 +1193,83 @@ components:
       required:
         - orderId
         - status
+
+    CreateCashoutRequest:
+      type: object
+      properties:
+        paymentMethodToken:
+          type: string
+          description: Token of the account where money will be transfered.
+        amount:
+          type: integer
+          format: int64
+          description: Amout to transfer from the user's account.
+          minimum: 0
+        description:
+          type: string
+          description: Description of the transaction
+          nullable: true
+          maxLength: 100
+        idempotencyKey:
+          type: string
+          description: Idemportent Key
+          maxLength: 36
+      required:
+        - paymentMethodToken
+        - idempotencyKey
+
+    CreateCashoutResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+          description: ID of the transaction
+        status:
+          description: Status of the payout
+          type: string
+          enum:
+            - PENDING
+            - SUCESS
+
+    SearchTransactionRequest:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int64
+          nullable: true
+        businessId:
+          type: integer
+          format: int64
+          nullable: true
+        type:
+          type: string
+          enum:
+            - CHARGE
+            - CASHOUT
+          description: Type of transaction
+          nullable: true
+        status:
+          type: array
+          items:
+            type: string
+          description: Status of the transaction
+        orderId:
+          type: string
+          description: Order ID
+          nullable: true
+        limit:
+          type: integer
+          default: 100
+        offset:
+          type: integer
+          default: 0
+
+    SearchTransactionResponse:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionSummary"

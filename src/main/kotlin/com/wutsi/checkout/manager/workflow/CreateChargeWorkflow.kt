@@ -1,15 +1,11 @@
 package com.wutsi.checkout.manager.workflow
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
 import com.wutsi.checkout.manager.event.InternalEventURN
 import com.wutsi.checkout.manager.event.TransactionEventPayload
-import com.wutsi.error.ErrorURN
-import com.wutsi.platform.core.error.ErrorResponse
-import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.payment.core.Status
@@ -24,22 +20,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateChargeWorkflow(
-    private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
     eventStream: EventStream
-) : AbstractCheckoutWorkflow<CreateChargeRequest, CreateChargeResponse, Void>(eventStream) {
-    override fun getEventType(
-        request: CreateChargeRequest,
-        response: CreateChargeResponse,
-        context: WorkflowContext
-    ): String? = null
-
-    override fun toEventPayload(
-        request: CreateChargeRequest,
-        response: CreateChargeResponse,
-        context: WorkflowContext
-    ): Void? = null
-
+) : AbstractTransactionWorkflow<CreateChargeRequest, CreateChargeResponse>(eventStream) {
     override fun getValidationRules(request: CreateChargeRequest, context: WorkflowContext): RuleSet {
         val business = checkoutAccessApi.getBusiness(request.businessId).business
         val account = membershipAccessApi.getAccount(business.accountId).account
@@ -60,23 +43,23 @@ class CreateChargeWorkflow(
     override fun doExecute(request: CreateChargeRequest, context: WorkflowContext): CreateChargeResponse {
         val order = checkoutAccessApi.getOrder(request.orderId).order
         val business = checkoutAccessApi.getBusiness(request.businessId).business
-        val charge = createCharge(request, business, order)
-        logger.add("transaction_id", charge.transactionId)
-        logger.add("transaction_status", charge.status)
+        val response = charge(request, business, order)
+        logger.add("transaction_id", response.transactionId)
+        logger.add("transaction_status", response.status)
 
-        if (charge.status == Status.SUCCESSFUL.name) {
+        if (response.status == Status.SUCCESSFUL.name) {
             eventStream.enqueue(
                 InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-                TransactionEventPayload(transactionId = charge.transactionId)
+                TransactionEventPayload(transactionId = response.transactionId)
             )
         }
         return CreateChargeResponse(
-            transactionId = charge.transactionId,
-            status = charge.status
+            transactionId = response.transactionId,
+            status = response.status
         )
     }
 
-    private fun createCharge(
+    private fun charge(
         request: CreateChargeRequest,
         business: Business,
         order: Order
@@ -99,17 +82,6 @@ class CreateChargeWorkflow(
             )
         } catch (ex: FeignException) {
             throw handleChargeException(ex)
-        }
-    }
-
-    private fun handleChargeException(ex: FeignException): Throwable {
-        val response = objectMapper.readValue(ex.contentUTF8(), ErrorResponse::class.java)
-        return if (response.error.code == com.wutsi.checkout.access.error.ErrorURN.TRANSACTION_FAILED.urn) {
-            ConflictException(
-                error = response.error.copy(code = ErrorURN.TRANSACTION_FAILED.urn)
-            )
-        } else {
-            ex
         }
     }
 }

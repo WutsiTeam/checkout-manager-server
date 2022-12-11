@@ -2,6 +2,7 @@ package com.wutsi.checkout.manager
 
 import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.BusinessSummary
+import com.wutsi.checkout.access.dto.CreateCashoutResponse
 import com.wutsi.checkout.access.dto.CreateChargeResponse
 import com.wutsi.checkout.access.dto.Discount
 import com.wutsi.checkout.access.dto.Order
@@ -107,7 +108,8 @@ object Fixtures {
         type = PaymentMethodType.MOBILE_MONEY.name,
         status = PaymentMethodStatus.ACTIVE.name,
         accountId = 111L,
-        ownerName = "Ray Sponsible"
+        ownerName = "Ray Sponsible",
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
     )
 
     fun createBusiness(
@@ -213,6 +215,9 @@ object Fixtures {
     fun createChargeResponse(status: Status = Status.PENDING) =
         CreateChargeResponse(transactionId = UUID.randomUUID().toString(), status = status.name)
 
+    fun createCashoutResponse(status: Status = Status.PENDING) =
+        CreateCashoutResponse(transactionId = UUID.randomUUID().toString(), status = status.name)
+
     fun createStoreSummary(
         id: Long = -1
     ) = StoreSummary(
@@ -299,7 +304,7 @@ object Fixtures {
 
     fun createTransactionSummary(
         id: String,
-        type: TransactionType,
+        type: TransactionType = TransactionType.CHARGE,
         status: Status = Status.SUCCESSFUL,
         orderId: String? = null,
         amount: Long = 10000
@@ -309,7 +314,9 @@ object Fixtures {
         orderId = orderId,
         status = status.name,
         amount = amount,
-        paymentMethod = createPaymentMethodSummary("xxxx")
+        paymentMethod = createPaymentMethodSummary("xxxx"),
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
     )
 
     fun createDevice() = Device(

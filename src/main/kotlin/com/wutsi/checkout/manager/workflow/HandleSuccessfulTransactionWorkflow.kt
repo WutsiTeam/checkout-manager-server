@@ -32,12 +32,12 @@ class HandleSuccessfulTransactionWorkflow(
         }
 
         when (tx.type) {
-            TransactionType.CHARGE.name -> handleCharge(tx)
+            TransactionType.CHARGE.name -> handleSuccessfulCharge(tx)
             else -> {}
         }
     }
 
-    private fun handleCharge(tx: Transaction) {
+    private fun handleSuccessfulCharge(tx: Transaction) {
         // Get the order
         val orderId = tx.orderId!!
         val order = checkoutAccessApi.getOrder(orderId).order

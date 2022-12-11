@@ -1,6 +1,7 @@
 package com.wutsi.checkout.manager.dto
 
 import javax.validation.constraints.NotBlank
+import kotlin.String
 
 public data class UpdateOrderStatusRequest(
     @get:NotBlank

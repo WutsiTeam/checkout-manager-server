@@ -85,3 +85,56 @@
         </td>
     </tr>
 </table>
+
+<hr th:if="${productEvents}"/>
+<h2 th:if="${productEvents}" th:text="#{email.notify-customer.event.title}">Title</h2>
+<div class="padding" th:each="productEvent:${productEvents}">
+    <div class="border">
+        <table cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td colspan="2">
+                    <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td align="right" class="padding" valign="middle" width="1">
+                                <img height="32"
+                                     th:if="${productEvent.event.meetingProviderLogoUrl}"
+                                     th:src="${productEvent.event.meetingProviderLogoUrl}"
+                                     width="32"
+                                />
+                            </td>
+                            <td class="padding" valign="middle">
+                                <h4 class="no-margin" th:text="${productEvent.title}">EVENT</h4>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr th:if="${productEvent.thumbnailUrl}">
+                <td align="center" class="padding" colspan="2" valign="middle">
+                    <img style="max-height:300px; max-width: 300px;" th:src="${productEvent.thumbnailUrl}"/>
+                </td>
+            </tr>
+            <tr th:if="${productEvent.event.starts}">
+                <td align="right" class="padding border-top">
+                    <span th:text="#{email.notify-customer.event.date}">Date</span>:
+                </td>
+                <td class="padding border-top" th:text="${productEvent.event.starts}">2020-10-01 21-30</td>
+            </tr>
+            <tr th:if="${productEvent.event.meetingJoinUrl}">
+                <td align="right" class="padding border-top">
+                    <span th:text="#{email.notify-customer.event.url}">URL</span>:
+                </td>
+                <td class="padding border-top">
+                    <a th:href="${productEvent.event.meetingJoinUrl}"
+                       th:text="${productEvent.event.meetingJoinUrl}">URL</a>
+                </td>
+            </tr>
+            <tr th:if="${productEvent.event.meetingPassword}">
+                <td align="right" class="padding border-top" th:text="#{email.notify-customer.event.password}">
+                    Password
+                </td>
+                <td class="padding border-top" th:text="${productEvent.event.meetingPassword}">1234343</td>
+            </tr>
+        </table>
+    </div>
+</div>

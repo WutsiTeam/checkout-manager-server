@@ -18,12 +18,16 @@ import com.wutsi.enums.BusinessStatus
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
 import com.wutsi.enums.DiscountType
+import com.wutsi.enums.MeetingProviderType
 import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.enums.ProductStatus
+import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.CategorySummary
+import com.wutsi.marketplace.access.dto.Event
+import com.wutsi.marketplace.access.dto.MeetingProviderSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
@@ -150,7 +154,8 @@ object Fixtures {
         businessId: Long = -1,
         accountId: Long = -1,
         totalPrice: Long = 100000L,
-        status: OrderStatus = OrderStatus.UNKNOWN
+        status: OrderStatus = OrderStatus.UNKNOWN,
+        items: List<OrderItem>? = null
     ) = Order(
         id = id,
         business = createBusinessSummary(businessId, accountId),
@@ -175,7 +180,7 @@ object Fixtures {
                 type = DiscountType.DYNAMIC.name
             )
         ),
-        items = listOf(
+        items = items ?: listOf(
             OrderItem(
                 productId = 999,
                 quantity = 3,
@@ -229,7 +234,8 @@ object Fixtures {
         id: Long = -1,
         storeId: Long = -1,
         quantity: Int? = 11,
-        pictures: List<PictureSummary> = emptyList()
+        pictures: List<PictureSummary> = emptyList(),
+        type: ProductType = ProductType.PHYSICAL_PRODUCT
     ) = Product(
         id = id,
         store = Fixtures.createStoreSummary(storeId),
@@ -246,13 +252,32 @@ object Fixtures {
         category = CategorySummary(
             id = 1,
             title = "Art"
+        ),
+        type = type.name,
+        event = if (type == ProductType.EVENT) createEvent() else null
+    )
+
+    private fun createEvent() = Event(
+        online = true,
+        meetingPassword = "123456",
+        meetingId = "1234567890",
+        meetingJoinUrl = "https://us04.zoom.us/j/12345678",
+        starts = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
+        ends = OffsetDateTime.of(2020, 1, 1, 15, 30, 0, 0, ZoneOffset.UTC),
+        meetingProvider = MeetingProviderSummary(
+            id = 1000,
+            type = MeetingProviderType.ZOOM.name,
+            name = "Zoom",
+            logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/marketplace-access-server/meeting-providers/zoom.png"
         )
     )
 
     fun createProductSummary(
         id: Long = -1,
         storeId: Long = -1,
-        quantity: Int? = 11
+        quantity: Int? = 11,
+        type: ProductType = ProductType.PHYSICAL_PRODUCT,
+        thumbnailUrl: String? = null
     ) = ProductSummary(
         id = id,
         storeId = storeId,
@@ -261,9 +286,11 @@ object Fixtures {
         comparablePrice = 150000L,
         quantity = quantity,
         status = ProductStatus.DRAFT.name,
-        thumbnailUrl = "http://img.com/$id.png",
         currency = "XAF",
-        title = "This is the title #$id"
+        title = "This is the title #$id",
+        type = type.name,
+        thumbnailUrl = thumbnailUrl,
+        event = if (type == ProductType.EVENT) createEvent() else null
     )
 
     fun createPictureSummary(id: Long = -1) = PictureSummary(

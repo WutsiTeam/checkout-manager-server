@@ -5,6 +5,9 @@ import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
 import com.wutsi.checkout.access.dto.TransactionSummary
 import com.wutsi.enums.TransactionType
+import com.wutsi.marketplace.access.dto.Event
+import com.wutsi.marketplace.access.dto.Product
+import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.regulation.Country
 import org.springframework.stereotype.Service
@@ -63,6 +66,35 @@ class MailMapper {
         name = provider.name,
         logoUrl = provider.logoUrl
     )
+
+    fun toProduct(product: Product, country: Country) = ProductModel(
+        id = product.id,
+        title = product.title,
+        thumbnailUrl = product.thumbnail?.url,
+        type = product.type,
+        event = product.event?.let { toEventModel(it, country) }
+    )
+
+    fun toProduct(product: ProductSummary, country: Country) = ProductModel(
+        id = product.id,
+        title = product.title,
+        thumbnailUrl = product.thumbnailUrl,
+        type = product.type,
+        event = product.event?.let { toEventModel(it, country) }
+    )
+
+    private fun toEventModel(event: Event, country: Country): EventModel {
+        val fmt = DateTimeFormatter.ofPattern(country.dateTimeFormat)
+        return EventModel(
+            online = event.online,
+            meetingId = event.meetingId,
+            meetingJoinUrl = event.meetingJoinUrl,
+            meetingPassword = event.meetingPassword,
+            meetingProviderLogoUrl = event.meetingProvider.logoUrl,
+            starts = event.starts?.format(fmt),
+            ends = event.ends?.format(fmt)
+        )
+    }
 
     private fun findPayment(order: Order): TransactionSummary? =
         order.transactions.find { it.status == Status.SUCCESSFUL.name && it.type == TransactionType.CHARGE.name }

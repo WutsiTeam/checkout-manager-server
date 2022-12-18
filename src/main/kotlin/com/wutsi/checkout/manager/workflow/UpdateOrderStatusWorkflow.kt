@@ -15,23 +15,27 @@ import org.springframework.stereotype.Service
 @Service
 class UpdateOrderStatusWorkflow(
     eventStream: EventStream
-) : AbstractOrderWorkflow<UpdateOrderStatusRequest, Unit>(eventStream) {
-    override fun getEventType(request: UpdateOrderStatusRequest, response: Unit, context: WorkflowContext): String? =
-        when (request.status) {
-            OrderStatus.IN_PROGRESS.name -> EventURN.ORDER_STARTED.urn
-            OrderStatus.COMPLETED.name -> EventURN.ORDER_COMPLETED.urn
-            OrderStatus.CANCELLED.name -> EventURN.ORDER_CANCELLED.urn
-            else -> null
+) : AbstractOrderWorkflow<UpdateOrderStatusRequest, Boolean>(eventStream) {
+    override fun getEventType(request: UpdateOrderStatusRequest, response: Boolean, context: WorkflowContext): String? =
+        if (response) {
+            when (request.status) {
+                OrderStatus.IN_PROGRESS.name -> EventURN.ORDER_STARTED.urn
+                OrderStatus.COMPLETED.name -> EventURN.ORDER_COMPLETED.urn
+                OrderStatus.CANCELLED.name -> EventURN.ORDER_CANCELLED.urn
+                else -> null
+            }
+        } else {
+            null
         }
 
-    override fun toEventPayload(request: UpdateOrderStatusRequest, response: Unit, context: WorkflowContext) =
+    override fun toEventPayload(request: UpdateOrderStatusRequest, response: Boolean, context: WorkflowContext) =
         OrderEventPayload(
             orderId = request.orderId
         )
 
     override fun getValidationRules(request: UpdateOrderStatusRequest, context: WorkflowContext): RuleSet {
         val account = getCurrentAccount(context)
-        val order = checkoutAccessApi.getOrder(request.orderId).order
+        val order = getOrder(request.orderId, context)
         return RuleSet(
             rules = listOf(
                 AccountShouldBeActiveRule(account),
@@ -41,13 +45,18 @@ class UpdateOrderStatusWorkflow(
         )
     }
 
-    override fun doExecute(request: UpdateOrderStatusRequest, context: WorkflowContext) {
-        checkoutAccessApi.updateOrderStatus(
-            id = request.orderId,
-            request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
-                status = request.status,
-                reason = request.reason
+    override fun doExecute(request: UpdateOrderStatusRequest, context: WorkflowContext): Boolean {
+        val order = getOrder(request.orderId, context)
+        if (order.status != request.status) {
+            checkoutAccessApi.updateOrderStatus(
+                id = request.orderId,
+                request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
+                    status = request.status,
+                    reason = request.reason
+                )
             )
-        )
+            return true
+        }
+        return false
     }
 }

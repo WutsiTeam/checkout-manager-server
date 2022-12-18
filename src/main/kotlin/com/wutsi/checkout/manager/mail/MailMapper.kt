@@ -90,7 +90,7 @@ class MailMapper {
             meetingId = event.meetingId,
             meetingJoinUrl = event.meetingJoinUrl,
             meetingPassword = event.meetingPassword,
-            meetingProviderLogoUrl = event.meetingProvider.logoUrl,
+            meetingProviderLogoUrl = event.meetingProvider?.logoUrl,
             starts = event.starts?.format(fmt),
             ends = event.ends?.format(fmt)
         )

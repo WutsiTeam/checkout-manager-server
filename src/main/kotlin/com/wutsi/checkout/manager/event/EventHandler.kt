@@ -21,6 +21,7 @@ class EventHandler(
             InternalEventURN.TRANSACTION_SUCCESSFUL.urn -> transaction.onTransactionSuccessful(event)
             InternalEventURN.ORDER_TO_CUSTOMER_SUBMITTED.urn -> order.onSendToCustomer(event)
             InternalEventURN.ORDER_TO_MERCHANT_SUBMITTED.urn -> order.onSendToMerchant(event)
+            InternalEventURN.ORDER_FULLFILLED.urn -> order.onOrderFulfilled(event)
             else -> {}
         }
     }

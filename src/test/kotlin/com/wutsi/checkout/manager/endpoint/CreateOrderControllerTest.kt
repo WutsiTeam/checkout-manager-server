@@ -15,6 +15,7 @@ import com.wutsi.checkout.manager.dto.CreateOrderResponse
 import com.wutsi.enums.ChannelType
 import com.wutsi.enums.DeviceType
 import com.wutsi.enums.OrderStatus
+import com.wutsi.enums.ProductType
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.ReservationItem
@@ -38,8 +39,8 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     val orderId = "1111"
     private val businessAccountId = 33333L
     private val reservationId = 11L
-    private val product1 = Fixtures.createProductSummary(1L)
-    private val product2 = Fixtures.createProductSummary(2L)
+    private val product1 = Fixtures.createProductSummary(1L, type = ProductType.PHYSICAL_PRODUCT)
+    private val product2 = Fixtures.createProductSummary(2L, type = ProductType.EVENT)
     private val businessAccount =
         Fixtures.createAccount(id = businessAccountId, businessId = BUSINESS_ID, business = true)
     private val business = Fixtures.createBusiness(id = BUSINESS_ID, accountId = businessAccountId)
@@ -104,6 +105,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                 items = listOf(
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[0].productId,
+                        productType = product1.type,
                         title = product1.title,
                         pictureUrl = product1.thumbnailUrl,
                         quantity = request.items[0].quantity,
@@ -111,6 +113,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                     ),
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[1].productId,
+                        productType = product2.type,
                         title = product2.title,
                         pictureUrl = product2.thumbnailUrl,
                         quantity = request.items[1].quantity,

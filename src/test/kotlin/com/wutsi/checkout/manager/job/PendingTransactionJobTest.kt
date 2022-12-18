@@ -12,6 +12,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.GetOrderResponse
 import com.wutsi.checkout.access.dto.GetTransactionResponse
+import com.wutsi.checkout.access.dto.OrderItem
 import com.wutsi.checkout.access.dto.SearchTransactionResponse
 import com.wutsi.checkout.access.dto.SyncTransactionStatusResponse
 import com.wutsi.checkout.access.dto.UpdateOrderStatusRequest
@@ -106,6 +107,7 @@ internal class PendingTransactionJobTest {
         val merchant = Fixtures.createAccount(
             id = merchantId,
             businessId = businessId,
+            business = true,
             displayName = "House of Pleasure",
             email = "house.of.plaesure@gmail.com"
         )
@@ -117,7 +119,7 @@ internal class PendingTransactionJobTest {
     fun pendingCharges() {
         // GIVEN
         val order = Fixtures.createOrder(
-            id = "111111",
+            id = "111",
             status = OrderStatus.UNKNOWN,
             businessId = businessId,
             accountId = customerId
@@ -152,17 +154,28 @@ internal class PendingTransactionJobTest {
     fun pendingChargesWithEvent() {
         // GIVEN
         val order = Fixtures.createOrder(
-            id = "111111",
+            id = "111",
             status = OrderStatus.UNKNOWN,
-            businessId = 5555,
-            accountId = 1
+            businessId = businessId,
+            accountId = 1,
+            items = listOf(
+                OrderItem(
+                    productId = 999,
+                    productType = ProductType.EVENT.name,
+                    quantity = 3,
+                    title = "This is a product",
+                    pictureUrl = "https://img.com/1.png",
+                    totalDiscount = 100
+                )
+            )
         )
         doReturn(GetOrderResponse(order)).whenever(checkoutAccessApi).getOrder(any())
 
         val prod = Fixtures.createProductSummary(
             id = order.items[0].productId,
             type = ProductType.EVENT,
-            thumbnailUrl = "https://afrikinfo.net/wp-content/uploads/2022/11/IMG-20221111-WA0003.jpg"
+            thumbnailUrl = "https://afrikinfo.net/wp-content/uploads/2022/11/IMG-20221111-WA0003.jpg",
+            event = Fixtures.createEvent()
         )
         doReturn(SearchProductResponse(listOf(prod))).whenever(marketplaceAccessApi).searchProduct(any())
 
@@ -175,12 +188,15 @@ internal class PendingTransactionJobTest {
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
-        Thread.sleep(20000)
+        Thread.sleep(10000)
         val email = argumentCaptor<Message>()
         verify(mail, times(2)).send(email.capture())
 
         val pushNotification = argumentCaptor<Message>()
         verify(push).send(pushNotification.capture())
         assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
+
+        Thread.sleep(20000)
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.COMPLETED.name))
     }
 }

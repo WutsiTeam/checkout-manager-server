@@ -40,7 +40,12 @@ abstract class AbstractSendOrderWorkflow(
     @Autowired
     private lateinit var messages: MessageSource
 
-    protected abstract fun createMessage(order: Order, merchant: Account, type: MessagingType): Message?
+    protected abstract fun createMessage(
+        order: Order,
+        merchant: Account,
+        type: MessagingType,
+        context: WorkflowContext
+    ): Message?
 
     override fun getEventType(orderId: String, response: Unit, context: WorkflowContext): String? = null
 
@@ -50,7 +55,7 @@ abstract class AbstractSendOrderWorkflow(
 
     override fun doExecute(orderId: String, context: WorkflowContext) {
         // Order
-        val order = checkoutAccessApi.getOrder(orderId).order
+        val order = getOrder(orderId, context)
         logger.add("order_customer_name", order.customerName)
         logger.add("order_customer_email", order.customerEmail)
         logger.add("merchant_id", order.business.accountId)
@@ -59,13 +64,13 @@ abstract class AbstractSendOrderWorkflow(
         val merchant = membershipAccessApi.getAccount(order.business.accountId).account
 
         // Send email
-        createMessage(order, merchant, MessagingType.EMAIL)?.let {
+        createMessage(order, merchant, MessagingType.EMAIL, context)?.let {
             val messageId = sendEmail(message = debug(it))
             logger.add("message_id_email", messageId)
         }
 
         // Send push notification
-        createMessage(order, merchant, MessagingType.PUSH_NOTIFICATION)?.let {
+        createMessage(order, merchant, MessagingType.PUSH_NOTIFICATION, context)?.let {
             try {
                 val messageId = sendPushNotification(message = debug(it))
                 logger.add("message_id_push", messageId)

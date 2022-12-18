@@ -183,6 +183,7 @@ object Fixtures {
         items = items ?: listOf(
             OrderItem(
                 productId = 999,
+                productType = ProductType.PHYSICAL_PRODUCT.name,
                 quantity = 3,
                 title = "This is a product",
                 pictureUrl = "https://img.com/1.png",
@@ -235,7 +236,8 @@ object Fixtures {
         storeId: Long = -1,
         quantity: Int? = 11,
         pictures: List<PictureSummary> = emptyList(),
-        type: ProductType = ProductType.PHYSICAL_PRODUCT
+        type: ProductType = ProductType.PHYSICAL_PRODUCT,
+        event: Event? = null
     ) = Product(
         id = id,
         store = Fixtures.createStoreSummary(storeId),
@@ -254,10 +256,10 @@ object Fixtures {
             title = "Art"
         ),
         type = type.name,
-        event = if (type == ProductType.EVENT) createEvent() else null
+        event = event
     )
 
-    private fun createEvent() = Event(
+    fun createEvent() = Event(
         online = true,
         meetingPassword = "123456",
         meetingId = "1234567890",
@@ -277,7 +279,8 @@ object Fixtures {
         storeId: Long = -1,
         quantity: Int? = 11,
         type: ProductType = ProductType.PHYSICAL_PRODUCT,
-        thumbnailUrl: String? = null
+        thumbnailUrl: String? = null,
+        event: Event? = null
     ) = ProductSummary(
         id = id,
         storeId = storeId,
@@ -290,7 +293,7 @@ object Fixtures {
         title = "This is the title #$id",
         type = type.name,
         thumbnailUrl = thumbnailUrl,
-        event = if (type == ProductType.EVENT) createEvent() else null
+        event = event
     )
 
     fun createPictureSummary(id: Long = -1) = PictureSummary(

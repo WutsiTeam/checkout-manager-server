@@ -9,6 +9,7 @@ import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.messaging.Party
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.RegulationEngine
+import com.wutsi.workflow.WorkflowContext
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
@@ -22,8 +23,12 @@ class SendOrderToMerchantWorkflow(
     private val regulationEngine: RegulationEngine,
     private val mailFilterSet: MailFilterSet
 ) : AbstractSendOrderWorkflow(eventStream) {
-
-    override fun createMessage(order: Order, merchant: Account, type: MessagingType): Message? =
+    override fun createMessage(
+        order: Order,
+        merchant: Account,
+        type: MessagingType,
+        context: WorkflowContext
+    ): Message? =
         when (type) {
             MessagingType.EMAIL -> merchant.email?.let {
                 Message(

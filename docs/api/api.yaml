@@ -862,6 +862,9 @@ components:
           type: integer
           format: int64
           description: ID of the product
+        productType:
+          type: string
+          description: Type of product
         title:
           type: string
           description: Title of the product

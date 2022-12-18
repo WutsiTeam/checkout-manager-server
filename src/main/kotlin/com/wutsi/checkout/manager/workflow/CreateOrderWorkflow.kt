@@ -95,6 +95,7 @@ class CreateOrderWorkflow(
                     if (prod != null) {
                         CreateOrderItemRequest(
                             productId = it.productId,
+                            productType = prod.type,
                             quantity = it.quantity,
                             title = prod.title,
                             pictureUrl = prod.thumbnailUrl,

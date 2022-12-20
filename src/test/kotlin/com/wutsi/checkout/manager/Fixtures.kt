@@ -203,8 +203,8 @@ object Fixtures {
                 totalDiscount = 0,
                 unitPrice = 2000,
                 subTotalPrice = 4000,
-                totalPrice = 4000
-            )
+                totalPrice = 4000,
+            ),
         ),
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),

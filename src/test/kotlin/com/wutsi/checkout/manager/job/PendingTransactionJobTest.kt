@@ -228,7 +228,7 @@ internal class PendingTransactionJobTest {
                     totalDiscount = 1000,
                     unitPrice = 10000,
                     subTotalPrice = 30000,
-                    totalPrice = 29000
+                    totalPrice = 29000,
                 ),
             ),
         )

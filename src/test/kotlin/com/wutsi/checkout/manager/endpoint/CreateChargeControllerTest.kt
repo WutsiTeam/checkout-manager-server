@@ -38,7 +38,7 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
     private val businessAccountId = 33333L
     private val reservationId = 11L
     private val orderId = "1111"
-    private var order = Fixtures.createOrder(id = orderId, totalPrice = 15000)
+    private var order = Fixtures.createOrder(id = orderId, subTotalPrice = 15000)
     private val businessAccount =
         Fixtures.createAccount(id = businessAccountId, businessId = BUSINESS_ID, business = true)
     private val business = Fixtures.createBusiness(id = BUSINESS_ID, accountId = businessAccountId)

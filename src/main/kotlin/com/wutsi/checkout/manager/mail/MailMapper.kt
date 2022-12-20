@@ -118,7 +118,7 @@ class MailMapper(
         val file = URL(url).file
         val i = file.lastIndexOf(".")
         return if (i > 0) {
-            "$assetUrl/assets/images/file-types/" + file.substring(i + 1).uppercase() + ".png"
+            "$assetUrl/images/file-types/" + file.substring(i + 1).uppercase() + ".png"
         } else {
             return null
         }

@@ -54,7 +54,7 @@ wutsi:
   client-id: checkout-manager
   application:
     name: checkout-manager
-    asset-url: https://int-wutsi.s3.amazonaws.com/static/wutsi-web
+    asset-url: https://int-wutsi.s3.amazonaws.com/static/wutsi-assets
     webapp-url: https://wutsi-web-test.herokuapp.com
     notification:
       debug: true

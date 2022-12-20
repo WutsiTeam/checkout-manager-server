@@ -164,6 +164,8 @@ internal class PendingTransactionJobTest {
             status = OrderStatus.UNKNOWN,
             businessId = businessId,
             accountId = 1,
+            subTotalPrice = 29000,
+            totalDiscounts = 1000,
             items = listOf(
                 OrderItem(
                     productId = 999,
@@ -214,6 +216,8 @@ internal class PendingTransactionJobTest {
             status = OrderStatus.UNKNOWN,
             businessId = businessId,
             accountId = 1,
+            subTotalPrice = 29000,
+            totalDiscounts = 1000,
             items = listOf(
                 OrderItem(
                     productId = 999,
@@ -221,7 +225,10 @@ internal class PendingTransactionJobTest {
                     quantity = 3,
                     title = "This is a product",
                     pictureUrl = "https://img.com/1.png",
-                    totalDiscount = 100,
+                    totalDiscount = 1000,
+                    unitPrice = 10000,
+                    subTotalPrice = 30000,
+                    totalPrice = 29000
                 ),
             ),
         )

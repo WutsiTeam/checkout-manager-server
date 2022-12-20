@@ -11,7 +11,7 @@ spring:
 wutsi:
   client-id: checkout-manager
   application:
-    asset-url: https://prod-wutsi.s3.amazonaws.com/static/wutsi-web
+    asset-url: https://prod-wutsi.s3.amazonaws.com/static/wutsi-assets
     webapp-url: https://www.wutsi.me
     notification:
       debug: false

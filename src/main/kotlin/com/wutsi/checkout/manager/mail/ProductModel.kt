@@ -5,5 +5,6 @@ data class ProductModel(
     val title: String,
     val thumbnailUrl: String? = null,
     val type: String,
-    val event: EventModel? = null
+    val event: EventModel? = null,
+    val files: List<FileModel> = emptyList(),
 )

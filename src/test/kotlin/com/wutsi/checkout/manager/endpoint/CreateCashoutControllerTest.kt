@@ -38,7 +38,7 @@ class CreateCashoutControllerTest : AbstractSecuredControllerTest() {
             id = ACCOUNT_ID,
             businessId = BUSINESS_ID,
             business = true,
-            email = "yo@gmail.com"
+            email = "yo@gmail.com",
         )
     private val business = Fixtures.createBusiness(id = BUSINESS_ID, accountId = ACCOUNT_ID)
     private val paymentMethod = Fixtures.createPaymentMethod(token = "11111", accountId = BUSINESS_ID)
@@ -46,7 +46,7 @@ class CreateCashoutControllerTest : AbstractSecuredControllerTest() {
         paymentMethodToken = paymentMethod.token,
         idempotencyKey = UUID.randomUUID().toString(),
         description = "This is nice",
-        amount = 15000
+        amount = 15000,
     )
 
     @BeforeEach
@@ -77,8 +77,8 @@ class CreateCashoutControllerTest : AbstractSecuredControllerTest() {
                 paymentMethodToken = request.paymentMethodToken,
                 idempotencyKey = request.idempotencyKey,
                 email = account.email!!,
-                description = request.description
-            )
+                description = request.description,
+            ),
         )
 
         val result = response.body!!
@@ -108,8 +108,8 @@ class CreateCashoutControllerTest : AbstractSecuredControllerTest() {
                 paymentMethodToken = request.paymentMethodToken,
                 idempotencyKey = request.idempotencyKey,
                 email = account.email!!,
-                description = request.description
-            )
+                description = request.description,
+            ),
         )
 
         val result = response.body!!
@@ -118,7 +118,7 @@ class CreateCashoutControllerTest : AbstractSecuredControllerTest() {
 
         verify(eventStream).enqueue(
             InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-            TransactionEventPayload(transactionResponse.transactionId)
+            TransactionEventPayload(transactionResponse.transactionId),
         )
         verify(eventStream, never()).publish(any(), any())
     }

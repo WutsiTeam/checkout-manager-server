@@ -24,7 +24,7 @@ class SearchPaymentProviderControllerTest : AbstractSecuredControllerTest() {
         // GIVEN
         val paymentProviders = listOf(
             Fixtures.createPaymentProvider(1),
-            Fixtures.createPaymentProvider(2)
+            Fixtures.createPaymentProvider(2),
         )
         doReturn(SearchPaymentProviderResponse(paymentProviders)).whenever(checkoutAccess).searchPaymentProvider(any())
 
@@ -32,7 +32,7 @@ class SearchPaymentProviderControllerTest : AbstractSecuredControllerTest() {
         val request = SearchPaymentProviderRequest(
             type = PaymentMethodType.MOBILE_MONEY.name,
             number = "+237670000010",
-            country = "CM"
+            country = "CM",
         )
         val response = rest.postForEntity(url(), request, SearchPaymentProviderResponse::class.java)
 
@@ -43,8 +43,8 @@ class SearchPaymentProviderControllerTest : AbstractSecuredControllerTest() {
             request = com.wutsi.checkout.access.dto.SearchPaymentProviderRequest(
                 type = request.type,
                 number = request.number,
-                country = request.country
-            )
+                country = request.country,
+            ),
         )
 
         val payments = response.body!!.paymentProviders

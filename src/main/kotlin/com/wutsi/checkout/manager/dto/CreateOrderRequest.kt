@@ -21,5 +21,5 @@ public data class CreateOrderRequest(
     public val customerEmail: String = "",
     @get:NotNull
     @get:NotEmpty
-    public val items: List<CreateOrderItemRequest> = emptyList()
+    public val items: List<CreateOrderItemRequest> = emptyList(),
 )

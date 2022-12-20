@@ -27,6 +27,7 @@ import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.CategorySummary
 import com.wutsi.marketplace.access.dto.Event
+import com.wutsi.marketplace.access.dto.FileSummary
 import com.wutsi.marketplace.access.dto.MeetingProviderSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
@@ -53,7 +54,7 @@ object Fixtures {
         country: String = "CM",
         phoneNumber: String = "+237670000010",
         displayName: String = "Ray Sponsible",
-        email: String? = null
+        email: String? = null,
     ) = Account(
         id = id,
         displayName = displayName,
@@ -64,34 +65,34 @@ object Fixtures {
         email = email,
         phone = Phone(
             number = phoneNumber,
-            country = country
+            country = country,
         ),
         pictureUrl = "https://www.img.com/$id.png",
         category = Category(
             id = 100L,
-            title = "Art"
+            title = "Art",
         ),
         city = Place(
             id = 1000L,
             name = "Douala",
-            longName = "Douala, Cameroun"
-        )
+            longName = "Douala, Cameroun",
+        ),
     )
 
     fun createPaymentProvider(
         id: Long = System.currentTimeMillis(),
         type: PaymentMethodType = PaymentMethodType.MOBILE_MONEY,
-        code: String = "MTN"
+        code: String = "MTN",
     ) = PaymentProviderSummary(
         id = id,
         code = code,
         type = type.name,
-        logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/checkout-access-server/logos/mtn.png"
+        logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/checkout-access-server/logos/mtn.png",
     )
 
     fun createPaymentMethod(
         token: String,
-        accountId: Long = -1
+        accountId: Long = -1,
     ) = PaymentMethod(
         token = token,
         provider = createPaymentProvider(),
@@ -100,11 +101,11 @@ object Fixtures {
         type = PaymentMethodType.MOBILE_MONEY.name,
         status = PaymentMethodStatus.ACTIVE.name,
         accountId = accountId,
-        country = "CM"
+        country = "CM",
     )
 
     fun createPaymentMethodSummary(
-        token: String
+        token: String,
     ) = PaymentMethodSummary(
         token = token,
         provider = createPaymentProvider(),
@@ -113,7 +114,7 @@ object Fixtures {
         status = PaymentMethodStatus.ACTIVE.name,
         accountId = 111L,
         ownerName = "Ray Sponsible",
-        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
     )
 
     fun createBusiness(
@@ -122,14 +123,14 @@ object Fixtures {
         balance: Long = 100000,
         currency: String = "XAF",
         country: String = "CM",
-        status: BusinessStatus = BusinessStatus.ACTIVE
+        status: BusinessStatus = BusinessStatus.ACTIVE,
     ) = Business(
         id = id,
         balance = balance,
         currency = currency,
         country = country,
         status = status.name,
-        accountId = accountId
+        accountId = accountId,
     )
 
     fun createBusinessSummary(
@@ -138,7 +139,7 @@ object Fixtures {
         balance: Long = 100000,
         currency: String = "XAF",
         country: String = "CM",
-        status: BusinessStatus = BusinessStatus.ACTIVE
+        status: BusinessStatus = BusinessStatus.ACTIVE,
     ) = BusinessSummary(
         id = id,
         balance = balance,
@@ -146,7 +147,7 @@ object Fixtures {
         country = country,
         status = status.name,
         accountId = accountId,
-        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
     )
 
     fun createOrder(
@@ -155,7 +156,7 @@ object Fixtures {
         accountId: Long = -1,
         totalPrice: Long = 100000L,
         status: OrderStatus = OrderStatus.UNKNOWN,
-        items: List<OrderItem>? = null
+        items: List<OrderItem>? = null,
     ) = Order(
         id = id,
         business = createBusinessSummary(businessId, accountId),
@@ -177,8 +178,8 @@ object Fixtures {
                 code = "111",
                 amount = 1000,
                 rate = 0,
-                type = DiscountType.DYNAMIC.name
-            )
+                type = DiscountType.DYNAMIC.name,
+            ),
         ),
         items = items ?: listOf(
             OrderItem(
@@ -196,10 +197,10 @@ object Fixtures {
                         code = "111",
                         amount = 100,
                         rate = 0,
-                        type = DiscountType.DYNAMIC.name
-                    )
-                )
-            )
+                        type = DiscountType.DYNAMIC.name,
+                    ),
+                ),
+            ),
         ),
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
@@ -209,13 +210,13 @@ object Fixtures {
                 id = "111",
                 type = TransactionType.CHARGE,
                 status = Status.SUCCESSFUL,
-                amount = totalPrice
-            )
-        )
+                amount = totalPrice,
+            ),
+        ),
     )
 
     fun createOrderSummary(id: String) = OrderSummary(
-        id = id
+        id = id,
     )
 
     fun createChargeResponse(status: Status = Status.PENDING) =
@@ -225,10 +226,10 @@ object Fixtures {
         CreateCashoutResponse(transactionId = UUID.randomUUID().toString(), status = status.name)
 
     fun createStoreSummary(
-        id: Long = -1
+        id: Long = -1,
     ) = StoreSummary(
         id = id,
-        currency = "XAF"
+        currency = "XAF",
     )
 
     fun createProduct(
@@ -237,7 +238,8 @@ object Fixtures {
         quantity: Int? = 11,
         pictures: List<PictureSummary> = emptyList(),
         type: ProductType = ProductType.PHYSICAL_PRODUCT,
-        event: Event? = null
+        event: Event? = null,
+        files: List<FileSummary> = emptyList(),
     ) = Product(
         id = id,
         store = Fixtures.createStoreSummary(storeId),
@@ -253,10 +255,11 @@ object Fixtures {
         title = "This is the title",
         category = CategorySummary(
             id = 1,
-            title = "Art"
+            title = "Art",
         ),
         type = type.name,
-        event = event
+        event = event,
+        files = files,
     )
 
     fun createEvent() = Event(
@@ -270,8 +273,21 @@ object Fixtures {
             id = 1000,
             type = MeetingProviderType.ZOOM.name,
             name = "Zoom",
-            logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/marketplace-access-server/meeting-providers/zoom.png"
-        )
+            logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/marketplace-access-server/meeting-providers/zoom.png",
+        ),
+    )
+
+    fun createFileSummary(
+        id: Long,
+        name: String = "$id.png",
+        url: String = "https://www.img.com/$id.png",
+    ) = FileSummary(
+        id = id,
+        url = url,
+        name = name,
+        contentType = "image/png",
+        contentSize = 12000,
+        created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
     )
 
     fun createProductSummary(
@@ -280,7 +296,7 @@ object Fixtures {
         quantity: Int? = 11,
         type: ProductType = ProductType.PHYSICAL_PRODUCT,
         thumbnailUrl: String? = null,
-        event: Event? = null
+        event: Event? = null,
     ) = ProductSummary(
         id = id,
         storeId = storeId,
@@ -293,12 +309,12 @@ object Fixtures {
         title = "This is the title #$id",
         type = type.name,
         thumbnailUrl = thumbnailUrl,
-        event = event
+        event = event,
     )
 
     fun createPictureSummary(id: Long = -1) = PictureSummary(
         id = id,
-        url = "https://img.com/$id.png"
+        url = "https://img.com/$id.png",
     )
 
     fun createTransaction(
@@ -307,7 +323,7 @@ object Fixtures {
         status: Status,
         orderId: String? = null,
         businessId: Long = -1,
-        accountId: Long = -1
+        accountId: Long = -1,
     ) = Transaction(
         id = id,
         type = type.name,
@@ -329,7 +345,7 @@ object Fixtures {
         net = 10000,
         fees = 500,
         gatewayFees = 250,
-        gatewayType = GatewayType.FLUTTERWAVE.name
+        gatewayType = GatewayType.FLUTTERWAVE.name,
     )
 
     fun createTransactionSummary(
@@ -337,7 +353,7 @@ object Fixtures {
         type: TransactionType = TransactionType.CHARGE,
         status: Status = Status.SUCCESSFUL,
         orderId: String? = null,
-        amount: Long = 10000
+        amount: Long = 10000,
     ) = TransactionSummary(
         id = id,
         type = type.name,
@@ -346,10 +362,10 @@ object Fixtures {
         amount = amount,
         paymentMethod = createPaymentMethodSummary("xxxx"),
         created = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
-        updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC)
+        updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
     )
 
     fun createDevice() = Device(
-        token = UUID.randomUUID().toString()
+        token = UUID.randomUUID().toString(),
     )
 }

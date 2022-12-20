@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service
 @Service
 class GetTransactionWorkflow(
     private val objectMapper: ObjectMapper,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractCheckoutWorkflow<String, GetTransactionResponse, Void>(eventStream) {
     override fun getEventType(
         transactionId: String,
         response: GetTransactionResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         transactionId: String,
         response: GetTransactionResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): Void? = null
 
     override fun getValidationRules(transactionId: String, context: WorkflowContext) = RuleSet.NONE
@@ -34,7 +34,7 @@ class GetTransactionWorkflow(
          */
         val json = objectMapper.writeValueAsString(transaction)
         return GetTransactionResponse(
-            transaction = objectMapper.readValue(json, Transaction::class.java)
+            transaction = objectMapper.readValue(json, Transaction::class.java),
         )
     }
 }

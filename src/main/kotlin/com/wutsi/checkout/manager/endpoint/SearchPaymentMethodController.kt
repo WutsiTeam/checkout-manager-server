@@ -10,12 +10,12 @@ import javax.validation.Valid
 
 @RestController
 public class SearchPaymentMethodController(
-    public val `delegate`: SearchPaymentMethodDelegate
+    public val `delegate`: SearchPaymentMethodDelegate,
 ) {
     @PostMapping("/v1/payment-methods/search")
     public fun invoke(
         @Valid @RequestBody
-        request: SearchPaymentMethodRequest
+        request: SearchPaymentMethodRequest,
     ):
         SearchPaymentMethodResponse = delegate.invoke(request)
 }

@@ -4,5 +4,5 @@ data class TransactionModel(
     val id: String,
     val type: String,
     val amount: String,
-    val paymentMethod: PaymentMethodModel
+    val paymentMethod: PaymentMethodModel,
 )

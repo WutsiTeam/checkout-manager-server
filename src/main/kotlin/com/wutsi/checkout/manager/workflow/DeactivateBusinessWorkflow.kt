@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class DeactivateBusinessWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractBusinessWorkflow<Void?, Long?>(eventStream) {
     override fun getEventType(request: Void?, businessId: Long?, context: WorkflowContext) =
         EventURN.BUSINESS_DEACTIVATED.urn
@@ -19,7 +19,7 @@ class DeactivateBusinessWorkflow(
     override fun toEventPayload(request: Void?, businessId: Long?, context: WorkflowContext) = businessId?.let {
         BusinessEventPayload(
             accountId = getCurrentAccountId(context),
-            businessId = it
+            businessId = it,
         )
     }
 
@@ -31,8 +31,8 @@ class DeactivateBusinessWorkflow(
             checkoutAccessApi.updateBusinessStatus(
                 id = account.businessId!!,
                 request = UpdateBusinessStatusRequest(
-                    status = BusinessStatus.INACTIVE.name
-                )
+                    status = BusinessStatus.INACTIVE.name,
+                ),
             )
         }
         return account.businessId

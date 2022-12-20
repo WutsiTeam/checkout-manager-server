@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 class TransactionEventHandler(
     private val mapper: ObjectMapper,
     private val logger: KVLogger,
-    private val workflow: HandleSuccessfulTransactionWorkflow
+    private val workflow: HandleSuccessfulTransactionWorkflow,
 ) {
     fun onTransactionSuccessful(event: Event) {
         val payload = toTransactionEventPayload(event)

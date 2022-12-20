@@ -23,18 +23,18 @@ class SearchPaymentMethodControllerTest : AbstractSecuredControllerTest() {
         // GIVEN
         val paymentMethods = listOf(
             Fixtures.createPaymentMethodSummary("111"),
-            Fixtures.createPaymentMethodSummary("2222")
+            Fixtures.createPaymentMethodSummary("2222"),
         )
         doReturn(com.wutsi.checkout.access.dto.SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccess)
             .searchPaymentMethod(
-                anyOrNull()
+                anyOrNull(),
             )
 
         // THEN
         val request = SearchPaymentMethodRequest(
             status = "ACTIVE",
             limit = 1,
-            offset = 100
+            offset = 100,
         )
         val response = rest.postForEntity(url(), request, SearchPaymentMethodResponse::class.java)
 
@@ -46,8 +46,8 @@ class SearchPaymentMethodControllerTest : AbstractSecuredControllerTest() {
                 accountId = ACCOUNT_ID,
                 status = request.status,
                 limit = request.limit,
-                offset = request.offset
-            )
+                offset = request.offset,
+            ),
         )
 
         val payments = response.body!!.paymentMethods

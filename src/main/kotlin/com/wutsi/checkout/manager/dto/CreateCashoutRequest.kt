@@ -15,5 +15,5 @@ public data class CreateCashoutRequest(
     public val description: String? = null,
     @get:NotBlank
     @get:Size(max = 36)
-    public val idempotencyKey: String = ""
+    public val idempotencyKey: String = "",
 )

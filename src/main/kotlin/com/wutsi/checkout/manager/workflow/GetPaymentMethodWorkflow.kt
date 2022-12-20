@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetPaymentMethodWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<String, GetPaymentMethodResponse>(eventStream) {
     override fun getEventType(
         token: String,
         response: GetPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         token: String,
         response: GetPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): PaymentMethodEventPayload? = null
 
     override fun getValidationRules(token: String, context: WorkflowContext) = RuleSet.NONE
@@ -46,9 +46,9 @@ class GetPaymentMethodWorkflow(
                     name = paymentMethod.provider.name,
                     logoUrl = paymentMethod.provider.logoUrl,
                     code = paymentMethod.provider.code,
-                    type = paymentMethod.provider.type
-                )
-            )
+                    type = paymentMethod.provider.type,
+                ),
+            ),
         )
     }
 }

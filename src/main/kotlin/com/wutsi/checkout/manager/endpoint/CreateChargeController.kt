@@ -10,12 +10,12 @@ import javax.validation.Valid
 
 @RestController
 public class CreateChargeController(
-    public val `delegate`: CreateChargeDelegate
+    public val `delegate`: CreateChargeDelegate,
 ) {
     @PostMapping("/v1/transactions/charge")
     public fun invoke(
         @Valid @RequestBody
-        request: CreateChargeRequest
+        request: CreateChargeRequest,
     ): CreateChargeResponse =
         delegate.invoke(request)
 }

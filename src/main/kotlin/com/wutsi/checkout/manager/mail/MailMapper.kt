@@ -4,18 +4,26 @@ import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
 import com.wutsi.checkout.access.dto.TransactionSummary
+import com.wutsi.checkout.manager.util.NumberUtil
+import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.Event
+import com.wutsi.marketplace.access.dto.FileSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.regulation.Country
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.net.URL
 import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 
 @Service
-class MailMapper {
+class MailMapper(
+    @Value("\${wutsi.application.webapp-url}") private val webappUrl: String,
+    @Value("\${wutsi.application.asset-url}") private val assetUrl: String,
+) {
     fun toOrderModel(order: Order, country: Country): OrderModel {
         val fmt = DecimalFormat(country.monetaryFormat)
         return OrderModel(
@@ -31,15 +39,16 @@ class MailMapper {
             items = order.items.map {
                 OrderItemModel(
                     productId = it.productId,
+                    productType = it.productType,
                     title = it.title,
                     pictureUrl = it.pictureUrl,
                     quantity = it.quantity,
                     unitPrice = fmt.format(it.unitPrice),
                     subTotalPrice = fmt.format(it.subTotalPrice),
-                    totalPrice = fmt.format(it.totalPrice)
+                    totalPrice = fmt.format(it.totalPrice),
                 )
             },
-            payment = findPayment(order)?.let { toTransactionModel(it, country) }
+            payment = findPayment(order)?.let { toTransactionModel(it, country) },
         )
     }
 
@@ -49,7 +58,7 @@ class MailMapper {
             id = tx.id,
             type = tx.type,
             amount = fmt.format(tx.amount),
-            paymentMethod = toPaymentMethodModel(tx.paymentMethod)
+            paymentMethod = toPaymentMethodModel(tx.paymentMethod),
         )
     }
 
@@ -57,14 +66,14 @@ class MailMapper {
         number = payment.number,
         maskedNumber = "***" + payment.number.takeLast(4),
         type = payment.type,
-        provider = toPaymentProviderModel(payment.provider)
+        provider = toPaymentProviderModel(payment.provider),
     )
 
     fun toPaymentProviderModel(provider: PaymentProviderSummary) = PaymentProviderModel(
         id = provider.id,
         code = provider.code,
         name = provider.name,
-        logoUrl = provider.logoUrl
+        logoUrl = provider.logoUrl,
     )
 
     fun toProduct(product: Product, country: Country) = ProductModel(
@@ -72,7 +81,8 @@ class MailMapper {
         title = product.title,
         thumbnailUrl = product.thumbnail?.url,
         type = product.type,
-        event = product.event?.let { toEventModel(it, country) }
+        event = if (product.type == ProductType.EVENT.name) product.event?.let { toEventModel(it, country) } else null,
+        files = if (product.type == ProductType.DIGITAL_DOWNLOAD.name) product.files.map { toFileModel(it) } else emptyList(),
     )
 
     fun toProduct(product: ProductSummary, country: Country) = ProductModel(
@@ -80,10 +90,10 @@ class MailMapper {
         title = product.title,
         thumbnailUrl = product.thumbnailUrl,
         type = product.type,
-        event = product.event?.let { toEventModel(it, country) }
+        event = product.event?.let { toEventModel(it, country) },
     )
 
-    private fun toEventModel(event: Event, country: Country): EventModel {
+    fun toEventModel(event: Event, country: Country): EventModel {
         val fmt = DateTimeFormatter.ofPattern(country.dateTimeFormat)
         return EventModel(
             online = event.online,
@@ -92,9 +102,30 @@ class MailMapper {
             meetingPassword = event.meetingPassword,
             meetingProviderLogoUrl = event.meetingProvider?.logoUrl,
             starts = event.starts?.format(fmt),
-            ends = event.ends?.format(fmt)
+            ends = event.ends?.format(fmt),
         )
     }
+
+    fun toFileModel(file: FileSummary) = FileModel(
+        id = file.id,
+        name = file.name,
+        contentSize = NumberUtil.toHumanReadableByteCountSI(file.contentSize.toLong()),
+        url = toFileUrl(file),
+        extensionUrl = toExtensionUrl(file.url),
+    )
+
+    private fun toExtensionUrl(url: String): String? {
+        val file = URL(url).file
+        val i = file.lastIndexOf(".")
+        return if (i > 0) {
+            "$assetUrl/assets/images/file-types/" + file.substring(i + 1).uppercase() + ".png"
+        } else {
+            return null
+        }
+    }
+
+    private fun toFileUrl(file: FileSummary): String =
+        "$webappUrl/download?f=${file.id}"
 
     private fun findPayment(order: Order): TransactionSummary? =
         order.transactions.find { it.status == Status.SUCCESSFUL.name && it.type == TransactionType.CHARGE.name }

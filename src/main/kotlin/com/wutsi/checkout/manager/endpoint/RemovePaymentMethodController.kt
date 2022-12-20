@@ -8,7 +8,7 @@ import kotlin.String
 
 @RestController
 public class RemovePaymentMethodController(
-    public val `delegate`: RemovePaymentMethodDelegate
+    public val `delegate`: RemovePaymentMethodDelegate,
 ) {
     @DeleteMapping("/v1/payment-methods/{token}")
     public fun invoke(@PathVariable(name = "token") token: String) {

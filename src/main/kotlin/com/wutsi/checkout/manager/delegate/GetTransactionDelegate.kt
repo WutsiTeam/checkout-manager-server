@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.GetTransactionResponse
 import com.wutsi.checkout.manager.workflow.GetTransactionWorkflow
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 public class GetTransactionDelegate(
     private val workflow: GetTransactionWorkflow,
-    private val pendingWorkflow: ProcessPendingTransactionWorkflow
+    private val pendingWorkflow: ProcessPendingTransactionWorkflow,
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(GetTransactionDelegate::class.java)

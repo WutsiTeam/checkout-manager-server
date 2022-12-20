@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.CreateOrderRequest
 import com.wutsi.checkout.manager.dto.CreateOrderResponse
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 public class CreateOrderDelegate(
     private val logger: KVLogger,
-    private val workflow: CreateOrderWorkflow
+    private val workflow: CreateOrderWorkflow,
 ) {
     public fun invoke(request: CreateOrderRequest): CreateOrderResponse {
         logger.add("request_customer_email", request.customerEmail)

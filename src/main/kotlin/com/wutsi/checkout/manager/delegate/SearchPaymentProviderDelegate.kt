@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.manager.dto.SearchPaymentProviderResponse
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 public class SearchPaymentProviderDelegate(
     private val logger: KVLogger,
-    private val workflow: SearchPaymentProviderWorkflow
+    private val workflow: SearchPaymentProviderWorkflow,
 ) {
     public fun invoke(request: SearchPaymentProviderRequest): SearchPaymentProviderResponse {
         logger.add("request_country", request.country)

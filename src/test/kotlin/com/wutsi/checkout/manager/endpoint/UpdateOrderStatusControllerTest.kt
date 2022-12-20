@@ -40,7 +40,7 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
         val request = UpdateOrderStatusRequest(
             orderId = order.id,
             status = OrderStatus.IN_PROGRESS.name,
-            reason = "Yes!"
+            reason = "Yes!",
         )
         val response = rest.postForEntity(url(), request, Any::class.java)
 
@@ -50,8 +50,8 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
             id = order.id,
             request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
                 status = request.status,
-                reason = request.reason
-            )
+                reason = request.reason,
+            ),
         )
 
         verify(eventStream).publish(EventURN.ORDER_STARTED.urn, OrderEventPayload(order.id))
@@ -62,7 +62,7 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
         val request = UpdateOrderStatusRequest(
             orderId = order.id,
             status = OrderStatus.CANCELLED.name,
-            reason = "Yes!"
+            reason = "Yes!",
         )
         val response = rest.postForEntity(url(), request, Any::class.java)
 
@@ -72,8 +72,8 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
             id = order.id,
             request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
                 status = request.status,
-                reason = request.reason
-            )
+                reason = request.reason,
+            ),
         )
 
         verify(eventStream).publish(EventURN.ORDER_CANCELLED.urn, OrderEventPayload(order.id))
@@ -84,7 +84,7 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
         val request = UpdateOrderStatusRequest(
             orderId = order.id,
             status = OrderStatus.COMPLETED.name,
-            reason = "Yes!"
+            reason = "Yes!",
         )
         val response = rest.postForEntity(url(), request, Any::class.java)
 
@@ -94,8 +94,8 @@ public class UpdateOrderStatusControllerTest : AbstractSecuredControllerTest() {
             id = order.id,
             request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
                 status = request.status,
-                reason = request.reason
-            )
+                reason = request.reason,
+            ),
         )
 
         verify(eventStream).publish(EventURN.ORDER_COMPLETED.urn, OrderEventPayload(order.id))

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ProcessPendingTransactionWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractCheckoutWorkflow<String, Unit, Void?>(eventStream) {
     override fun getEventType(transactionId: String, response: Unit, context: WorkflowContext): String? = null
 

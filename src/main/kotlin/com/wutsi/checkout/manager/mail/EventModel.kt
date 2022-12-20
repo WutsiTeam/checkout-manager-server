@@ -7,5 +7,5 @@ data class EventModel(
     val meetingProviderLogoUrl: String?,
     val online: Boolean,
     val starts: String?,
-    val ends: String?
+    val ends: String?,
 )

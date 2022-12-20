@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class UpdateOrderStatusWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<UpdateOrderStatusRequest, Boolean>(eventStream) {
     override fun getEventType(request: UpdateOrderStatusRequest, response: Boolean, context: WorkflowContext): String? =
         if (response) {
@@ -30,7 +30,7 @@ class UpdateOrderStatusWorkflow(
 
     override fun toEventPayload(request: UpdateOrderStatusRequest, response: Boolean, context: WorkflowContext) =
         OrderEventPayload(
-            orderId = request.orderId
+            orderId = request.orderId,
         )
 
     override fun getValidationRules(request: UpdateOrderStatusRequest, context: WorkflowContext): RuleSet {
@@ -40,8 +40,8 @@ class UpdateOrderStatusWorkflow(
             rules = listOf(
                 AccountShouldBeActiveRule(account),
                 AccountShouldBeBusinessRule(account),
-                AccountShouldBeOwnerOfOrder(account, order)
-            )
+                AccountShouldBeOwnerOfOrder(account, order),
+            ),
         )
     }
 
@@ -52,8 +52,8 @@ class UpdateOrderStatusWorkflow(
                 id = request.orderId,
                 request = com.wutsi.checkout.access.dto.UpdateOrderStatusRequest(
                     status = request.status,
-                    reason = request.reason
-                )
+                    reason = request.reason,
+                ),
             )
             return true
         }

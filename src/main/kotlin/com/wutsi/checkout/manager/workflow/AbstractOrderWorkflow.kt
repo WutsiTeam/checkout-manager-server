@@ -6,7 +6,7 @@ import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.WorkflowContext
 
 abstract class AbstractOrderWorkflow<Req, Resp>(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractCheckoutWorkflow<Req, Resp, OrderEventPayload>(eventStream) {
     protected fun getOrder(id: String, context: WorkflowContext): Order {
         val key = "order.$id"

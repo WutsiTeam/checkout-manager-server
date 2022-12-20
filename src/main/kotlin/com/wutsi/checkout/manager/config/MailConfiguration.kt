@@ -28,8 +28,8 @@ class MailConfiguration(private val messageSource: MessageSource) {
         listOf(
             DecoratorFilter(),
             UTMFilter(),
-            CSSFilter()
-        )
+            CSSFilter(),
+        ),
     )
 
     private fun htmlTemplateResolver(): ITemplateResolver {

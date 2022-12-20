@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SearchTransactionWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractTransactionWorkflow<SearchTransactionRequest, SearchTransactionResponse>(eventStream) {
     override fun getValidationRules(request: SearchTransactionRequest, context: WorkflowContext) = RuleSet.NONE
 
@@ -23,16 +23,16 @@ class SearchTransactionWorkflow(
                 orderId = request.orderId,
                 status = request.status,
                 limit = request.limit,
-                offset = request.offset
-            )
+                offset = request.offset,
+            ),
         ).transactions
         return SearchTransactionResponse(
             transactions = transactions.map {
                 objectMapper.readValue(
                     objectMapper.writeValueAsString(it),
-                    TransactionSummary::class.java
+                    TransactionSummary::class.java,
                 )
-            }
+            },
         )
     }
 }

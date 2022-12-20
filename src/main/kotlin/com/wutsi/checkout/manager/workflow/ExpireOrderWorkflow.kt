@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class ExpireOrderWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<String, Unit>(eventStream) {
     override fun getEventType(
         orderId: String,
         response: Unit,
-        context: WorkflowContext
+        context: WorkflowContext,
     ) = EventURN.ORDER_EXPIRED.urn
 
     override fun toEventPayload(
         orderId: String,
         response: Unit,
-        context: WorkflowContext
+        context: WorkflowContext,
     ) = OrderEventPayload(orderId)
 
     override fun getValidationRules(orderId: String, context: WorkflowContext) = RuleSet.NONE

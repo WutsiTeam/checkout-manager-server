@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class RemovePaymentMethodWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<String, Unit>(eventStream) {
     override fun getEventType(
         token: String,
         response: Unit,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         token: String,
         response: Unit,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): PaymentMethodEventPayload? = null
 
     override fun getValidationRules(token: String, context: WorkflowContext): RuleSet {
@@ -30,8 +30,8 @@ class RemovePaymentMethodWorkflow(
         val paymentMethod = checkoutAccessApi.getPaymentMethod(token).paymentMethod
         return RuleSet(
             rules = listOf(
-                AccountShouldBeOwnerOfPaymentMethodRule(account, paymentMethod)
-            )
+                AccountShouldBeOwnerOfPaymentMethodRule(account, paymentMethod),
+            ),
         )
     }
 
@@ -39,8 +39,8 @@ class RemovePaymentMethodWorkflow(
         checkoutAccessApi.updatePaymentMethodStatus(
             token = token,
             request = UpdatePaymentMethodStatusRequest(
-                status = PaymentMethodStatus.INACTIVE.name
-            )
+                status = PaymentMethodStatus.INACTIVE.name,
+            ),
         )
     }
 }

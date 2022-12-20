@@ -26,7 +26,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
         // GIVEN
         val orders = listOf(
             Fixtures.createOrderSummary("1"),
-            Fixtures.createOrderSummary("2")
+            Fixtures.createOrderSummary("2"),
         )
         doReturn(SearchOrderResponse(orders)).whenever(checkoutAccess).searchOrder(any())
 
@@ -39,7 +39,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
             createdFrom = OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
             createdTo = OffsetDateTime.of(2020, 1, 30, 0, 0, 0, 0, ZoneOffset.UTC),
             status = listOf(OrderStatus.EXPIRED.name, OrderStatus.COMPLETED.name),
-            businessId = 111
+            businessId = 111,
         )
         val response =
             rest.postForEntity(url(), request, com.wutsi.checkout.manager.dto.SearchOrderResponse::class.java)
@@ -56,8 +56,8 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
                 createdTo = request.createdTo,
                 createdFrom = request.createdFrom,
                 businessId = request.businessId,
-                status = request.status
-            )
+                status = request.status,
+            ),
         )
 
         val result = response.body!!.orders

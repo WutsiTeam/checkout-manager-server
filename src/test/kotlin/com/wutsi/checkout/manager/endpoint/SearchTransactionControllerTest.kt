@@ -26,7 +26,7 @@ class SearchTransactionControllerTest : AbstractSecuredControllerTest() {
         val txs = listOf(
             Fixtures.createTransactionSummary("111"),
             Fixtures.createTransactionSummary("222"),
-            Fixtures.createTransactionSummary("333")
+            Fixtures.createTransactionSummary("333"),
         )
         doReturn(SearchTransactionResponse(txs)).whenever(checkoutAccess).searchTransaction(any())
 
@@ -38,7 +38,7 @@ class SearchTransactionControllerTest : AbstractSecuredControllerTest() {
             limit = 10,
             orderId = "111",
             type = TransactionType.CHARGE.name,
-            businessId = 3333L
+            businessId = 3333L,
         )
         val response = rest.postForEntity(url(), request, SearchTransactionResponse::class.java)
 
@@ -53,8 +53,8 @@ class SearchTransactionControllerTest : AbstractSecuredControllerTest() {
                 limit = request.limit,
                 orderId = request.orderId,
                 businessId = request.businessId,
-                status = request.status
-            )
+                status = request.status,
+            ),
         )
 
         val transactions = response.body!!.transactions

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class EventHandler(
     private val membership: MembershipEventHandler,
     private val transaction: TransactionEventHandler,
-    private val order: OrderEventHandler
+    private val order: OrderEventHandler,
 ) {
     @EventListener
     fun handleEvent(event: Event) {

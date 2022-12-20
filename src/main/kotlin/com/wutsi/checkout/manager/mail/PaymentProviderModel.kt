@@ -4,5 +4,5 @@ data class PaymentProviderModel(
     val id: Long,
     val code: String,
     val name: String,
-    val logoUrl: String
+    val logoUrl: String,
 )

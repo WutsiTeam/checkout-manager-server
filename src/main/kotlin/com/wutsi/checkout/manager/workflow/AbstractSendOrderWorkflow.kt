@@ -20,7 +20,7 @@ import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 
 abstract class AbstractSendOrderWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<String, Unit>(eventStream) {
     @Value("\${wutsi.application.asset-url}")
     private lateinit var assetUrl: String
@@ -44,7 +44,7 @@ abstract class AbstractSendOrderWorkflow(
         order: Order,
         merchant: Account,
         type: MessagingType,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): Message?
 
     override fun getEventType(orderId: String, response: Unit, context: WorkflowContext): String? = null
@@ -108,8 +108,8 @@ abstract class AbstractSendOrderWorkflow(
             name = merchant.displayName,
             logoUrl = merchant.pictureUrl,
             category = merchant.category?.title,
-            location = merchant.city?.longName
-        )
+            location = merchant.city?.longName,
+        ),
     )
 
     private fun sendEmail(message: Message): String? {

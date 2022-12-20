@@ -11,5 +11,11 @@ data class OrderModel(
     val totalDiscount: String?,
     val items: List<OrderItemModel>,
     val date: String,
-    val payment: TransactionModel?
-)
+    val payment: TransactionModel?,
+) {
+    val itemsWithEvent: List<OrderItemModel>
+        get() = items.filter { it.event != null }
+
+    val itemsWithFiles: List<OrderItemModel>
+        get() = items.filter { it.files.isNotEmpty() }
+}

@@ -21,6 +21,7 @@ import com.wutsi.enums.OrderStatus
 import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.MarketplaceAccessApi
+import com.wutsi.marketplace.access.dto.GetProductResponse
 import com.wutsi.marketplace.access.dto.SearchProductResponse
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.GetAccountDeviceResponse
@@ -80,14 +81,14 @@ internal class PendingTransactionJobTest {
                 "1",
                 type = TransactionType.CHARGE,
                 orderId = "111",
-                status = Status.PENDING
+                status = Status.PENDING,
             ),
             Fixtures.createTransactionSummary(
                 "2",
                 type = TransactionType.CHARGE,
                 orderId = "222",
-                status = Status.PENDING
-            )
+                status = Status.PENDING,
+            ),
         )
         doReturn(SearchTransactionResponse(txs)).whenever(checkoutAccessApi).searchTransaction(any())
 
@@ -100,7 +101,7 @@ internal class PendingTransactionJobTest {
             txs[0].id,
             type = TransactionType.CHARGE,
             status = Status.SUCCESSFUL,
-            orderId = txs[0].orderId
+            orderId = txs[0].orderId,
         )
         doReturn(GetTransactionResponse(tx)).whenever(checkoutAccessApi).getTransaction(txs[0].id)
 
@@ -109,7 +110,7 @@ internal class PendingTransactionJobTest {
             businessId = businessId,
             business = true,
             displayName = "House of Pleasure",
-            email = "house.of.plaesure@gmail.com"
+            email = "house.of.plaesure@gmail.com",
         )
         doReturn(GetAccountResponse(merchant)).whenever(membershipMemberApi).getAccount(any())
         doReturn(GetAccountDeviceResponse(device)).whenever(membershipMemberApi).getAccountDevice(any())
@@ -122,13 +123,13 @@ internal class PendingTransactionJobTest {
             id = "111",
             status = OrderStatus.UNKNOWN,
             businessId = businessId,
-            accountId = customerId
+            accountId = customerId,
         )
         doReturn(GetOrderResponse(order)).whenever(checkoutAccessApi).getOrder(any())
 
         val prod = Fixtures.createProductSummary(
             id = order.items[0].productId,
-            type = ProductType.PHYSICAL_PRODUCT
+            type = ProductType.PHYSICAL_PRODUCT,
         )
         doReturn(SearchProductResponse(listOf(prod))).whenever(marketplaceAccessApi).searchProduct(any())
 
@@ -148,6 +149,11 @@ internal class PendingTransactionJobTest {
         val pushNotification = argumentCaptor<Message>()
         verify(push).send(pushNotification.capture())
         assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
+
+        verify(checkoutAccessApi, never()).updateOrderStatus(
+            "111",
+            UpdateOrderStatusRequest(OrderStatus.COMPLETED.name),
+        )
     }
 
     @Test
@@ -165,9 +171,9 @@ internal class PendingTransactionJobTest {
                     quantity = 3,
                     title = "This is a product",
                     pictureUrl = "https://img.com/1.png",
-                    totalDiscount = 100
-                )
-            )
+                    totalDiscount = 100,
+                ),
+            ),
         )
         doReturn(GetOrderResponse(order)).whenever(checkoutAccessApi).getOrder(any())
 
@@ -175,9 +181,62 @@ internal class PendingTransactionJobTest {
             id = order.items[0].productId,
             type = ProductType.EVENT,
             thumbnailUrl = "https://afrikinfo.net/wp-content/uploads/2022/11/IMG-20221111-WA0003.jpg",
-            event = Fixtures.createEvent()
+            event = Fixtures.createEvent(),
         )
         doReturn(SearchProductResponse(listOf(prod))).whenever(marketplaceAccessApi).searchProduct(any())
+
+        // WHEN
+        job.run()
+        Thread.sleep(10000)
+
+        // THEN
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.OPENED.name))
+        verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
+
+        // Email notification
+        Thread.sleep(10000)
+        val email = argumentCaptor<Message>()
+        verify(mail, times(2)).send(email.capture())
+
+        val pushNotification = argumentCaptor<Message>()
+        verify(push).send(pushNotification.capture())
+        assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
+
+        Thread.sleep(20000)
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.COMPLETED.name))
+    }
+
+    @Test
+    fun pendingChargesWithDigitalDownloads() {
+        // GIVEN
+        val order = Fixtures.createOrder(
+            id = "111",
+            status = OrderStatus.UNKNOWN,
+            businessId = businessId,
+            accountId = 1,
+            items = listOf(
+                OrderItem(
+                    productId = 999,
+                    productType = ProductType.DIGITAL_DOWNLOAD.name,
+                    quantity = 3,
+                    title = "This is a product",
+                    pictureUrl = "https://img.com/1.png",
+                    totalDiscount = 100,
+                ),
+            ),
+        )
+        doReturn(GetOrderResponse(order)).whenever(checkoutAccessApi).getOrder(any())
+
+        val prod = Fixtures.createProduct(
+            id = order.items[0].productId,
+            type = ProductType.DIGITAL_DOWNLOAD,
+            files = listOf(
+                Fixtures.createFileSummary(1, "Document.xls", "http://www.dirve.com/1.xls"),
+                Fixtures.createFileSummary(2, "Document.png", "http://www.dirve.com/2.png"),
+                Fixtures.createFileSummary(3, "Document.ppt", "http://www.dirve.com/3.ppt"),
+            ),
+        )
+        doReturn(GetProductResponse(prod)).whenever(marketplaceAccessApi).getProduct(order.items[0].productId)
 
         // WHEN
         job.run()

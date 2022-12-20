@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetBusinessWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractBusinessWorkflow<Long, GetBusinessResponse>(eventStream) {
     override fun getEventType(
         businessId: Long,
         response: GetBusinessResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         businessId: Long,
         response: GetBusinessResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): BusinessEventPayload? = null
 
     override fun getValidationRules(businessId: Long, context: WorkflowContext) = RuleSet.NONE
@@ -38,8 +38,8 @@ class GetBusinessWorkflow(
                 country = business.country,
                 created = business.created,
                 updated = business.updated,
-                deactivated = business.deactivated
-            )
+                deactivated = business.deactivated,
+            ),
         )
     }
 }

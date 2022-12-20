@@ -54,13 +54,13 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         items = listOf(
             CreateOrderItemRequest(
                 productId = product1.id,
-                quantity = 1
+                quantity = 1,
             ),
             CreateOrderItemRequest(
                 productId = product2.id,
-                quantity = 2
-            )
-        )
+                quantity = 2,
+            ),
+        ),
     )
 
     @BeforeEach
@@ -70,7 +70,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         doReturn(GetAccountResponse(businessAccount)).whenever(membershipAccess).getAccount(businessAccountId)
 
         doReturn(SearchProductResponse(listOf(product1, product2))).whenever(marketplaceAccessApi).searchProduct(
-            any()
+            any(),
         )
 
         doReturn(CreateReservationResponse(reservationId)).whenever(marketplaceAccessApi).createReservation(any())
@@ -82,7 +82,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     fun opened() {
         // OPENED
         doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.OPENED.name)).whenever(
-            checkoutAccess
+            checkoutAccess,
         )
             .createOrder(any())
 
@@ -109,7 +109,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                         title = product1.title,
                         pictureUrl = product1.thumbnailUrl,
                         quantity = request.items[0].quantity,
-                        unitPrice = product1.price ?: 0
+                        unitPrice = product1.price ?: 0,
                     ),
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[1].productId,
@@ -117,10 +117,10 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                         title = product2.title,
                         pictureUrl = product2.thumbnailUrl,
                         quantity = request.items[1].quantity,
-                        unitPrice = product2.price ?: 0
-                    )
-                )
-            )
+                        unitPrice = product2.price ?: 0,
+                    ),
+                ),
+            ),
         )
 
         verify(marketplaceAccessApi).createReservation(
@@ -129,14 +129,14 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                 items = listOf(
                     ReservationItem(
                         productId = request.items[0].productId,
-                        quantity = request.items[0].quantity
+                        quantity = request.items[0].quantity,
                     ),
                     ReservationItem(
                         productId = request.items[1].productId,
-                        quantity = request.items[1].quantity
-                    )
-                )
-            )
+                        quantity = request.items[1].quantity,
+                    ),
+                ),
+            ),
         )
 
         verify(eventStream, never()).publish(any(), any())
@@ -146,7 +146,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     fun pending() {
         // GIVEN
         doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.UNKNOWN.name)).whenever(
-            checkoutAccess
+            checkoutAccess,
         )
             .createOrder(any())
 
@@ -166,7 +166,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
     fun `availability error`() {
         // GIVEN
         doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.UNKNOWN.name)).whenever(
-            checkoutAccess
+            checkoutAccess,
         )
             .createOrder(any())
 

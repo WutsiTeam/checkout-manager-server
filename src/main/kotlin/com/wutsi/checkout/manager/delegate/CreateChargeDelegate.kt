@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 public class CreateChargeDelegate(
     private val logger: KVLogger,
-    private val workflow: CreateChargeWorkflow
+    private val workflow: CreateChargeWorkflow,
 ) {
     public fun invoke(request: CreateChargeRequest): CreateChargeResponse {
         logger.add("request_order_id", request.orderId)

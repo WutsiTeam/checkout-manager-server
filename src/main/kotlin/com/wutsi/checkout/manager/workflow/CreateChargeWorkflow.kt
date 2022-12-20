@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 @Service
 class CreateChargeWorkflow(
     private val logger: KVLogger,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractTransactionWorkflow<CreateChargeRequest, CreateChargeResponse>(eventStream) {
     override fun getValidationRules(request: CreateChargeRequest, context: WorkflowContext): RuleSet {
         val business = checkoutAccessApi.getBusiness(request.businessId).business
@@ -35,8 +35,8 @@ class CreateChargeWorkflow(
                 AccountShouldBeActiveRule(account),
                 BusinessShouldBeActive(business),
                 paymentMethod?.let { PaymentMethodShouldBeActive(it) },
-                OrderShouldNotBeExpiredRule(order)
-            )
+                OrderShouldNotBeExpiredRule(order),
+            ),
         )
     }
 
@@ -50,19 +50,19 @@ class CreateChargeWorkflow(
         if (response.status == Status.SUCCESSFUL.name) {
             eventStream.enqueue(
                 InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-                TransactionEventPayload(transactionId = response.transactionId)
+                TransactionEventPayload(transactionId = response.transactionId),
             )
         }
         return CreateChargeResponse(
             transactionId = response.transactionId,
-            status = response.status
+            status = response.status,
         )
     }
 
     private fun charge(
         request: CreateChargeRequest,
         business: Business,
-        order: Order
+        order: Order,
     ): com.wutsi.checkout.access.dto.CreateChargeResponse {
         try {
             return checkoutAccessApi.createCharge(
@@ -77,8 +77,8 @@ class CreateChargeWorkflow(
                     businessId = business.id,
                     idempotencyKey = request.idempotencyKey,
                     amount = order.balance,
-                    description = request.description
-                )
+                    description = request.description,
+                ),
             )
         } catch (ex: FeignException) {
             throw handleChargeException(ex)

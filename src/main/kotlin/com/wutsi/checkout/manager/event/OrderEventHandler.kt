@@ -20,7 +20,7 @@ class OrderEventHandler(
     private val checkoutAccessApi: CheckoutAccessApi,
     private val sendOrderToCustomerWorkflow: SendOrderToCustomerWorkflow,
     private val sendOrderToMerchantWorkflow: SendOrderToMerchantWorkflow,
-    private val updateOrderStatusWorkflow: UpdateOrderStatusWorkflow
+    private val updateOrderStatusWorkflow: UpdateOrderStatusWorkflow,
 ) {
     fun onSendToCustomer(event: Event) {
         val payload = toOrderEventPayload(event)
@@ -44,7 +44,7 @@ class OrderEventHandler(
         val context = WorkflowContext(accountId = order.business.accountId)
         val request = UpdateOrderStatusRequest(
             orderId = payload.orderId,
-            status = OrderStatus.COMPLETED.name
+            status = OrderStatus.COMPLETED.name,
         )
         updateOrderStatusWorkflow.execute(request, context)
     }

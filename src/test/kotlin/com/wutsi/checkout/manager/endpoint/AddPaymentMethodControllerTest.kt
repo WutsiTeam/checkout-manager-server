@@ -37,7 +37,7 @@ class AddPaymentMethodControllerTest : AbstractSecuredControllerTest() {
         number = "30490349039",
         type = PaymentMethodType.MOBILE_MONEY.name,
         ownerName = "Ray Sponsible",
-        country = "CM"
+        country = "CM",
     )
 
     private val token = "xxx"
@@ -69,8 +69,8 @@ class AddPaymentMethodControllerTest : AbstractSecuredControllerTest() {
             EventURN.PAYMENT_METHOD_ADDED.urn,
             PaymentMethodEventPayload(
                 accountId = ACCOUNT_ID,
-                paymentMethodToken = token
-            )
+                paymentMethodToken = token,
+            ),
         )
     }
 

@@ -16,7 +16,7 @@ import java.time.OffsetDateTime
 class ExpireOrderJob(
     private val checkoutAccessApi: CheckoutAccessApi,
     private val workflow: ExpireOrderWorkflow,
-    lockManager: CronLockManager
+    lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "expire-order"
 
@@ -38,9 +38,9 @@ class ExpireOrderJob(
                     expiresTo = now,
                     status = listOf(
                         OrderStatus.PENDING.name,
-                        OrderStatus.UNKNOWN.name
-                    )
-                )
+                        OrderStatus.UNKNOWN.name,
+                    ),
+                ),
             ).orders
             orders.forEach {
                 if (expire(it.id)) {

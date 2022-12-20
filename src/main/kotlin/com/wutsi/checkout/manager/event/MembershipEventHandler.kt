@@ -27,7 +27,7 @@ class MembershipEventHandler(
     private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
     private val createBusinessWorkflow: CreateBusinessWorkflow,
     private val deactivateBusinessWorkflow: DeactivateBusinessWorkflow,
-    private val deactivatePaymentMethodWorkflow: DeactivatePaymentMethodWorkflow
+    private val deactivatePaymentMethodWorkflow: DeactivatePaymentMethodWorkflow,
 ) {
     fun onMemberRegistered(event: Event) {
         val payload = toMemberPayload(event)
@@ -39,8 +39,8 @@ class MembershipEventHandler(
             SearchPaymentProviderRequest(
                 country = account.phone.country,
                 number = account.phone.number,
-                type = type.name
-            )
+                type = type.name,
+            ),
         ).paymentProviders
 
         if (providers.size == 1) {
@@ -49,7 +49,7 @@ class MembershipEventHandler(
                 type = type.name,
                 number = account.phone.number,
                 country = account.phone.country,
-                ownerName = account.displayName
+                ownerName = account.displayName,
             )
             val context = WorkflowContext(accountId = payload.accountId)
             val response = addPaymentMethodWorkflow.execute(request, context)
@@ -66,8 +66,8 @@ class MembershipEventHandler(
         checkoutAccessApi.searchPaymentMethod(
             request = SearchPaymentMethodRequest(
                 accountId = payload.accountId,
-                status = PaymentMethodStatus.ACTIVE.name
-            )
+                status = PaymentMethodStatus.ACTIVE.name,
+            ),
         ).paymentMethods.forEach {
             deactivatePaymentMethodWorkflow.execute(it.token, context)
         }

@@ -15,5 +15,5 @@ public data class AddPaymentMethodRequest(
     public val country: String = "",
     @get:NotBlank
     @get:Size(max = 100)
-    public val ownerName: String = ""
+    public val ownerName: String = "",
 )

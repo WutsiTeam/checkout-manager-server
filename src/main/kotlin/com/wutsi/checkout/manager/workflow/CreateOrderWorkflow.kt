@@ -26,18 +26,18 @@ import org.springframework.stereotype.Service
 class CreateOrderWorkflow(
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<CreateOrderRequest, CreateOrderResponse>(eventStream) {
     override fun getEventType(
         request: CreateOrderRequest,
         response: CreateOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         request: CreateOrderRequest,
         response: CreateOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): OrderEventPayload? = null
 
     override fun getValidationRules(request: CreateOrderRequest, context: WorkflowContext): RuleSet {
@@ -46,8 +46,8 @@ class CreateOrderWorkflow(
         return RuleSet(
             listOfNotNull(
                 AccountShouldBeActiveRule(account),
-                BusinessShouldBeActive(business)
-            )
+                BusinessShouldBeActive(business),
+            ),
         )
     }
 
@@ -65,20 +65,20 @@ class CreateOrderWorkflow(
 
         return CreateOrderResponse(
             orderId = response.orderId,
-            orderStatus = response.orderStatus
+            orderStatus = response.orderStatus,
         )
     }
 
     private fun createOrder(
         request: CreateOrderRequest,
-        business: Business
+        business: Business,
     ): com.wutsi.checkout.access.dto.CreateOrderResponse {
         val products = marketplaceAccessApi.searchProduct(
             request = SearchProductRequest(
                 limit = request.items.size,
                 productIds = request.items.map { it.productId },
-                status = ProductStatus.PUBLISHED.name
-            )
+                status = ProductStatus.PUBLISHED.name,
+            ),
         ).products.associateBy { it.id }
 
         return checkoutAccessApi.createOrder(
@@ -99,13 +99,13 @@ class CreateOrderWorkflow(
                             quantity = it.quantity,
                             title = prod.title,
                             pictureUrl = prod.thumbnailUrl,
-                            unitPrice = prod.price ?: 0
+                            unitPrice = prod.price ?: 0,
                         )
                     } else {
                         null
                     }
-                }.filterNotNull()
-            )
+                }.filterNotNull(),
+            ),
         )
     }
 
@@ -117,10 +117,10 @@ class CreateOrderWorkflow(
                     items = request.items.map {
                         ReservationItem(
                             productId = it.productId,
-                            quantity = it.quantity
+                            quantity = it.quantity,
                         )
-                    }
-                )
+                    },
+                ),
             ).reservationId
         } catch (ex: FeignException) {
             throw handleAvailabilityException(ex)
@@ -131,7 +131,7 @@ class CreateOrderWorkflow(
         val response = objectMapper.readValue(ex.contentUTF8(), ErrorResponse::class.java)
         if (response.error.code == com.wutsi.marketplace.access.error.ErrorURN.PRODUCT_NOT_AVAILABLE.urn) {
             return ConflictException(
-                error = response.error.copy(code = ErrorURN.PRODUCT_NOT_AVAILABLE.urn)
+                error = response.error.copy(code = ErrorURN.PRODUCT_NOT_AVAILABLE.urn),
             )
         } else {
             return ex

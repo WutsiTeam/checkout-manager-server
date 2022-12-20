@@ -33,7 +33,7 @@ internal class ExpireOrderJobTest {
         // GIVEN
         val orders = listOf(
             Fixtures.createOrderSummary("1"),
-            Fixtures.createOrderSummary("2")
+            Fixtures.createOrderSummary("2"),
         )
         doReturn(SearchOrderResponse(orders)).whenever(checkoutAccessApi).searchOrder(any())
 
@@ -43,11 +43,11 @@ internal class ExpireOrderJobTest {
         // THEN
         verify(checkoutAccessApi).updateOrderStatus(
             orders[0].id,
-            UpdateOrderStatusRequest(OrderStatus.EXPIRED.name)
+            UpdateOrderStatusRequest(OrderStatus.EXPIRED.name),
         )
         verify(checkoutAccessApi).updateOrderStatus(
             orders[1].id,
-            UpdateOrderStatusRequest(OrderStatus.EXPIRED.name)
+            UpdateOrderStatusRequest(OrderStatus.EXPIRED.name),
         )
 
         verify(eventStream).publish(EventURN.ORDER_EXPIRED.urn, OrderEventPayload(orders[0].id))

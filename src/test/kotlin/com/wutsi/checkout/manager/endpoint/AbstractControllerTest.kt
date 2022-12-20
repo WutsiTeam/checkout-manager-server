@@ -32,7 +32,7 @@ abstract class AbstractControllerTest {
     }
 
     protected fun createFeignNotFoundException(
-        errorCode: String
+        errorCode: String,
     ) = FeignException.NotFound(
         "",
         Request.create(
@@ -41,7 +41,7 @@ abstract class AbstractControllerTest {
             emptyMap(),
             "".toByteArray(),
             Charset.defaultCharset(),
-            RequestTemplate()
+            RequestTemplate(),
         ),
         """
             {
@@ -50,11 +50,11 @@ abstract class AbstractControllerTest {
                 }
             }
         """.trimIndent().toByteArray(),
-        emptyMap()
+        emptyMap(),
     )
 
     protected fun createFeignConflictException(
-        errorCode: String
+        errorCode: String,
     ) = FeignException.Conflict(
         "",
         Request.create(
@@ -63,7 +63,7 @@ abstract class AbstractControllerTest {
             emptyMap(),
             "".toByteArray(),
             Charset.defaultCharset(),
-            RequestTemplate()
+            RequestTemplate(),
         ),
         """
             {
@@ -72,6 +72,6 @@ abstract class AbstractControllerTest {
                 }
             }
         """.trimIndent().toByteArray(),
-        emptyMap()
+        emptyMap(),
     )
 }

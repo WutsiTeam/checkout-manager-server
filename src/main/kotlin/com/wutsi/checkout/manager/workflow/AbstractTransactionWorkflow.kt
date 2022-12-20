@@ -24,7 +24,7 @@ abstract class AbstractTransactionWorkflow<Req, Resp>(eventStream: EventStream) 
         val response = objectMapper.readValue(ex.contentUTF8(), ErrorResponse::class.java)
         return if (response.error.code == com.wutsi.checkout.access.error.ErrorURN.TRANSACTION_FAILED.urn) {
             ConflictException(
-                error = response.error.copy(code = ErrorURN.TRANSACTION_FAILED.urn)
+                error = response.error.copy(code = ErrorURN.TRANSACTION_FAILED.urn),
             )
         } else {
             ex

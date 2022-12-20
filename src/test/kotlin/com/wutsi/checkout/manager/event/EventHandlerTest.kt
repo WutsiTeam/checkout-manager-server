@@ -25,15 +25,15 @@ internal class EventHandlerTest {
     private val memberEventPayload = MemberEventPayload(
         phoneNumber = "+237670000010",
         accountId = 111L,
-        pin = "123456"
+        pin = "123456",
     )
 
     private val transactionEventPayload = TransactionEventPayload(
-        transactionId = "33333"
+        transactionId = "33333",
     )
 
     private val orderEventPayload = OrderEventPayload(
-        orderId = "1111"
+        orderId = "1111",
     )
 
     @Test
@@ -41,7 +41,7 @@ internal class EventHandlerTest {
         // WHEN
         val event = Event(
             type = EventURN.MEMBER_REGISTERED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload)
+            payload = mapper.writeValueAsString(memberEventPayload),
         )
         handler.handleEvent(event)
 
@@ -54,7 +54,7 @@ internal class EventHandlerTest {
         // WHEN
         val event = Event(
             type = EventURN.MEMBER_DELETED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload)
+            payload = mapper.writeValueAsString(memberEventPayload),
         )
         handler.handleEvent(event)
 
@@ -67,7 +67,7 @@ internal class EventHandlerTest {
         // WHEN
         val event = Event(
             type = EventURN.BUSINESS_ACTIVATED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload)
+            payload = mapper.writeValueAsString(memberEventPayload),
         )
         handler.handleEvent(event)
 
@@ -80,7 +80,7 @@ internal class EventHandlerTest {
         // WHEN
         val event = Event(
             type = EventURN.BUSINESS_DEACTIVATED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload)
+            payload = mapper.writeValueAsString(memberEventPayload),
         )
         handler.handleEvent(event)
 

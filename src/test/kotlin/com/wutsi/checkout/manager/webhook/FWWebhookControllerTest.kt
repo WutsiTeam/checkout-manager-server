@@ -35,7 +35,7 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
     override fun intercept(
         request: HttpRequest,
         body: ByteArray,
-        execution: ClientHttpRequestExecution
+        execution: ClientHttpRequestExecution,
     ): ClientHttpResponse {
         request.headers.add("verif-hash", secretHash)
         return execution.execute(request, body)
@@ -52,8 +52,8 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
             event = "payment.completed",
             data = FWResponseData(
                 id = 1203920932,
-                tx_ref = "-transaction-id-"
-            )
+                tx_ref = "-transaction-id-",
+            ),
         )
         rest.postForEntity(url(), request, Any::class.java)
 
@@ -66,8 +66,8 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
             event = "payment.completed",
             FWResponseData(
                 id = 1203920932,
-                tx_ref = "-transaction-id-"
-            )
+                tx_ref = "-transaction-id-",
+            ),
         )
         RestTemplate().postForEntity(url(), request, Any::class.java)
 
@@ -80,8 +80,8 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
             event = "payment.completed",
             FWResponseData(
                 id = 1203920932,
-                tx_ref = null
-            )
+                tx_ref = null,
+            ),
         )
         rest.postForEntity(url(), request, Any::class.java)
 

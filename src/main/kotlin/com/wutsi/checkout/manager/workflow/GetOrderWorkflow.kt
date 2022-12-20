@@ -12,18 +12,18 @@ import org.springframework.stereotype.Service
 @Service
 class GetOrderWorkflow(
     private val objectMapper: ObjectMapper,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<String, GetOrderResponse>(eventStream) {
     override fun getEventType(
         orderId: String,
         response: GetOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         orderId: String,
         response: GetOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): OrderEventPayload? = null
 
     override fun getValidationRules(orderId: String, context: WorkflowContext) = RuleSet.NONE
@@ -36,7 +36,7 @@ class GetOrderWorkflow(
          */
         val json = objectMapper.writeValueAsString(order)
         return GetOrderResponse(
-            order = objectMapper.readValue(json, Order::class.java)
+            order = objectMapper.readValue(json, Order::class.java),
         )
     }
 }

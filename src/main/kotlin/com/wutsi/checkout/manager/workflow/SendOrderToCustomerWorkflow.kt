@@ -3,6 +3,7 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.event.InternalEventURN
 import com.wutsi.checkout.manager.mail.MailMapper
+import com.wutsi.checkout.manager.mail.OrderModel
 import com.wutsi.enums.ProductType
 import com.wutsi.event.OrderEventPayload
 import com.wutsi.mail.MailFilterSet
@@ -26,23 +27,23 @@ class SendOrderToCustomerWorkflow(
     private val mapper: MailMapper,
     private val templateEngine: TemplateEngine,
     private val regulationEngine: RegulationEngine,
-    private val mailFilterSet: MailFilterSet
+    private val mailFilterSet: MailFilterSet,
 ) : AbstractSendOrderWorkflow(eventStream) {
     override fun createMessage(
         order: Order,
         merchant: Account,
         type: MessagingType,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): Message? =
         when (type) {
             MessagingType.EMAIL -> Message(
                 recipient = Party(
                     email = order.customerEmail,
-                    displayName = order.customerName
+                    displayName = order.customerName,
                 ),
                 subject = getText("email.notify-customer.subject"),
                 body = generateBody(order, merchant),
-                mimeType = "text/html"
+                mimeType = "text/html",
             )
             else -> null
         }
@@ -66,17 +67,23 @@ class SendOrderToCustomerWorkflow(
         val ctx = Context(LocaleContextHolder.getLocale())
         val country = regulationEngine.country(order.business.country)
 
-        ctx.setVariable("order", mapper.toOrderModel(order, country))
-        loadEvents(order, country, ctx)
+        ctx.setVariable("order", toOrderModel(order, country))
 
         val body = templateEngine.process("order-customer.html", ctx)
         return mailFilterSet.filter(
             body = body,
-            context = createMailContext(merchant)
+            context = createMailContext(merchant),
         )
     }
 
-    private fun loadEvents(order: Order, country: Country, ctx: Context) {
+    private fun toOrderModel(order: Order, country: Country): OrderModel {
+        val model = mapper.toOrderModel(order, country)
+        attachEvents(model, country)
+        attachFiles(model)
+        return model
+    }
+
+    private fun attachEvents(order: OrderModel, country: Country) {
         val productIds = order.items
             .filter { it.productType == ProductType.EVENT.name }
             .map { it.productId }
@@ -87,11 +94,22 @@ class SendOrderToCustomerWorkflow(
         val products = marketplaceAccessApi.searchProduct(
             request = SearchProductRequest(
                 productIds = productIds,
-                limit = productIds.size
-            )
-        ).products
-        if (products.isNotEmpty()) {
-            ctx.setVariable("productEvents", products.map { mapper.toProduct(it, country) })
-        }
+                limit = productIds.size,
+            ),
+        ).products.associateBy { it.id }
+        order.items
+            .filter { it.productType == ProductType.EVENT.name }
+            .forEach {
+                it.event = products[it.productId]?.event?.let { mapper.toEventModel(it, country) }
+            }
+    }
+
+    private fun attachFiles(order: OrderModel) {
+        order.items
+            .filter { it.productType == ProductType.DIGITAL_DOWNLOAD.name }
+            .forEach {
+                val product = marketplaceAccessApi.getProduct(it.productId).product
+                it.files = product.files.map { mapper.toFileModel(it) }
+            }
     }
 }

@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RestController
 public class FlutterwaveController(
     private val logger: KVLogger,
     private val workflow: ProcessPendingTransactionWorkflow,
-    @Value("\${wutsi.flutterwave.secret-hash}") private val secretHash: String
+    @Value("\${wutsi.flutterwave.secret-hash}") private val secretHash: String,
 ) {
     @PostMapping("/webhook")
     public fun invoke(
         @RequestBody request: FWWebhookRequest,
-        @RequestHeader(name = "verif-hash", required = false) verifHash: String? = null
+        @RequestHeader(name = "verif-hash", required = false) verifHash: String? = null,
     ) {
         log(request)
 

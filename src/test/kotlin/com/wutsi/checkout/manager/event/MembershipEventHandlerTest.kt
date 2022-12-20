@@ -58,11 +58,11 @@ internal class MembershipEventHandlerTest {
     val payload = MemberEventPayload(
         phoneNumber = account.phone.number,
         accountId = 123L,
-        pin = "111111"
+        pin = "111111",
     )
     val event = Event(
         payload = ObjectMapper().writeValueAsString(payload),
-        timestamp = OffsetDateTime.now()
+        timestamp = OffsetDateTime.now(),
     )
 
     @BeforeEach
@@ -93,16 +93,16 @@ internal class MembershipEventHandlerTest {
                 number = account.phone.number,
                 country = account.phone.country,
                 providerId = paymentProvider.id,
-                type = PaymentMethodType.MOBILE_MONEY.name
-            )
+                type = PaymentMethodType.MOBILE_MONEY.name,
+            ),
         )
 
         verify(eventStream).publish(
             EventURN.PAYMENT_METHOD_ADDED.urn,
             PaymentMethodEventPayload(
                 accountId = account.id,
-                paymentMethodToken = token
-            )
+                paymentMethodToken = token,
+            ),
         )
     }
 
@@ -127,7 +127,7 @@ internal class MembershipEventHandlerTest {
         // GIVEN
         val providers = listOf(
             Fixtures.createPaymentProvider(type = PaymentMethodType.MOBILE_MONEY),
-            Fixtures.createPaymentProvider(type = PaymentMethodType.BANK)
+            Fixtures.createPaymentProvider(type = PaymentMethodType.BANK),
         )
         doReturn(SearchPaymentProviderResponse(providers)).whenever(checkoutAccessApi).searchPaymentProvider(any())
 
@@ -150,7 +150,7 @@ internal class MembershipEventHandlerTest {
 
         val paymentMethods = listOf(
             Fixtures.createPaymentMethodSummary(token = "111"),
-            Fixtures.createPaymentMethodSummary(token = "222")
+            Fixtures.createPaymentMethodSummary(token = "222"),
         )
         doReturn(SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccessApi).searchPaymentMethod(any())
 
@@ -167,13 +167,13 @@ internal class MembershipEventHandlerTest {
         // THEN
         verify(checkoutAccessApi).updateBusinessStatus(
             account.businessId!!,
-            UpdateBusinessStatusRequest(status = BusinessStatus.INACTIVE.name)
+            UpdateBusinessStatusRequest(status = BusinessStatus.INACTIVE.name),
         )
 
         val token = argumentCaptor<String>()
         verify(checkoutAccessApi, times(2)).updatePaymentMethodStatus(
             token.capture(),
-            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name))
+            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name)),
         )
         assertEquals(paymentMethods[0].token, token.firstValue)
         assertEquals(paymentMethods[1].token, token.secondValue)
@@ -182,8 +182,8 @@ internal class MembershipEventHandlerTest {
             EventURN.BUSINESS_DEACTIVATED.urn,
             BusinessEventPayload(
                 businessId = account.businessId!!,
-                accountId = account.id
-            )
+                accountId = account.id,
+            ),
         )
     }
 
@@ -195,7 +195,7 @@ internal class MembershipEventHandlerTest {
 
         val paymentMethods = listOf(
             Fixtures.createPaymentMethodSummary(token = "111"),
-            Fixtures.createPaymentMethodSummary(token = "222")
+            Fixtures.createPaymentMethodSummary(token = "222"),
         )
         doReturn(SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccessApi).searchPaymentMethod(any())
 
@@ -215,7 +215,7 @@ internal class MembershipEventHandlerTest {
         val token = argumentCaptor<String>()
         verify(checkoutAccessApi, times(2)).updatePaymentMethodStatus(
             token.capture(),
-            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name))
+            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name)),
         )
         assertEquals(paymentMethods[0].token, token.firstValue)
         assertEquals(paymentMethods[1].token, token.secondValue)
@@ -237,16 +237,16 @@ internal class MembershipEventHandlerTest {
             CreateBusinessRequest(
                 accountId = account.id,
                 country = account.country,
-                currency = "XAF"
-            )
+                currency = "XAF",
+            ),
         )
 
         verify(eventStream).publish(
             EventURN.BUSINESS_CREATED.urn,
             BusinessEventPayload(
                 businessId = businessId,
-                accountId = account.id
-            )
+                accountId = account.id,
+            ),
         )
     }
 
@@ -264,16 +264,16 @@ internal class MembershipEventHandlerTest {
         verify(checkoutAccessApi).updateBusinessStatus(
             businessId,
             UpdateBusinessStatusRequest(
-                status = BusinessStatus.INACTIVE.name
-            )
+                status = BusinessStatus.INACTIVE.name,
+            ),
         )
 
         verify(eventStream).publish(
             EventURN.BUSINESS_DEACTIVATED.urn,
             BusinessEventPayload(
                 businessId = businessId,
-                accountId = account.id
-            )
+                accountId = account.id,
+            ),
         )
     }
 

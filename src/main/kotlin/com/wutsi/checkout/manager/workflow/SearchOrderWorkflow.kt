@@ -13,18 +13,18 @@ import org.springframework.stereotype.Service
 @Service
 class SearchOrderWorkflow(
     private val objectMapper: ObjectMapper,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractOrderWorkflow<SearchOrderRequest, SearchOrderResponse>(eventStream) {
     override fun getEventType(
         request: SearchOrderRequest,
         response: SearchOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         request: SearchOrderRequest,
         response: SearchOrderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): OrderEventPayload? = null
 
     override fun getValidationRules(request: SearchOrderRequest, context: WorkflowContext) = RuleSet.NONE
@@ -39,16 +39,16 @@ class SearchOrderWorkflow(
                 status = request.status,
                 createdTo = request.createdTo,
                 createdFrom = request.createdFrom,
-                expiresTo = request.expiresTo
-            )
+                expiresTo = request.expiresTo,
+            ),
         ).orders
         return SearchOrderResponse(
             orders = orders.map {
                 objectMapper.readValue(
                     objectMapper.writeValueAsString(it),
-                    OrderSummary::class.java
+                    OrderSummary::class.java,
                 )
-            }
+            },
         )
     }
 }

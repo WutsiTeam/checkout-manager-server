@@ -13,29 +13,29 @@ import org.springframework.stereotype.Service
 
 @Service
 class AddPaymentMethodWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<AddPaymentMethodRequest, AddPaymentMethodResponse>(eventStream) {
     override fun getEventType(
         request: AddPaymentMethodRequest,
         response: AddPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ) = EventURN.PAYMENT_METHOD_ADDED.urn
 
     override fun toEventPayload(
         request: AddPaymentMethodRequest,
         response: AddPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ) = PaymentMethodEventPayload(
         accountId = getCurrentAccountId(context),
-        paymentMethodToken = response.paymentMethodToken
+        paymentMethodToken = response.paymentMethodToken,
     )
 
     override fun getValidationRules(request: AddPaymentMethodRequest, context: WorkflowContext): RuleSet {
         val account = getCurrentAccount(context)
         return RuleSet(
             listOf(
-                AccountShouldBeActiveRule(account)
-            )
+                AccountShouldBeActiveRule(account),
+            ),
         )
     }
 
@@ -48,8 +48,8 @@ class AddPaymentMethodWorkflow(
                     number = request.number,
                     country = request.country,
                     ownerName = request.ownerName,
-                    providerId = request.providerId
-                )
-            ).paymentMethodToken
+                    providerId = request.providerId,
+                ),
+            ).paymentMethodToken,
         )
 }

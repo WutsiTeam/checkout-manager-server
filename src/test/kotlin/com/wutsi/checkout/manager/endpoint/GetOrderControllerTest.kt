@@ -38,7 +38,7 @@ public class GetOrderControllerTest : AbstractSecuredControllerTest() {
         val writer = mapper.writerWithDefaultPrettyPrinter()
         assertEquals(
             writer.writeValueAsString(order),
-            writer.writeValueAsString(value)
+            writer.writeValueAsString(value),
         )
     }
 

@@ -21,33 +21,33 @@ class SendOrderToMerchantWorkflow(
     private val mapper: MailMapper,
     private val templateEngine: TemplateEngine,
     private val regulationEngine: RegulationEngine,
-    private val mailFilterSet: MailFilterSet
+    private val mailFilterSet: MailFilterSet,
 ) : AbstractSendOrderWorkflow(eventStream) {
     override fun createMessage(
         order: Order,
         merchant: Account,
         type: MessagingType,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): Message? =
         when (type) {
             MessagingType.EMAIL -> merchant.email?.let {
                 Message(
                     recipient = Party(
                         email = it,
-                        displayName = merchant.displayName
+                        displayName = merchant.displayName,
                     ),
                     subject = getText("email.notify-merchant.subject"),
                     body = generateBody(order, merchant),
-                    mimeType = "text/html"
+                    mimeType = "text/html",
                 )
             }
             MessagingType.PUSH_NOTIFICATION -> getDeviceToken(merchant)?.let {
                 Message(
                     recipient = Party(
                         deviceToken = it,
-                        displayName = merchant.displayName
+                        displayName = merchant.displayName,
                     ),
-                    body = getText("push-notification.notify-merchant.body")
+                    body = getText("push-notification.notify-merchant.body"),
                 )
             }
             else -> null
@@ -61,7 +61,7 @@ class SendOrderToMerchantWorkflow(
         val body = templateEngine.process("order-merchant.html", ctx)
         return mailFilterSet.filter(
             body = body,
-            context = createMailContext(merchant)
+            context = createMailContext(merchant),
         )
     }
 

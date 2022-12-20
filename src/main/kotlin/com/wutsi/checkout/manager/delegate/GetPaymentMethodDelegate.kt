@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.GetPaymentMethodResponse
 import com.wutsi.checkout.manager.workflow.GetPaymentMethodWorkflow

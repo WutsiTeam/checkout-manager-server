@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 class HandleSuccessfulTransactionWorkflow(
     eventStream: EventStream,
-    private val logger: KVLogger
+    private val logger: KVLogger,
 ) : AbstractCheckoutWorkflow<String, Unit, Void?>(eventStream) {
     override fun getEventType(transactionId: String, response: Unit, context: WorkflowContext): String? = null
 
@@ -50,8 +50,8 @@ class HandleSuccessfulTransactionWorkflow(
         checkoutAccessApi.updateOrderStatus(
             id = orderId,
             request = UpdateOrderStatusRequest(
-                status = OrderStatus.OPENED.name
-            )
+                status = OrderStatus.OPENED.name,
+            ),
         )
 
         sendOrderToCustomer(order)

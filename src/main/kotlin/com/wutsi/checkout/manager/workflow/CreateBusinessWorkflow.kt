@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service
 @Service
 class CreateBusinessWorkflow(
     private val regulationEngine: RegulationEngine,
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractBusinessWorkflow<Void?, Long>(eventStream) {
     override fun getEventType(request: Void?, businessId: Long, context: WorkflowContext) =
         EventURN.BUSINESS_CREATED.urn
 
     override fun toEventPayload(request: Void?, businessId: Long, context: WorkflowContext) = BusinessEventPayload(
         accountId = getCurrentAccountId(context),
-        businessId = businessId
+        businessId = businessId,
     )
 
     override fun getValidationRules(request: Void?, context: WorkflowContext): RuleSet {
@@ -29,8 +29,8 @@ class CreateBusinessWorkflow(
         return RuleSet(
             listOf(
                 AccountShouldBeActiveRule(account),
-                CountryShouldSupportBusinessAccountRule(account, regulationEngine)
-            )
+                CountryShouldSupportBusinessAccountRule(account, regulationEngine),
+            ),
         )
     }
 
@@ -40,8 +40,8 @@ class CreateBusinessWorkflow(
             request = CreateBusinessRequest(
                 accountId = account.id,
                 country = account.country,
-                currency = regulationEngine.country(account.country).currency
-            )
+                currency = regulationEngine.country(account.country).currency,
+            ),
         ).businessId
     }
 }

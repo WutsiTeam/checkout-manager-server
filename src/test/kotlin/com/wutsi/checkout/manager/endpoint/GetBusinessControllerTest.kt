@@ -22,7 +22,7 @@ public class GetBusinessControllerTest : AbstractSecuredControllerTest() {
         // GIVEN
         val business = Fixtures.createBusiness(BUSINESS_ID, ACCOUNT_ID)
         doReturn(com.wutsi.checkout.access.dto.GetBusinessResponse(business)).whenever(checkoutAccess).getBusiness(
-            BUSINESS_ID
+            BUSINESS_ID,
         )
 
         // WHEN

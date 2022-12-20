@@ -11,32 +11,32 @@ import org.springframework.stereotype.Service
 
 @Service
 class SearchPaymentProviderWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<SearchPaymentProviderRequest, SearchPaymentProviderResponse>(eventStream) {
     override fun getEventType(
         request: SearchPaymentProviderRequest,
         response: SearchPaymentProviderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         request: SearchPaymentProviderRequest,
         response: SearchPaymentProviderResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): PaymentMethodEventPayload? = null
 
     override fun getValidationRules(request: SearchPaymentProviderRequest, context: WorkflowContext) = RuleSet.NONE
 
     override fun doExecute(
         request: SearchPaymentProviderRequest,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): SearchPaymentProviderResponse {
         val providers = checkoutAccessApi.searchPaymentProvider(
             request = com.wutsi.checkout.access.dto.SearchPaymentProviderRequest(
                 number = request.number,
                 country = request.country,
-                type = request.type
-            )
+                type = request.type,
+            ),
         ).paymentProviders
         return SearchPaymentProviderResponse(
             paymentProviders = providers.map {
@@ -45,9 +45,9 @@ class SearchPaymentProviderWorkflow(
                     name = it.name,
                     logoUrl = it.logoUrl,
                     code = it.code,
-                    type = it.type
+                    type = it.type,
                 )
-            }
+            },
         )
     }
 }

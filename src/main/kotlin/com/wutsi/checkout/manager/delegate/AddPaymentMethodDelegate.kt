@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodResponse
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class AddPaymentMethodDelegate(
     private val workflow: AddPaymentMethodWorkflow,
-    private val logger: KVLogger
+    private val logger: KVLogger,
 ) {
     fun invoke(request: AddPaymentMethodRequest): AddPaymentMethodResponse {
         logger.add("request_provider_id", request.providerId)

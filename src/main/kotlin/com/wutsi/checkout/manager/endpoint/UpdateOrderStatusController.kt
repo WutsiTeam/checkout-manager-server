@@ -9,12 +9,12 @@ import javax.validation.Valid
 
 @RestController
 public class UpdateOrderStatusController(
-    public val `delegate`: UpdateOrderStatusDelegate
+    public val `delegate`: UpdateOrderStatusDelegate,
 ) {
     @PostMapping("/v1/orders/status")
     public fun invoke(
         @Valid @RequestBody
-        request: UpdateOrderStatusRequest
+        request: UpdateOrderStatusRequest,
     ) {
         delegate.invoke(request)
     }

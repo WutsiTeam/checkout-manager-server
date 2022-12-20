@@ -12,18 +12,18 @@ import org.springframework.stereotype.Service
 
 @Service
 class SearchPaymentMethodWorkflow(
-    eventStream: EventStream
+    eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<SearchPaymentMethodRequest, SearchPaymentMethodResponse>(eventStream) {
     override fun getEventType(
         request: SearchPaymentMethodRequest,
         response: SearchPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
         request: SearchPaymentMethodRequest,
         response: SearchPaymentMethodResponse,
-        context: WorkflowContext
+        context: WorkflowContext,
     ): PaymentMethodEventPayload? = null
 
     override fun getValidationRules(request: SearchPaymentMethodRequest, context: WorkflowContext) = RuleSet.NONE
@@ -34,8 +34,8 @@ class SearchPaymentMethodWorkflow(
                 accountId = getCurrentAccountId(context),
                 status = request.status,
                 limit = request.limit,
-                offset = request.offset
-            )
+                offset = request.offset,
+            ),
         ).paymentMethods
         return SearchPaymentMethodResponse(
             paymentMethods = paymentMethods.map {
@@ -51,10 +51,10 @@ class SearchPaymentMethodWorkflow(
                         name = it.provider.name,
                         logoUrl = it.provider.logoUrl,
                         code = it.provider.code,
-                        type = it.provider.type
-                    )
+                        type = it.provider.type,
+                    ),
                 )
-            }
+            },
         )
     }
 }

@@ -32,7 +32,7 @@ public class RemovePaymentMethodControllerTest : AbstractSecuredControllerTest()
         // THEN
         checkoutAccess.updatePaymentMethodStatus(
             paymentMethod.token,
-            UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name)
+            UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name),
         )
     }
 

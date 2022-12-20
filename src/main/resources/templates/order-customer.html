@@ -51,15 +51,7 @@
         </td>
     </tr>
     <tr th:if="${order.payment}">
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.total-paid}">
-            TOTAL PAID:
-        </td>
-        <td align="right" class="padding border-top">
-            <span th:text="${order.payment.amount}">30,000 FCFA</span>
-        </td>
-    </tr>
-    <tr th:if="${order.payment}">
-        <td align="right" class="padding-bottom" colspan="2">
+        <td align="right" class="padding" colspan="2">
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
@@ -74,7 +66,9 @@
                 </tr>
             </table>
         </td>
-        <td class="padding-bottom">&nbsp;</td>
+        <td class="padding" style="text-align: right" valign="right">
+            <div class="btn-success rounded" th:text="#{email.notify-customer.body.paid}">PAID</div>
+        </td>
     </tr>
     <tr>
         <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-customer.body.balance}">
@@ -86,9 +80,9 @@
     </tr>
 </table>
 
-<hr th:if="${productEvents}"/>
-<h2 th:if="${productEvents}" th:text="#{email.notify-customer.event.title}">Title</h2>
-<div class="padding" th:each="productEvent:${productEvents}">
+<!-- EVENTS -->
+<h2 th:if="${order.itemsWithEvent.size() GT 0}" th:text="#{email.notify-customer.event.title}">Title</h2>
+<div class="padding" th:each="item : ${order.itemsWithEvent}">
     <div class="border">
         <table cellpadding="0" cellspacing="0" width="100%">
             <tr>
@@ -97,43 +91,74 @@
                         <tr>
                             <td align="right" class="padding" valign="middle" width="1">
                                 <img height="32"
-                                     th:if="${productEvent.event.meetingProviderLogoUrl}"
-                                     th:src="${productEvent.event.meetingProviderLogoUrl}"
+                                     th:if="${item.event.meetingProviderLogoUrl}"
+                                     th:src="${item.event.meetingProviderLogoUrl}"
                                      width="32"
                                 />
                             </td>
                             <td class="padding" valign="middle">
-                                <h4 class="no-margin" th:text="${productEvent.title}">EVENT</h4>
+                                <h2 class="no-margin" th:text="${item.title}">EVENT</h2>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            <tr th:if="${productEvent.thumbnailUrl}">
-                <td align="center" class="padding" colspan="2" valign="middle">
-                    <img style="max-height:300px; max-width: 300px;" th:src="${productEvent.thumbnailUrl}"/>
+            <tr th:if="${item.pictureUrl}">
+                <td align="center" class="padding  border-top" colspan="2" valign="middle">
+                    <img style="max-height:300px; max-width: 300px;" th:src="${item.pictureUrl}"/>
                 </td>
             </tr>
-            <tr th:if="${productEvent.event.starts}">
+            <tr th:if="${item.event.starts}">
                 <td align="right" class="padding border-top">
                     <span th:text="#{email.notify-customer.event.date}">Date</span>:
                 </td>
-                <td class="padding border-top" th:text="${productEvent.event.starts}">2020-10-01 21-30</td>
+                <td class="padding border-top" th:text="${item.event.starts}">2020-10-01 21-30</td>
             </tr>
-            <tr th:if="${productEvent.event.meetingJoinUrl}">
+            <tr th:if="${item.event.meetingJoinUrl}">
                 <td align="right" class="padding border-top">
                     <span th:text="#{email.notify-customer.event.url}">URL</span>:
                 </td>
                 <td class="padding border-top">
-                    <a th:href="${productEvent.event.meetingJoinUrl}"
-                       th:text="${productEvent.event.meetingJoinUrl}">URL</a>
+                    <a th:href="${item.event.meetingJoinUrl}"
+                       th:text="${item.event.meetingJoinUrl}">URL</a>
                 </td>
             </tr>
-            <tr th:if="${productEvent.event.meetingPassword}">
+            <tr th:if="${item.event.meetingPassword}">
                 <td align="right" class="padding border-top" th:text="#{email.notify-customer.event.password}">
                     Password
                 </td>
-                <td class="padding border-top" th:text="${productEvent.event.meetingPassword}">1234343</td>
+                <td class="padding border-top" th:text="${item.event.meetingPassword}">1234343</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- DIGITAL DOWNLOADS -->
+<h2 th:if="${order.itemsWithFiles.size() GT 0}" th:text="#{email.notify-customer.files.title}">Files</h2>
+<div class="padding" th:each="item : ${order.itemsWithFiles}">
+    <div class="border">
+        <table cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="padding" colspan="2">
+                    <h2 class="no-margin" th:text="${item.title}">Title</h2>
+                </td>
+            </tr>
+            <tr th:each="file:${item.files}">
+                <td align="right" class="padding border-top" valign="middle" width="1">
+                    <img height="64"
+                         th:if="${file.extensionUrl}"
+                         th:src="${file.extensionUrl}"
+                         width="64"
+                    />
+                </td>
+                <td class="padding border-top" valign="middle">
+                    <a th:href="${file.url}">
+                        <h3 th:text="${file.name}">File.PNG</h3>
+                    </a>
+                    <div>
+                        <span th:text="#{email.notify-customer.files.size(${file.contentSize})}">Size: 12Kb</span>
+                    </div>
+                </td>
             </tr>
         </table>
     </div>

@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.`delegate`
+package com.wutsi.checkout.manager.delegate
 
 import com.wutsi.checkout.manager.dto.SearchOrderRequest
 import com.wutsi.checkout.manager.dto.SearchOrderResponse
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 public class SearchOrderDelegate(
     private val logger: KVLogger,
-    private val workflow: SearchOrderWorkflow
+    private val workflow: SearchOrderWorkflow,
 ) {
     public fun invoke(request: SearchOrderRequest): SearchOrderResponse {
         logger.add("request_limit", request.limit)

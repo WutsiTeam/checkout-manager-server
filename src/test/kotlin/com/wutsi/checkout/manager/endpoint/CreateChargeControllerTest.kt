@@ -52,7 +52,7 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
         orderId = orderId,
         description = "This is nice",
         email = "ray.sponsible@gmail.com",
-        paymentMethodOwnerName = "Ray Sponsible"
+        paymentMethodOwnerName = "Ray Sponsible",
     )
 
     @BeforeEach
@@ -92,8 +92,8 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
                 paymenMethodNumber = request.paymenMethodNumber,
                 email = request.email,
                 paymentMethodType = request.paymentMethodType,
-                description = request.description
-            )
+                description = request.description,
+            ),
         )
 
         val result = response.body!!
@@ -128,8 +128,8 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
                 paymenMethodNumber = request.paymenMethodNumber,
                 email = request.email,
                 paymentMethodType = request.paymentMethodType,
-                description = request.description
-            )
+                description = request.description,
+            ),
         )
 
         val result = response.body!!
@@ -138,7 +138,7 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
 
         verify(eventStream).enqueue(
             InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-            TransactionEventPayload(transactionResponse.transactionId)
+            TransactionEventPayload(transactionResponse.transactionId),
         )
         verify(eventStream, never()).publish(any(), any())
     }

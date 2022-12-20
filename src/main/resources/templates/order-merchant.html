@@ -68,15 +68,7 @@
         </td>
     </tr>
     <tr th:if="${order.payment}">
-        <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.total-paid}">
-            TOTAL PAID:
-        </td>
-        <td align="right" class="padding border-top">
-            <span th:text="${order.payment.amount}">30,000 FCFA</span>
-        </td>
-    </tr>
-    <tr th:if="${order.payment}">
-        <td align="right" class="padding-bottom" colspan="2">
+        <td align="right" class="padding" colspan="2">
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
@@ -91,7 +83,9 @@
                 </tr>
             </table>
         </td>
-        <td class="padding-bottom">&nbsp;</td>
+        <td class="padding" style="text-align: right" valign="right">
+            <div class="btn-success rounded" th:text="#{email.notify-merchant.body.paid}">PAID</div>
+        </td>
     </tr>
     <tr>
         <td align="right" class="padding border-top" colspan="2" th:text="#{email.notify-merchant.body.balance}">

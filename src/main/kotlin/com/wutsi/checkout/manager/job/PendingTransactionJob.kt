@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 class PendingTransactionJob(
     private val checkoutAccessApi: CheckoutAccessApi,
     private val workflow: ProcessPendingTransactionWorkflow,
-    lockManager: CronLockManager
+    lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "pending-transaction"
 
@@ -34,8 +34,8 @@ class PendingTransactionJob(
                 request = SearchTransactionRequest(
                     status = listOf(Status.PENDING.name),
                     limit = limit,
-                    offset = offset++
-                )
+                    offset = offset++,
+                ),
             ).transactions
             txs.forEach {
                 if (sync(it)) {

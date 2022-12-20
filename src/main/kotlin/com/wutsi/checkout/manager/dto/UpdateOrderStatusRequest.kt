@@ -8,5 +8,5 @@ public data class UpdateOrderStatusRequest(
     public val orderId: String = "",
     @get:NotBlank
     public val status: String = "",
-    public val reason: String? = null
+    public val reason: String? = null,
 )

@@ -55,6 +55,7 @@ object Fixtures {
         phoneNumber: String = "+237670000010",
         displayName: String = "Ray Sponsible",
         email: String? = null,
+        pictureUrl: String = "https://ik.imagekit.io/cx8qxsgz4d/user/12/picture/tr:w-64,h-64,fo-face/023bb5c8-7b09-4f2f-be51-29f5c851c2c0-scaled_image_picker1721723356188894418.png",
     ) = Account(
         id = id,
         displayName = displayName,
@@ -67,7 +68,7 @@ object Fixtures {
             number = phoneNumber,
             country = country,
         ),
-        pictureUrl = "https://www.img.com/$id.png",
+        pictureUrl = pictureUrl,
         category = Category(
             id = 100L,
             title = "Art",

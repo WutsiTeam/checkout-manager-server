@@ -73,6 +73,7 @@
 </table>
 
 <!-- EVENTS -->
+<hr th:if="${order.itemsWithEvent.size() GT 0}"/>
 <h2 th:if="${order.itemsWithEvent.size() GT 0}" th:text="#{email.notify-customer.event.title}">Title</h2>
 <div class="padding" th:each="item : ${order.itemsWithEvent}">
     <div class="border">
@@ -126,32 +127,17 @@
 </div>
 
 <!-- DIGITAL DOWNLOADS -->
+<hr th:if="${order.itemsWithFiles.size() GT 0}"/>
 <h2 th:if="${order.itemsWithFiles.size() GT 0}" th:text="#{email.notify-customer.files.title}">Files</h2>
-<div class="padding" th:each="item : ${order.itemsWithFiles}">
-    <div class="border">
-        <table cellpadding="0" cellspacing="0" width="100%">
-            <tr>
-                <td class="padding" colspan="2">
-                    <h2 class="no-margin" th:text="${item.title}">Title</h2>
-                </td>
-            </tr>
-            <tr th:each="file:${item.files}">
-                <td align="right" class="padding border-top" valign="middle" width="1">
-                    <img height="64"
-                         th:if="${file.extensionUrl}"
-                         th:src="${file.extensionUrl}"
-                         width="64"
-                    />
-                </td>
-                <td class="padding border-top" valign="middle">
-                    <a th:href="${file.url}">
-                        <h3 th:text="${file.name}">File.PNG</h3>
-                    </a>
-                    <div>
-                        <span th:text="#{email.notify-customer.files.size(${file.contentSize})}">Size: 12Kb</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
+<table cellpadding="0" cellspacing="0" th:each="item : ${order.itemsWithFiles}" width="100%">
+    <tr th:each="file:${item.files}">
+        <td class="padding border-top" valign="middle">
+            <a th:href="${file.downloadUrl}">
+                <h3 class="no-padding no-margin" th:text="${file.name}">File.PNG</h3>
+            </a>
+            <div>
+                <span th:text="#{email.notify-customer.files.size(${file.contentSize})}">Size: 12Kb</span>
+            </div>
+        </td>
+    </tr>
+</table>

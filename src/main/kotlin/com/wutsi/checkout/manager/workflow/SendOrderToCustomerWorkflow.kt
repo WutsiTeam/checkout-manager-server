@@ -109,7 +109,8 @@ class SendOrderToCustomerWorkflow(
             .filter { it.productType == ProductType.DIGITAL_DOWNLOAD.name }
             .forEach {
                 val product = marketplaceAccessApi.getProduct(it.productId).product
-                it.files = product.files.map { mapper.toFileModel(it) }
+                val item = it
+                it.files = product.files.map { mapper.toFileModel(it, order, item) }
             }
     }
 }

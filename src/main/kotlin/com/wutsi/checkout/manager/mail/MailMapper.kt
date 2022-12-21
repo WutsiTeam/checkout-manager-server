@@ -106,11 +106,11 @@ class MailMapper(
         )
     }
 
-    fun toFileModel(file: FileSummary) = FileModel(
+    fun toFileModel(file: FileSummary, order: OrderModel? = null, item: OrderItemModel? = null) = FileModel(
         id = file.id,
         name = file.name,
         contentSize = NumberUtil.toHumanReadableByteCountSI(file.contentSize.toLong()),
-        url = toFileUrl(file),
+        downloadUrl = toFileDownloadUrl(file, order, item),
         extensionUrl = toExtensionUrl(file.url),
     )
 
@@ -124,8 +124,12 @@ class MailMapper(
         }
     }
 
-    private fun toFileUrl(file: FileSummary): String =
-        "$webappUrl/download?f=${file.id}"
+    private fun toFileDownloadUrl(file: FileSummary, order: OrderModel?, item: OrderItemModel?): String =
+        if (item != null && order != null) {
+            "$webappUrl/download?f=${file.id}&p=${item.productId}&o=${order.id}"
+        } else {
+            "$webappUrl/download?f=${file.id}"
+        }
 
     private fun findPayment(order: Order): TransactionSummary? =
         order.transactions.find { it.status == Status.SUCCESSFUL.name && it.type == TransactionType.CHARGE.name }

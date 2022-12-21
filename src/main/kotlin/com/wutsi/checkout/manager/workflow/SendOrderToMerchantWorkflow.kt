@@ -1,7 +1,7 @@
 package com.wutsi.checkout.manager.workflow
 
 import com.wutsi.checkout.access.dto.Order
-import com.wutsi.checkout.manager.mail.MailMapper
+import com.wutsi.checkout.manager.mail.Mapper
 import com.wutsi.mail.MailFilterSet
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.platform.core.messaging.Message
@@ -18,7 +18,7 @@ import org.thymeleaf.context.Context
 @Service
 class SendOrderToMerchantWorkflow(
     eventStream: EventStream,
-    private val mapper: MailMapper,
+    private val mapper: Mapper,
     private val templateEngine: TemplateEngine,
     private val regulationEngine: RegulationEngine,
     private val mailFilterSet: MailFilterSet,

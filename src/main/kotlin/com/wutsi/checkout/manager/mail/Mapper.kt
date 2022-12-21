@@ -20,7 +20,7 @@ import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 
 @Service
-class MailMapper(
+class Mapper(
     @Value("\${wutsi.application.webapp-url}") private val webappUrl: String,
     @Value("\${wutsi.application.asset-url}") private val assetUrl: String,
 ) {
@@ -118,7 +118,7 @@ class MailMapper(
         val file = URL(url).file
         val i = file.lastIndexOf(".")
         return if (i > 0) {
-            "$assetUrl/images/file-types/" + file.substring(i + 1).uppercase() + ".png"
+            "$assetUrl/images/file-types/" + file.substring(i + 1).lowercase() + ".png"
         } else {
             return null
         }

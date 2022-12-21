@@ -5,7 +5,7 @@
 
 <div class="padding">&nbsp;</div>
 
-<table cellpadding="0" cellspacing="0" width="100%">
+<table cellpadding="0" cellspacing="0" class="border" width="100%">
     <tr>
         <th class="padding border-bottom" width="50%"></th>
         <th align="right" class="padding border-bottom" th:text="#{email.notify-customer.body.quantity}" width="20%">
@@ -131,6 +131,13 @@
 <h2 th:if="${order.itemsWithFiles.size() GT 0}" th:text="#{email.notify-customer.files.title}">Files</h2>
 <table cellpadding="0" cellspacing="0" th:each="item : ${order.itemsWithFiles}" width="100%">
     <tr th:each="file:${item.files}">
+        <td align="right" class="padding border-top" valign="middle" width="1">
+            <img height="64"
+                 th:if="${file.extensionUrl}"
+                 th:src="${file.extensionUrl}"
+                 width="64"
+            />
+        </td>
         <td class="padding border-top" valign="middle">
             <a th:href="${file.downloadUrl}">
                 <h3 class="no-padding no-margin" th:text="${file.name}">File.PNG</h3>

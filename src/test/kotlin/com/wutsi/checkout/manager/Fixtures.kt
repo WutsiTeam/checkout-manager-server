@@ -88,7 +88,7 @@ object Fixtures {
         id = id,
         code = code,
         type = type.name,
-        logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/checkout-access-server/logos/mtn.png",
+        logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/wutsi-assets/images/payment-providers/mtn.png",
     )
 
     fun createPaymentMethod(
@@ -162,10 +162,10 @@ object Fixtures {
     ) = Order(
         id = id,
         business = createBusinessSummary(businessId, accountId),
-        totalPrice = subTotalPrice,
+        totalPrice = subTotalPrice - totalDiscounts,
         totalDiscount = totalDiscounts,
-        subTotalPrice = subTotalPrice - totalDiscounts,
-        totalPaid = subTotalPrice - totalDiscounts,
+        subTotalPrice = subTotalPrice,
+        totalPaid = subTotalPrice,
         balance = 0,
         status = status.name,
         customerName = "Ray Sponsible",
@@ -278,7 +278,7 @@ object Fixtures {
             id = 1000,
             type = MeetingProviderType.ZOOM.name,
             name = "Zoom",
-            logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/marketplace-access-server/meeting-providers/zoom.png",
+            logoUrl = "https://prod-wutsi.s3.amazonaws.com/static/wutsi-assets/images/meeting-providers/zoom.png",
         ),
     )
 

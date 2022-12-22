@@ -32,7 +32,7 @@ class SearchOrderWorkflow(
     override fun doExecute(request: SearchOrderRequest, context: WorkflowContext): SearchOrderResponse {
         val orders = checkoutAccessApi.searchOrder(
             request = com.wutsi.checkout.access.dto.SearchOrderRequest(
-                customerId = request.customerId,
+                customerAccountId = request.customerAccountId,
                 limit = request.limit,
                 offset = request.offset,
                 businessId = request.businessId,

@@ -36,7 +36,7 @@ public data class Order(
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val closed: OffsetDateTime? = null,
     public val notes: String? = null,
-    public val customerId: Long? = null,
+    public val customerAccountId: Long? = null,
     public val customerName: String = "",
     @get:Size(max = 100)
     public val customerEmail: String = "",

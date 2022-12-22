@@ -342,7 +342,7 @@ object Fixtures {
         updated = OffsetDateTime.of(2020, 1, 1, 10, 30, 0, 0, ZoneOffset.UTC),
         amount = 10500,
         errorCode = ErrorCode.APPROVAL_REJECTED.name,
-        customerId = 1111L,
+        customerAccountId = 1111L,
         paymentMethod = Fixtures.createPaymentMethodSummary(""),
         financialTransactionId = "1111-111",
         gatewayTransactionId = "2222-222",

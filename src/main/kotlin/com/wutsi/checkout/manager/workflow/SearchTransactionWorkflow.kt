@@ -17,7 +17,7 @@ class SearchTransactionWorkflow(
     override fun doExecute(request: SearchTransactionRequest, context: WorkflowContext): SearchTransactionResponse {
         val transactions = checkoutAccessApi.searchTransaction(
             request = com.wutsi.checkout.access.dto.SearchTransactionRequest(
-                customerId = request.customerId,
+                customerAccountId = request.customerAccountId,
                 businessId = request.businessId,
                 type = request.type,
                 orderId = request.orderId,

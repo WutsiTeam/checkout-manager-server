@@ -17,7 +17,7 @@ public data class OrderSummary(
     public val currency: String = "",
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val created: OffsetDateTime = OffsetDateTime.now(),
-    public val customerId: Long? = null,
+    public val customerAccountId: Long? = null,
     public val customerName: String = "",
     public val customerEmail: String = "",
     public val itemCount: Int = 0,

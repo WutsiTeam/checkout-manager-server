@@ -32,7 +32,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
 
         // WHEN
         val request = SearchOrderRequest(
-            customerId = 222,
+            customerAccountId = 222,
             limit = 1000,
             offset = 111,
             expiresTo = OffsetDateTime.of(2020, 1, 10, 10, 30, 0, 0, ZoneOffset.UTC),
@@ -49,7 +49,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
 
         verify(checkoutAccess).searchOrder(
             request = com.wutsi.checkout.access.dto.SearchOrderRequest(
-                customerId = request.customerId,
+                customerAccountId = request.customerAccountId,
                 limit = request.limit,
                 offset = request.offset,
                 expiresTo = request.expiresTo,

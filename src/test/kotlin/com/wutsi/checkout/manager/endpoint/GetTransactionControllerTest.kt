@@ -42,7 +42,7 @@ class GetTransactionControllerTest : AbstractSecuredControllerTest() {
 
         val value = response.body!!.transaction
         assertEquals(tx.id, value.id)
-        assertEquals(tx.customerId, value.customerId)
+        assertEquals(tx.customerAccountId, value.customerAccountId)
         assertEquals(tx.amount, value.amount)
         assertEquals(tx.type, value.type)
         assertEquals(tx.gatewayType, value.gatewayType)

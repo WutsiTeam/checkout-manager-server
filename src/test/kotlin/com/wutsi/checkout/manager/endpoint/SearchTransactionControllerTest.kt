@@ -32,7 +32,7 @@ class SearchTransactionControllerTest : AbstractSecuredControllerTest() {
 
         // WHEN
         val request = SearchTransactionRequest(
-            customerId = 111L,
+            customerAccountId = 111L,
             status = listOf(Status.SUCCESSFUL.name, Status.PENDING.name),
             offset = 111,
             limit = 10,
@@ -47,7 +47,7 @@ class SearchTransactionControllerTest : AbstractSecuredControllerTest() {
 
         verify(checkoutAccess).searchTransaction(
             request = com.wutsi.checkout.access.dto.SearchTransactionRequest(
-                customerId = request.customerId,
+                customerAccountId = request.customerAccountId,
                 type = request.type,
                 offset = request.offset,
                 limit = request.limit,

@@ -622,7 +622,7 @@ components:
           type: string
           description: Customer Notes
           nullable: true
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: Customer's account ID
@@ -827,7 +827,7 @@ components:
           type: string
           description: Note from customer
           nullable: true
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: Customer's account ID
@@ -931,7 +931,7 @@ components:
         business:
           type: object
           $ref: "#/components/schemas/BusinessSummary"
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: ID of the customer associated with the transaction
@@ -1019,7 +1019,7 @@ components:
           type: string
           format: uuid
           description: ID of the transaction
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: ID of the customer associated with the transaction
@@ -1084,7 +1084,7 @@ components:
           format: int64
           description: ID of the store
           nullable: true
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: ID of the customer
@@ -1161,7 +1161,7 @@ components:
           type: string
           format: date-time
           description: Creation datetime
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           description: Customer's account ID
@@ -1238,7 +1238,7 @@ components:
     SearchTransactionRequest:
       type: object
       properties:
-        customerId:
+        customerAccountId:
           type: integer
           format: int64
           nullable: true

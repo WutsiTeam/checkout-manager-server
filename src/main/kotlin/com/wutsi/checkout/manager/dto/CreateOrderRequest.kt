@@ -13,7 +13,7 @@ public data class CreateOrderRequest(
     public val channelType: String? = null,
     public val businessId: Long = 0,
     public val notes: String? = null,
-    public val customerId: Long? = null,
+    public val customerAccountId: Long? = null,
     @get:NotBlank
     public val customerName: String = "",
     @get:NotBlank

@@ -273,8 +273,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchTransactionResponse'
-        404:
-          description: Transaction not found
       tags:
         - Transactions
 
@@ -309,6 +307,28 @@ paths:
           description: Transaction not found
       tags:
         - Transactions
+
+
+  /v1/kpis/sales/search:
+    post:
+      operationId: "search-sales-kpi"
+      description: Search sales KPIs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchSalesKpiRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchSalesKpiResponse'
+      tags:
+        - KPIs
+
 
 components:
   securitySchemes:
@@ -569,6 +589,12 @@ components:
           format: date-time
           description: Deactivation Date/Time
           nullable: true
+        totalOrders:
+          type: integer
+          format: int64
+        totalSales:
+          type: integer
+          format: int64
 
     BusinessSummary:
       type: object
@@ -1276,3 +1302,50 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TransactionSummary"
+
+    SearchSalesKpiRequest:
+      type: object
+      properties:
+        businessId:
+          type: integer
+          format: int64
+          nullable: true
+        productId:
+          type: integer
+          format: int64
+          nullable: true
+        fromDate:
+          type: string
+          format: date
+          nullable: true
+        toDate:
+          type: string
+          format: date
+          nullable: true
+        aggregate:
+          type: boolean
+          description: if TRUE, the KPI will be aggregate
+
+    SearchSalesKpiResponse:
+      type: object
+      properties:
+        kpis:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesKpiSummary"
+
+    SalesKpiSummary:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        totalOrders:
+          type: integer
+          format: int64
+        totalUnits:
+          type: integer
+          format: int64
+        totalValue:
+          type: integer
+          format: int64

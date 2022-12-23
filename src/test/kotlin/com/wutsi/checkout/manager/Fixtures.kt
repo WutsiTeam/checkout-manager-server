@@ -11,6 +11,7 @@ import com.wutsi.checkout.access.dto.OrderSummary
 import com.wutsi.checkout.access.dto.PaymentMethod
 import com.wutsi.checkout.access.dto.PaymentMethodSummary
 import com.wutsi.checkout.access.dto.PaymentProviderSummary
+import com.wutsi.checkout.access.dto.SalesKpiSummary
 import com.wutsi.checkout.access.dto.Transaction
 import com.wutsi.checkout.access.dto.TransactionSummary
 import com.wutsi.enums.AccountStatus
@@ -41,6 +42,7 @@ import com.wutsi.membership.access.dto.Place
 import com.wutsi.platform.payment.GatewayType
 import com.wutsi.platform.payment.core.ErrorCode
 import com.wutsi.platform.payment.core.Status
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
@@ -132,6 +134,8 @@ object Fixtures {
         country = country,
         status = status.name,
         accountId = accountId,
+        totalOrders = 500,
+        totalSales = 120000,
     )
 
     fun createBusinessSummary(
@@ -372,5 +376,12 @@ object Fixtures {
 
     fun createDevice() = Device(
         token = UUID.randomUUID().toString(),
+    )
+
+    fun createSalesKpiSummary(date: LocalDate = LocalDate.now()) = SalesKpiSummary(
+        date = date,
+        totalOrders = 100,
+        totalValue = 250000,
+        totalUnits = 5000,
     )
 }

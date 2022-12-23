@@ -4,31 +4,12 @@ import com.wutsi.checkout.manager.dto.PaymentMethodSummary
 import com.wutsi.checkout.manager.dto.PaymentProviderSummary
 import com.wutsi.checkout.manager.dto.SearchPaymentMethodRequest
 import com.wutsi.checkout.manager.dto.SearchPaymentMethodResponse
-import com.wutsi.event.PaymentMethodEventPayload
-import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import org.springframework.stereotype.Service
 
 @Service
-class SearchPaymentMethodWorkflow(
-    eventStream: EventStream,
-) : AbstractPaymentMethodWorkflow<SearchPaymentMethodRequest, SearchPaymentMethodResponse>(eventStream) {
-    override fun getEventType(
-        request: SearchPaymentMethodRequest,
-        response: SearchPaymentMethodResponse,
-        context: WorkflowContext,
-    ): String? = null
-
-    override fun toEventPayload(
-        request: SearchPaymentMethodRequest,
-        response: SearchPaymentMethodResponse,
-        context: WorkflowContext,
-    ): PaymentMethodEventPayload? = null
-
-    override fun getValidationRules(request: SearchPaymentMethodRequest, context: WorkflowContext) = RuleSet.NONE
-
-    override fun doExecute(request: SearchPaymentMethodRequest, context: WorkflowContext): SearchPaymentMethodResponse {
+class SearchPaymentMethodWorkflow : AbstractQueryWorkflow<SearchPaymentMethodRequest, SearchPaymentMethodResponse>() {
+    override fun execute(request: SearchPaymentMethodRequest, context: WorkflowContext): SearchPaymentMethodResponse {
         val paymentMethods = checkoutAccessApi.searchPaymentMethod(
             request = com.wutsi.checkout.access.dto.SearchPaymentMethodRequest(
                 accountId = getCurrentAccountId(context),

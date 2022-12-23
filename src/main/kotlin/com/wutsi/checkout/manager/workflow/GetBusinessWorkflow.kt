@@ -1,5 +1,6 @@
 package com.wutsi.checkout.manager.workflow
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.checkout.manager.dto.Business
 import com.wutsi.checkout.manager.dto.GetBusinessResponse
 import com.wutsi.event.BusinessEventPayload
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetBusinessWorkflow(
+    private val objectMapper: ObjectMapper,
     eventStream: EventStream,
 ) : AbstractBusinessWorkflow<Long, GetBusinessResponse>(eventStream) {
     override fun getEventType(
@@ -29,16 +31,9 @@ class GetBusinessWorkflow(
     override fun doExecute(businessId: Long, context: WorkflowContext): GetBusinessResponse {
         val business = checkoutAccessApi.getBusiness(businessId).business
         return GetBusinessResponse(
-            business = Business(
-                id = business.id,
-                accountId = business.accountId,
-                balance = business.balance,
-                currency = business.currency,
-                status = business.status,
-                country = business.country,
-                created = business.created,
-                updated = business.updated,
-                deactivated = business.deactivated,
+            business = objectMapper.readValue(
+                objectMapper.writeValueAsString(business),
+                Business::class.java,
             ),
         )
     }

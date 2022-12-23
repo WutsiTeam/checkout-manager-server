@@ -33,7 +33,7 @@
     <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 
     <wutsi-platform-payment.version>0.0.105</wutsi-platform-payment.version>
-    <wutsi-workflow.version>1.0.56</wutsi-workflow.version>
+    <wutsi-workflow.version>1.0.57</wutsi-workflow.version>
   </properties>
 
   <dependencies>

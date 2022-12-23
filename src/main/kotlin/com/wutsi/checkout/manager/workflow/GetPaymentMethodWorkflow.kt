@@ -3,31 +3,12 @@ package com.wutsi.checkout.manager.workflow
 import com.wutsi.checkout.manager.dto.GetPaymentMethodResponse
 import com.wutsi.checkout.manager.dto.PaymentMethod
 import com.wutsi.checkout.manager.dto.PaymentProviderSummary
-import com.wutsi.event.PaymentMethodEventPayload
-import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
 import org.springframework.stereotype.Service
 
 @Service
-class GetPaymentMethodWorkflow(
-    eventStream: EventStream,
-) : AbstractPaymentMethodWorkflow<String, GetPaymentMethodResponse>(eventStream) {
-    override fun getEventType(
-        token: String,
-        response: GetPaymentMethodResponse,
-        context: WorkflowContext,
-    ): String? = null
-
-    override fun toEventPayload(
-        token: String,
-        response: GetPaymentMethodResponse,
-        context: WorkflowContext,
-    ): PaymentMethodEventPayload? = null
-
-    override fun getValidationRules(token: String, context: WorkflowContext) = RuleSet.NONE
-
-    override fun doExecute(token: String, context: WorkflowContext): GetPaymentMethodResponse {
+class GetPaymentMethodWorkflow : AbstractQueryWorkflow<String, GetPaymentMethodResponse>() {
+    override fun execute(token: String, context: WorkflowContext): GetPaymentMethodResponse {
         val paymentMethod = checkoutAccessApi.getPaymentMethod(token).paymentMethod
         return GetPaymentMethodResponse(
             paymentMethod = PaymentMethod(

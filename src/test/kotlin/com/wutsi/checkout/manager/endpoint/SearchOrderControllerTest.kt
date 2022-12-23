@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.wutsi.checkout.access.dto.SearchOrderResponse
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.checkout.manager.dto.SearchOrderRequest
 import com.wutsi.enums.OrderStatus
@@ -28,7 +27,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
             Fixtures.createOrderSummary("1"),
             Fixtures.createOrderSummary("2"),
         )
-        doReturn(SearchOrderResponse(orders)).whenever(checkoutAccess).searchOrder(any())
+        doReturn(com.wutsi.checkout.access.dto.SearchOrderResponse(orders)).whenever(checkoutAccess).searchOrder(any())
 
         // WHEN
         val request = SearchOrderRequest(
@@ -40,6 +39,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
             createdTo = OffsetDateTime.of(2020, 1, 30, 0, 0, 0, 0, ZoneOffset.UTC),
             status = listOf(OrderStatus.EXPIRED.name, OrderStatus.COMPLETED.name),
             businessId = 111,
+            productId = 333L,
         )
         val response =
             rest.postForEntity(url(), request, com.wutsi.checkout.manager.dto.SearchOrderResponse::class.java)
@@ -57,6 +57,7 @@ public class SearchOrderControllerTest : AbstractSecuredControllerTest() {
                 createdFrom = request.createdFrom,
                 businessId = request.businessId,
                 status = request.status,
+                productId = request.productId,
             ),
         )
 

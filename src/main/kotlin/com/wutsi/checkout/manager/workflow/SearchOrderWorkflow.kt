@@ -19,6 +19,7 @@ class SearchOrderWorkflow : AbstractQueryWorkflow<SearchOrderRequest, SearchOrde
                 createdTo = request.createdTo,
                 createdFrom = request.createdFrom,
                 expiresTo = request.expiresTo,
+                productId = request.productId,
             ),
         ).orders
         return SearchOrderResponse(

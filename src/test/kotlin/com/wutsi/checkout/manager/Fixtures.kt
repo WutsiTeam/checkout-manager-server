@@ -383,5 +383,6 @@ object Fixtures {
         totalOrders = 100,
         totalValue = 250000,
         totalUnits = 5000,
+        totalViews = 300000,
     )
 }

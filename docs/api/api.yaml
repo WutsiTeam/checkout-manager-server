@@ -595,6 +595,10 @@ components:
         totalSales:
           type: integer
           format: int64
+        totalViews:
+          type: integer
+          format: int64
+          description: Value of the total views
 
     BusinessSummary:
       type: object
@@ -1354,3 +1358,7 @@ components:
         totalValue:
           type: integer
           format: int64
+        totalViews:
+          type: integer
+          format: int64
+          description: Value of the total views

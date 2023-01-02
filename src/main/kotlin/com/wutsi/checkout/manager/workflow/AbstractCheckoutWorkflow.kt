@@ -26,6 +26,12 @@ abstract class AbstractCheckoutWorkflow<Req, Resp, Ev>(eventStream: EventStream)
 
     protected fun getCurrentAccount(context: WorkflowContext): Account {
         val accountId = context.accountId ?: SecurityUtil.getAccountId()
-        return membershipAccessApi.getAccount(accountId).account
+        val key = "account.$accountId"
+        if (!context.data.containsKey(key) || (context.data[key] !is Account)) {
+            val account = membershipAccessApi.getAccount(accountId).account
+            context.data[key] = account
+            return account
+        }
+        return context.data[key] as Account
     }
 }

@@ -10,7 +10,7 @@ abstract class AbstractOrderWorkflow<Req, Resp>(
 ) : AbstractCheckoutWorkflow<Req, Resp, OrderEventPayload>(eventStream) {
     protected fun getOrder(id: String, context: WorkflowContext): Order {
         val key = "order.$id"
-        if (!context.data.containsKey(key) || (context.data[id] !is Order)) {
+        if (!context.data.containsKey(key) || (context.data[key] !is Order)) {
             val order = checkoutAccessApi.getOrder(id).order
             context.data[key] = order
             return order

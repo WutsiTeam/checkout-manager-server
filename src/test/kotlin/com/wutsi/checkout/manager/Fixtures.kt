@@ -256,7 +256,6 @@ object Fixtures {
         summary = "This is a summary",
         description = "This is the description",
         price = 100000L,
-        comparablePrice = 150000L,
         quantity = quantity,
         status = ProductStatus.DRAFT.name,
         thumbnail = if (pictures.isEmpty()) null else pictures[0],

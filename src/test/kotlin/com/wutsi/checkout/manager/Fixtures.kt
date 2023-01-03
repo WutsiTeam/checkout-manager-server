@@ -184,7 +184,7 @@ object Fixtures {
                 code = "111",
                 amount = 1000,
                 rate = 0,
-                type = DiscountType.DYNAMIC.name,
+                type = DiscountType.SALES.name,
             ),
         ),
         items = items ?: listOf(

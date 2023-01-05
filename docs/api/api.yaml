@@ -669,10 +669,39 @@ components:
           description: Items of order
           items:
             $ref: "#/components/schemas/CreateOrderItemRequest"
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateOrderDiscountRequest"
       required:
         - items
         - customerName
         - customerEmail
+
+    CreateOrderDiscountRequest:
+      type: object
+      properties:
+        discountId:
+          type: integer
+          format: int64
+          description: ID of the discount
+        name:
+          type: string
+          description: Discount name
+          maxLength: 30
+        type:
+          type: string
+          description: Type of discount
+          enum:
+            - SALES
+            - COUPON
+        amount:
+          type: integer
+          format: int64
+          description: Discount amount
+      required:
+        - name
+        - type
 
     CreateOrderItemRequest:
       type: object
@@ -684,6 +713,10 @@ components:
         quantity:
           type: integer
           description: Number of offers
+        discounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateOrderDiscountRequest"
 
     CreateOrderResponse:
       type: object
@@ -930,19 +963,24 @@ components:
     Discount:
       type: object
       properties:
-        code:
+        discountId:
+          type: integer
+          format: int64
+          description: ID of the discount
+        name:
           type: string
-          description: Discount code
+          description: Discount name
+          maxLength: 30
+        type:
+          type: string
+          description: Type of discount
+          enum:
+            - SALES
+            - COUPON
         amount:
           type: integer
           format: int64
           description: Discount amount
-        rate:
-          type: integer
-          description: Discount rate (0 - 100)
-        type:
-          type: string
-          description: Type of discount
 
     GetTransactionResponse:
       type: object

@@ -2,15 +2,17 @@ package com.wutsi.checkout.manager.workflow
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.checkout.access.dto.Business
+import com.wutsi.checkout.access.dto.CreateOrderDiscountRequest
 import com.wutsi.checkout.access.dto.CreateOrderItemRequest
 import com.wutsi.checkout.manager.dto.CreateOrderRequest
 import com.wutsi.checkout.manager.dto.CreateOrderResponse
-import com.wutsi.enums.ProductStatus
 import com.wutsi.error.ErrorURN
 import com.wutsi.event.OrderEventPayload
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.ReservationItem
-import com.wutsi.marketplace.access.dto.SearchProductRequest
+import com.wutsi.marketplace.access.dto.SearchDiscountRequest
+import com.wutsi.marketplace.access.dto.SearchOfferRequest
+import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.ErrorResponse
 import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.logging.KVLogger
@@ -73,13 +75,26 @@ class CreateOrderWorkflow(
         request: CreateOrderRequest,
         business: Business,
     ): com.wutsi.checkout.access.dto.CreateOrderResponse {
-        val products = marketplaceAccessApi.searchProduct(
-            request = SearchProductRequest(
+        // Offers
+        val offers = marketplaceAccessApi.searchOffer(
+            request = SearchOfferRequest(
                 limit = request.items.size,
                 productIds = request.items.map { it.productId },
-                status = ProductStatus.PUBLISHED.name,
             ),
-        ).products.associateBy { it.id }
+        ).offers.associateBy { it.product.id }
+
+        // Discounts
+        val discountIds = offers.mapNotNull { it.value.price.discountId }.toSet()
+        val discounts = if (discountIds.isEmpty()) {
+            emptyMap()
+        } else {
+            marketplaceAccessApi.searchDiscount(
+                request = SearchDiscountRequest(
+                    discountIds = discountIds.toList(),
+                    limit = discountIds.size,
+                ),
+            ).discounts.associateBy { it.id }
+        }
 
         return checkoutAccessApi.createOrder(
             request = com.wutsi.checkout.access.dto.CreateOrderRequest(
@@ -91,20 +106,41 @@ class CreateOrderWorkflow(
                 deviceType = request.deviceType,
                 channelType = request.channelType,
                 items = request.items.map {
-                    val prod = products[it.productId]
-                    if (prod != null) {
-                        CreateOrderItemRequest(
-                            productId = it.productId,
-                            productType = prod.type,
-                            quantity = it.quantity,
-                            title = prod.title,
-                            pictureUrl = prod.thumbnailUrl,
-                            unitPrice = prod.price ?: 0,
+                    val offer = offers[it.productId]
+                    if (offer == null) {
+                        throw ConflictException(
+                            error = Error(
+                                code = ErrorURN.PRODUCT_NOT_AVAILABLE.urn,
+                                data = mapOf(
+                                    "product-id" to it.productId,
+                                ),
+                            ),
                         )
                     } else {
-                        null
+                        val discount = offer.price.discountId?.let { discounts[it] }
+                        val product = offer.product
+                        CreateOrderItemRequest(
+                            productId = it.productId,
+                            productType = product.type,
+                            quantity = it.quantity,
+                            title = product.title,
+                            pictureUrl = product.thumbnailUrl,
+                            unitPrice = product.price ?: 0,
+                            discounts = if (discount != null) {
+                                listOf(
+                                    CreateOrderDiscountRequest(
+                                        discountId = discount.id,
+                                        name = discount.name,
+                                        type = discount.type,
+                                        amount = offer.price.savings,
+                                    ),
+                                )
+                            } else {
+                                emptyList()
+                            },
+                        )
                     }
-                }.filterNotNull(),
+                },
             ),
         )
     }

@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.doThrow
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import com.wutsi.checkout.access.dto.CreateOrderDiscountRequest
 import com.wutsi.checkout.access.dto.GetBusinessResponse
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.checkout.manager.dto.CreateOrderItemRequest
@@ -19,6 +20,8 @@ import com.wutsi.enums.ProductType
 import com.wutsi.marketplace.access.dto.CreateReservationRequest
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.marketplace.access.dto.ReservationItem
+import com.wutsi.marketplace.access.dto.SearchDiscountResponse
+import com.wutsi.marketplace.access.dto.SearchOfferResponse
 import com.wutsi.marketplace.access.dto.SearchProductResponse
 import com.wutsi.membership.access.dto.GetAccountResponse
 import com.wutsi.platform.core.error.ErrorResponse
@@ -76,11 +79,102 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         doReturn(CreateReservationResponse(reservationId)).whenever(marketplaceAccessApi).createReservation(any())
 
         doReturn(GetBusinessResponse(business)).whenever(checkoutAccess).getBusiness(BUSINESS_ID)
+
+        val offers = listOf(
+            Fixtures.createOfferSummary(product1, Fixtures.createProductPriceSummary(product1.id)),
+            Fixtures.createOfferSummary(product2, Fixtures.createProductPriceSummary(product2.id)),
+        )
+        doReturn(SearchOfferResponse(offers)).whenever(marketplaceAccessApi).searchOffer(any())
     }
 
     @Test
     fun opened() {
-        // OPENED
+        // GIVEN
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.OPENED.name)).whenever(
+            checkoutAccess,
+        )
+            .createOrder(any())
+
+        val offers = listOf(
+            Fixtures.createOfferSummary(
+                product1,
+                Fixtures.createProductPriceSummary(product1.id, discountId = 11, savings = 100),
+            ),
+            Fixtures.createOfferSummary(product2, Fixtures.createProductPriceSummary(product2.id)),
+        )
+        doReturn(SearchOfferResponse(offers)).whenever(marketplaceAccessApi).searchOffer(any())
+
+        val discount = Fixtures.createDiscountSummary(id = 11)
+        doReturn(SearchDiscountResponse(listOf(discount))).whenever(marketplaceAccessApi).searchDiscount(any())
+
+        // WHEN
+        val response =
+            rest.postForEntity(url(), request, com.wutsi.checkout.manager.dto.CreateOrderResponse::class.java)
+
+        // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
+        verify(checkoutAccess).createOrder(
+            request = com.wutsi.checkout.access.dto.CreateOrderRequest(
+                deviceType = request.deviceType,
+                channelType = request.channelType,
+                customerEmail = request.customerEmail,
+                notes = request.notes,
+                customerName = request.customerName,
+                businessId = business.id,
+                currency = business.currency,
+                items = listOf(
+                    com.wutsi.checkout.access.dto.CreateOrderItemRequest(
+                        productId = request.items[0].productId,
+                        productType = product1.type,
+                        title = product1.title,
+                        pictureUrl = product1.thumbnailUrl,
+                        quantity = request.items[0].quantity,
+                        unitPrice = product1.price ?: 0,
+                        discounts = listOf(
+                            CreateOrderDiscountRequest(
+                                discountId = discount.id,
+                                name = discount.name,
+                                type = discount.type,
+                                amount = offers[0].price.savings,
+                            ),
+                        ),
+                    ),
+                    com.wutsi.checkout.access.dto.CreateOrderItemRequest(
+                        productId = request.items[1].productId,
+                        productType = product2.type,
+                        title = product2.title,
+                        pictureUrl = product2.thumbnailUrl,
+                        quantity = request.items[1].quantity,
+                        unitPrice = product2.price ?: 0,
+                        discounts = emptyList(),
+                    ),
+                ),
+            ),
+        )
+
+        verify(marketplaceAccessApi).createReservation(
+            request = CreateReservationRequest(
+                orderId = orderId,
+                items = listOf(
+                    ReservationItem(
+                        productId = request.items[0].productId,
+                        quantity = request.items[0].quantity,
+                    ),
+                    ReservationItem(
+                        productId = request.items[1].productId,
+                        quantity = request.items[1].quantity,
+                    ),
+                ),
+            ),
+        )
+
+        verify(eventStream, never()).publish(any(), any())
+    }
+
+    @Test
+    fun orderWithDiscounts() {
+        // GIVEN
         doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.OPENED.name)).whenever(
             checkoutAccess,
         )
@@ -110,6 +204,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                         pictureUrl = product1.thumbnailUrl,
                         quantity = request.items[0].quantity,
                         unitPrice = product1.price ?: 0,
+                        discounts = emptyList(),
                     ),
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[1].productId,
@@ -118,6 +213,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                         pictureUrl = product2.thumbnailUrl,
                         quantity = request.items[1].quantity,
                         unitPrice = product2.price ?: 0,
+                        discounts = emptyList(),
                     ),
                 ),
             ),
@@ -150,6 +246,11 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         )
             .createOrder(any())
 
+        doReturn(com.wutsi.checkout.access.dto.CreateOrderResponse(orderId, OrderStatus.OPENED.name)).whenever(
+            checkoutAccess,
+        )
+            .createOrder(any())
+
         // WHEN
         val response = rest.postForEntity(url(), request, CreateOrderResponse::class.java)
 
@@ -170,7 +271,6 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         )
             .createOrder(any())
 
-        // GIVEN
         val cause = createFeignNotFoundException(com.wutsi.marketplace.access.error.ErrorURN.PRODUCT_NOT_AVAILABLE.urn)
         doThrow(cause).whenever(marketplaceAccessApi).createReservation(any())
 

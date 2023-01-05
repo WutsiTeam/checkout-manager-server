@@ -4,7 +4,6 @@ import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.BusinessSummary
 import com.wutsi.checkout.access.dto.CreateCashoutResponse
 import com.wutsi.checkout.access.dto.CreateChargeResponse
-import com.wutsi.checkout.access.dto.Discount
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.access.dto.OrderItem
 import com.wutsi.checkout.access.dto.OrderSummary
@@ -27,11 +26,15 @@ import com.wutsi.enums.ProductStatus
 import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.dto.CategorySummary
+import com.wutsi.marketplace.access.dto.DiscountSummary
 import com.wutsi.marketplace.access.dto.Event
 import com.wutsi.marketplace.access.dto.FileSummary
 import com.wutsi.marketplace.access.dto.MeetingProviderSummary
+import com.wutsi.marketplace.access.dto.Offer
+import com.wutsi.marketplace.access.dto.OfferSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
+import com.wutsi.marketplace.access.dto.ProductPriceSummary
 import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
@@ -179,14 +182,6 @@ object Fixtures {
         currency = "XAF",
         notes = "Yo man",
         deviceId = "4309403-43094039-43094309",
-        discounts = listOf(
-            Discount(
-                code = "111",
-                amount = 1000,
-                rate = 0,
-                type = DiscountType.SALES.name,
-            ),
-        ),
         items = items ?: listOf(
             OrderItem(
                 productId = 1,
@@ -383,5 +378,34 @@ object Fixtures {
         totalValue = 250000,
         totalUnits = 5000,
         totalViews = 300000,
+    )
+
+    fun createProductPriceSummary(productId: Long, discountId: Long? = null, savings: Long = 0) = ProductPriceSummary(
+        productId = productId,
+        discountId = discountId,
+        savings = savings,
+    )
+
+    fun createOfferSummary(
+        product: ProductSummary,
+        price: ProductPriceSummary,
+    ) = OfferSummary(
+        product = product,
+        price = price,
+    )
+
+    fun createOffer(
+        product: Product,
+        price: ProductPriceSummary,
+    ) = Offer(
+        product = product,
+        price = price,
+    )
+
+    fun createDiscountSummary(id: Long) = DiscountSummary(
+        id = id,
+        name = "FIN25",
+        rate = 25,
+        type = DiscountType.SALES.name,
     )
 }

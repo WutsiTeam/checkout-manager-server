@@ -1052,6 +1052,10 @@ components:
           type: string
           description: Error code
           nullable: true
+        supplierErrorMessage:
+          type: string
+          description: Error message from supplier
+          nullable: true
         supplierErrorCode:
           type: string
           description: Error code from supplier

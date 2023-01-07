@@ -81,8 +81,8 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         doReturn(GetBusinessResponse(business)).whenever(checkoutAccess).getBusiness(BUSINESS_ID)
 
         val offers = listOf(
-            Fixtures.createOfferSummary(product1, Fixtures.createProductPriceSummary(product1.id)),
-            Fixtures.createOfferSummary(product2, Fixtures.createProductPriceSummary(product2.id)),
+            Fixtures.createOfferSummary(product1, Fixtures.createOfferPrice(product1.id)),
+            Fixtures.createOfferSummary(product2, Fixtures.createOfferPrice(product2.id)),
         )
         doReturn(SearchOfferResponse(offers)).whenever(marketplaceAccessApi).searchOffer(any())
     }
@@ -98,9 +98,9 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         val offers = listOf(
             Fixtures.createOfferSummary(
                 product1,
-                Fixtures.createProductPriceSummary(product1.id, discountId = 11, savings = 100),
+                Fixtures.createOfferPrice(product1.id, discountId = 11, savings = 100),
             ),
-            Fixtures.createOfferSummary(product2, Fixtures.createProductPriceSummary(product2.id)),
+            Fixtures.createOfferSummary(product2, Fixtures.createOfferPrice(product2.id)),
         )
         doReturn(SearchOfferResponse(offers)).whenever(marketplaceAccessApi).searchOffer(any())
 

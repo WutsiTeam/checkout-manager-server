@@ -31,10 +31,10 @@ import com.wutsi.marketplace.access.dto.Event
 import com.wutsi.marketplace.access.dto.FileSummary
 import com.wutsi.marketplace.access.dto.MeetingProviderSummary
 import com.wutsi.marketplace.access.dto.Offer
+import com.wutsi.marketplace.access.dto.OfferPrice
 import com.wutsi.marketplace.access.dto.OfferSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
-import com.wutsi.marketplace.access.dto.ProductPriceSummary
 import com.wutsi.marketplace.access.dto.ProductSummary
 import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
@@ -380,7 +380,7 @@ object Fixtures {
         totalViews = 300000,
     )
 
-    fun createProductPriceSummary(productId: Long, discountId: Long? = null, savings: Long = 0) = ProductPriceSummary(
+    fun createOfferPrice(productId: Long, discountId: Long? = null, savings: Long = 0) = OfferPrice(
         productId = productId,
         discountId = discountId,
         savings = savings,
@@ -388,7 +388,7 @@ object Fixtures {
 
     fun createOfferSummary(
         product: ProductSummary,
-        price: ProductPriceSummary,
+        price: OfferPrice,
     ) = OfferSummary(
         product = product,
         price = price,
@@ -396,7 +396,7 @@ object Fixtures {
 
     fun createOffer(
         product: Product,
-        price: ProductPriceSummary,
+        price: OfferPrice,
     ) = Offer(
         product = product,
         price = price,

@@ -29,9 +29,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
+import java.time.Clock
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -66,9 +71,18 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
         ),
     )
 
+    private val now = Instant.ofEpochMilli(10000)
+    private val utc = ZoneId.of("UTC")
+
+    @MockBean
+    private lateinit var clock: Clock
+
     @BeforeEach
     override fun setUp() {
         super.setUp()
+
+        doReturn(now).whenever(clock).instant()
+        doReturn(utc).whenever(clock).zone
 
         doReturn(GetAccountResponse(businessAccount)).whenever(membershipAccess).getAccount(businessAccountId)
 
@@ -123,6 +137,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                 customerName = request.customerName,
                 businessId = business.id,
                 currency = business.currency,
+                expires = OffsetDateTime.now(clock).plusMinutes(10),
                 items = listOf(
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[0].productId,
@@ -196,6 +211,7 @@ class CreateOrderControllerTest : AbstractSecuredControllerTest() {
                 customerName = request.customerName,
                 businessId = business.id,
                 currency = business.currency,
+                expires = OffsetDateTime.now(clock).plusMinutes(10),
                 items = listOf(
                     com.wutsi.checkout.access.dto.CreateOrderItemRequest(
                         productId = request.items[0].productId,

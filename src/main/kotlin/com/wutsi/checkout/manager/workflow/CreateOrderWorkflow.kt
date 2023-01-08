@@ -22,12 +22,19 @@ import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
 import com.wutsi.workflow.rule.account.BusinessShouldBeActive
 import feign.FeignException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.OffsetDateTime
 
 @Service
 class CreateOrderWorkflow(
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
+    private val clock: Clock,
+
+    @Value("\${wutsi.application.order.ttl-minutes}") private val ttlMinutes: Long,
+
     eventStream: EventStream,
 ) : AbstractOrderWorkflow<CreateOrderRequest, CreateOrderResponse>(eventStream) {
     override fun getEventType(
@@ -141,6 +148,7 @@ class CreateOrderWorkflow(
                         )
                     }
                 },
+                expires = OffsetDateTime.now(clock).plusMinutes(ttlMinutes),
             ),
         )
     }

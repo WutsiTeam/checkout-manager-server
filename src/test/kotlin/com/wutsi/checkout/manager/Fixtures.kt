@@ -139,6 +139,7 @@ object Fixtures {
         accountId = accountId,
         totalOrders = 500,
         totalSales = 120000,
+        cashoutBalance = (balance * .75).toLong(),
     )
 
     fun createBusinessSummary(

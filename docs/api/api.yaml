@@ -563,6 +563,10 @@ components:
           type: integer
           format: int64
           description: Balance of the business
+        cashoutBalance:
+          type: integer
+          format: int64
+          description: Cashout balance of the business
         country:
           type: string
           description: 2 letter country code

@@ -80,8 +80,8 @@ abstract class AbstractSendOrderWorkflow(
         }
     }
 
-    protected fun getText(key: String): String =
-        messages.getMessage(key, emptyArray(), LocaleContextHolder.getLocale())
+    protected fun getText(key: String, args: Array<Any> = emptyArray()): String =
+        messages.getMessage(key, args, LocaleContextHolder.getLocale())
 
     private fun debug(message: Message): Message {
         if (debugNodifications.toBoolean()) {
@@ -109,6 +109,14 @@ abstract class AbstractSendOrderWorkflow(
             logoUrl = merchant.pictureUrl,
             category = merchant.category?.title,
             location = merchant.city?.longName,
+            phoneNumber = merchant.phone.number,
+            whatsapp = merchant.whatsapp,
+            websiteUrl = merchant.website,
+            twitterId = merchant.twitterId,
+            facebookId = merchant.facebookId,
+            instagramId = merchant.instagramId,
+            youtubeId = merchant.youtubeId,
+            country = merchant.country,
         ),
     )
 

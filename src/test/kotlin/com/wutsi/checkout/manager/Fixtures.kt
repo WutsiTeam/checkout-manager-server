@@ -83,6 +83,12 @@ object Fixtures {
             name = "Douala",
             longName = "Douala, Cameroun",
         ),
+        facebookId = "google",
+        twitterId = "google",
+        instagramId = "google",
+        youtubeId = "google",
+        website = "http://www.google.com",
+        whatsapp = true,
     )
 
     fun createPaymentProvider(

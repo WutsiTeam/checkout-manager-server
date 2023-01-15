@@ -41,7 +41,7 @@ class SendOrderToCustomerWorkflow(
                     email = order.customerEmail,
                     displayName = order.customerName,
                 ),
-                subject = getText("email.notify-customer.subject"),
+                subject = getText("email.notify-customer.subject", arrayOf(merchant.displayName.uppercase())),
                 body = generateBody(order, merchant),
                 mimeType = "text/html",
             )

@@ -7,8 +7,6 @@ import com.wutsi.event.OrderEventPayload
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
-import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
-import com.wutsi.workflow.rule.account.AccountShouldBeBusinessRule
 import com.wutsi.workflow.rule.account.AccountShouldBeOwnerOfOrder
 import org.springframework.stereotype.Service
 
@@ -38,8 +36,6 @@ class UpdateOrderStatusWorkflow(
         val order = getOrder(request.orderId, context)
         return RuleSet(
             rules = listOf(
-                AccountShouldBeActiveRule(account),
-                AccountShouldBeBusinessRule(account),
                 AccountShouldBeOwnerOfOrder(account, order),
             ),
         )

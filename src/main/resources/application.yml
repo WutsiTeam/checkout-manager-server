@@ -44,7 +44,8 @@ spring:
       mail:
         debug: true
         smtp:
-          from: <no-reply@wutsi.com>
+          from: no-reply@wutsi.com
+          sender: "Wutsi <no-reply@wutsi.com>"
           auth: true
           starttls:
             enable: true

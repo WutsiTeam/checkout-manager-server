@@ -49,6 +49,7 @@ class Mapper(
                 )
             },
             payment = findPayment(order)?.let { toTransactionModel(it, country) },
+            notes = if (order.notes.isNullOrEmpty()) null else order.notes,
         )
     }
 

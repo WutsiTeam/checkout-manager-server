@@ -12,6 +12,7 @@ data class OrderModel(
     val items: List<OrderItemModel>,
     val date: String,
     val payment: TransactionModel?,
+    val notes: String?,
 ) {
     val itemsWithEvent: List<OrderItemModel>
         get() = items.filter { it.event != null }

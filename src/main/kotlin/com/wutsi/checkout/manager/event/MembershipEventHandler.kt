@@ -63,7 +63,10 @@ class MembershipEventHandler(
 
         // Deactivate Business account
         val account = membershipAccessApi.getAccount(payload.accountId).account
-        account.businessId?.let { deactivateBusinessWorkflow.execute(it, context) }
+        account.businessId?.let {
+            logger.add("business_id_to_deactivate", it)
+            deactivateBusinessWorkflow.execute(it, context)
+        }
 
         // Deactivate his payment method
         checkoutAccessApi.searchPaymentMethod(
@@ -72,6 +75,7 @@ class MembershipEventHandler(
                 status = PaymentMethodStatus.ACTIVE.name,
             ),
         ).paymentMethods.forEach {
+            logger.add("token_to_deactivate", it.token)
             deactivatePaymentMethodWorkflow.execute(it.token, context)
         }
     }

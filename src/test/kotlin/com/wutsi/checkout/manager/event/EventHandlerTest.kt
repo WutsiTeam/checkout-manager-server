@@ -16,6 +16,9 @@ internal class EventHandlerTest {
     @MockBean
     private lateinit var membership: MembershipEventHandler
 
+    @MockBean
+    private lateinit var business: BusinessEventHandler
+
     @Autowired
     private lateinit var handler: EventHandler
 
@@ -72,7 +75,7 @@ internal class EventHandlerTest {
         handler.handleEvent(event)
 
         // THEN
-        verify(membership).onBusinessActivated(event)
+        verify(business).onBusinessActivated(event)
     }
 
     @Test
@@ -85,6 +88,6 @@ internal class EventHandlerTest {
         handler.handleEvent(event)
 
         // THEN
-        verify(membership).onBusinesstDeactivated(event)
+        verify(business).onBusinessDeactivated(event)
     }
 }

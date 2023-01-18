@@ -10,8 +10,6 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.checkout.access.CheckoutAccessApi
-import com.wutsi.checkout.access.dto.CreateBusinessRequest
-import com.wutsi.checkout.access.dto.CreateBusinessResponse
 import com.wutsi.checkout.access.dto.CreatePaymentMethodRequest
 import com.wutsi.checkout.access.dto.CreatePaymentMethodResponse
 import com.wutsi.checkout.access.dto.GetPaymentMethodResponse
@@ -220,71 +218,6 @@ internal class MembershipEventHandlerTest {
         assertEquals(paymentMethods[0].token, token.firstValue)
         assertEquals(paymentMethods[1].token, token.secondValue)
 
-        verify(eventStream, never()).publish(any(), any())
-    }
-
-    @Test
-    fun onBusinessEnabled() {
-        // GIVEN
-        val businessId = 1111L
-        doReturn(CreateBusinessResponse(businessId)).whenever(checkoutAccessApi).createBusiness(any())
-
-        // WHEN
-        handler.onBusinessActivated(event)
-
-        // THEN
-        verify(checkoutAccessApi).createBusiness(
-            CreateBusinessRequest(
-                accountId = account.id,
-                country = account.country,
-                currency = "XAF",
-            ),
-        )
-
-        verify(eventStream).publish(
-            EventURN.BUSINESS_CREATED.urn,
-            BusinessEventPayload(
-                businessId = businessId,
-                accountId = account.id,
-            ),
-        )
-    }
-
-    @Test
-    fun onBusinessSuspended() {
-        // GIVEN
-        val businessId = 111L
-        val account = Fixtures.createAccount(id = 123L, phoneNumber = "+237670000010", businessId = businessId)
-        doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
-
-        // WHEN
-        handler.onBusinesstDeactivated(event)
-
-        // THEN
-        verify(checkoutAccessApi).updateBusinessStatus(
-            businessId,
-            UpdateBusinessStatusRequest(
-                status = BusinessStatus.INACTIVE.name,
-            ),
-        )
-
-        verify(eventStream).publish(
-            EventURN.BUSINESS_DEACTIVATED.urn,
-            BusinessEventPayload(
-                businessId = businessId,
-                accountId = account.id,
-            ),
-        )
-    }
-
-    @Test
-    fun onBusinessDisabledWithAccountNotHavingBusinessId() {
-        // WHEN
-        handler.onBusinesstDeactivated(event)
-
-        // THEN
-        verify(checkoutAccessApi, never()).updateBusinessStatus(any(), any())
-        verify(membershipAccessApi, never()).updateAccountAttribute(any(), any())
         verify(eventStream, never()).publish(any(), any())
     }
 }

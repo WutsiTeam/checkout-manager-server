@@ -6,7 +6,6 @@ import com.wutsi.checkout.access.dto.SearchPaymentMethodRequest
 import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
-import com.wutsi.checkout.manager.workflow.CreateBusinessWorkflow
 import com.wutsi.checkout.manager.workflow.DeactivateBusinessWorkflow
 import com.wutsi.checkout.manager.workflow.DeactivatePaymentMethodWorkflow
 import com.wutsi.enums.PaymentMethodStatus
@@ -25,7 +24,6 @@ class MembershipEventHandler(
     private val membershipAccessApi: MembershipAccessApi,
     private val checkoutAccessApi: CheckoutAccessApi,
     private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
-    private val createBusinessWorkflow: CreateBusinessWorkflow,
     private val deactivateBusinessWorkflow: DeactivateBusinessWorkflow,
     private val deactivatePaymentMethodWorkflow: DeactivatePaymentMethodWorkflow,
 ) {
@@ -62,7 +60,12 @@ class MembershipEventHandler(
         log(payload)
 
         val context = WorkflowContext(accountId = payload.accountId)
-        deactivateBusinessWorkflow.execute(null, context)
+
+        // Deactivate Business account
+        val account = membershipAccessApi.getAccount(payload.accountId).account
+        account.businessId?.let { deactivateBusinessWorkflow.execute(it, context) }
+
+        // Deactivate his payment method
         checkoutAccessApi.searchPaymentMethod(
             request = SearchPaymentMethodRequest(
                 accountId = payload.accountId,
@@ -71,24 +74,6 @@ class MembershipEventHandler(
         ).paymentMethods.forEach {
             deactivatePaymentMethodWorkflow.execute(it.token, context)
         }
-    }
-
-    fun onBusinessActivated(event: Event) {
-        val payload = toMemberPayload(event)
-        log(payload)
-
-        val context = WorkflowContext(accountId = payload.accountId)
-        val businessId = createBusinessWorkflow.execute(null, context)
-        logger.add("business_id", businessId)
-    }
-
-    fun onBusinesstDeactivated(event: Event) {
-        val payload = toMemberPayload(event)
-        log(payload)
-
-        val context = WorkflowContext(accountId = payload.accountId)
-        val businessId = deactivateBusinessWorkflow.execute(null, context)
-        logger.add("business_id", businessId)
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =

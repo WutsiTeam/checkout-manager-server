@@ -6,7 +6,6 @@ import com.wutsi.event.PaymentMethodEventPayload
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
-import com.wutsi.workflow.rule.account.AccountShouldBeActiveRule
 import com.wutsi.workflow.rule.account.AccountShouldBeOwnerOfPaymentMethodRule
 import org.springframework.stereotype.Service
 
@@ -15,13 +14,13 @@ class DeactivatePaymentMethodWorkflow(
     eventStream: EventStream,
 ) : AbstractPaymentMethodWorkflow<String, Unit>(eventStream) {
     override fun getEventType(
-        request: String,
+        token: String,
         response: Unit,
         context: WorkflowContext,
     ): String? = null
 
     override fun toEventPayload(
-        request: String,
+        token: String,
         response: Unit,
         context: WorkflowContext,
     ): PaymentMethodEventPayload? = null
@@ -31,7 +30,6 @@ class DeactivatePaymentMethodWorkflow(
         val paymentMethod = checkoutAccessApi.getPaymentMethod(token).paymentMethod
         return RuleSet(
             listOf(
-                AccountShouldBeActiveRule(account),
                 AccountShouldBeOwnerOfPaymentMethodRule(account, paymentMethod),
             ),
         )

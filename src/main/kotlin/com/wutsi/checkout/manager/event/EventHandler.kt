@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 class EventHandler(
     private val membership: MembershipEventHandler,
     private val transaction: TransactionEventHandler,
+    private val business: BusinessEventHandler,
     private val order: OrderEventHandler,
 ) {
     @EventListener
@@ -16,8 +17,8 @@ class EventHandler(
         when (event.type) {
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
             EventURN.MEMBER_DELETED.urn -> membership.onMemberDeleted(event)
-            EventURN.BUSINESS_ACTIVATED.urn -> membership.onBusinessActivated(event)
-            EventURN.BUSINESS_DEACTIVATED.urn -> membership.onBusinesstDeactivated(event)
+            EventURN.BUSINESS_ACTIVATED.urn -> business.onBusinessActivated(event)
+            EventURN.BUSINESS_DEACTIVATED.urn -> business.onBusinessDeactivated(event)
             InternalEventURN.TRANSACTION_SUCCESSFUL.urn -> transaction.onTransactionSuccessful(event)
             InternalEventURN.ORDER_TO_CUSTOMER_SUBMITTED.urn -> order.onSendToCustomer(event)
             InternalEventURN.ORDER_TO_MERCHANT_SUBMITTED.urn -> order.onSendToMerchant(event)

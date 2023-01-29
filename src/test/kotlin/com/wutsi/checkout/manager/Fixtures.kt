@@ -312,7 +312,6 @@ object Fixtures {
         storeId = storeId,
         summary = "This is a summary",
         price = 100000L,
-        comparablePrice = 150000L,
         quantity = quantity,
         status = ProductStatus.DRAFT.name,
         currency = "XAF",

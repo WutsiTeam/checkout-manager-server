@@ -38,7 +38,7 @@ class SendOrderToMerchantWorkflow(
                     ),
                     subject = getText("email.notify-merchant.subject"),
                     body = generateBody(order, merchant),
-                    mimeType = "text/html",
+                    mimeType = "text/html;charset=UTF-8",
                 )
             }
             MessagingType.PUSH_NOTIFICATION -> getDeviceToken(merchant)?.let {

@@ -42,7 +42,7 @@ class HandleSuccessfulTransactionWorkflow(
         val orderId = tx.orderId!!
         val order = checkoutAccessApi.getOrder(orderId).order
         logger.add("order_status", order.status)
-        if (order.status == OrderStatus.OPENED.name) { // Already opened
+        if (order.status == OrderStatus.IN_PROGRESS.name) { // Already processed
             return
         }
 
@@ -50,7 +50,7 @@ class HandleSuccessfulTransactionWorkflow(
         checkoutAccessApi.updateOrderStatus(
             id = orderId,
             request = UpdateOrderStatusRequest(
-                status = OrderStatus.OPENED.name,
+                status = OrderStatus.IN_PROGRESS.name,
             ),
         )
 

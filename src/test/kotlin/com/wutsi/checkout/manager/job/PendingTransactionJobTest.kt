@@ -138,7 +138,7 @@ internal class PendingTransactionJobTest {
         Thread.sleep(10000)
 
         // THEN
-        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.OPENED.name))
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
@@ -192,7 +192,7 @@ internal class PendingTransactionJobTest {
         Thread.sleep(10000)
 
         // THEN
-        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.OPENED.name))
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
@@ -250,7 +250,7 @@ internal class PendingTransactionJobTest {
         Thread.sleep(10000)
 
         // THEN
-        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.OPENED.name))
+        verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification

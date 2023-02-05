@@ -5,10 +5,24 @@
 </div>
 
 <div class="padding">
-    <p>
-        <b><span th:text="#{email.notify-customer.body.order-id}">Order ID</span>:</b>
-        <span th:text="${order.id}">XXXX</span>
-    </p>
+    <div class="padding">
+        <table cellpadding="0" cellspacing="0" class="border">
+            <tr>
+                <td class="border-bottom padding">
+                    <b th:text="#{email.notify-customer.body.order-id}">Order ID</b>
+                </td>
+                <td class="border-bottom padding" th:text="${order.id}">11111</td>
+            </tr>
+            <tr th:if="${order.notes}">
+                <td class="border-bottom padding" valid="top">
+                    <b th:text="#{email.notify-customer.body.instructions}">Instructions</b>
+                </td>
+                <td class="border-bottom padding" valign="top" th:text="${order.notes}">...</td>
+            </tr>
+        </table>
+    </div>
+
+
     <table cellpadding="0" cellspacing="0" class="border" width="100%">
         <tr>
             <th class="padding border-bottom" width="50%"></th>

@@ -10,10 +10,10 @@ import com.wutsi.platform.core.messaging.Party
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.RegulationEngine
 import com.wutsi.workflow.WorkflowContext
-import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
+import java.util.Locale
 
 @Service
 class SendOrderToMerchantWorkflow(
@@ -54,7 +54,7 @@ class SendOrderToMerchantWorkflow(
         }
 
     private fun generateBody(order: Order, merchant: Account): String {
-        val ctx = Context(LocaleContextHolder.getLocale())
+        val ctx = Context(Locale(merchant.language))
         val country = regulationEngine.country(order.business.country)
         ctx.setVariable("order", mapper.toOrderModel(order, country))
 

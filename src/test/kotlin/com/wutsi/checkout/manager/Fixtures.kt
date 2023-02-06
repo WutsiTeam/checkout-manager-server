@@ -61,6 +61,7 @@ object Fixtures {
         displayName: String = "Ray Sponsible",
         email: String? = null,
         pictureUrl: String = "https://ik.imagekit.io/cx8qxsgz4d/user/12/picture/tr:w-64,h-64,fo-face/023bb5c8-7b09-4f2f-be51-29f5c851c2c0-scaled_image_picker1721723356188894418.png",
+        language: String = "fr",
     ) = Account(
         id = id,
         displayName = displayName,
@@ -89,6 +90,7 @@ object Fixtures {
         youtubeId = "google",
         website = "http://www.google.com",
         whatsapp = true,
+        language = language,
     )
 
     fun createPaymentProvider(

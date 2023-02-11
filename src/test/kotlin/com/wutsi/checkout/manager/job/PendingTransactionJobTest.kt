@@ -22,6 +22,7 @@ import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
 import com.wutsi.marketplace.access.MarketplaceAccessApi
 import com.wutsi.marketplace.access.dto.GetProductResponse
+import com.wutsi.marketplace.access.dto.GetStoreResponse
 import com.wutsi.marketplace.access.dto.SearchProductResponse
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.GetAccountDeviceResponse
@@ -65,6 +66,17 @@ internal class PendingTransactionJobTest {
     private val customerId = 1L
     private val merchantId = 333L
     private val businessId = 555L
+    private val storeId = 777L
+
+    private val merchant = Fixtures.createAccount(
+        id = merchantId,
+        businessId = businessId,
+        storeId = storeId,
+        business = true,
+        displayName = "House of Pleasure",
+        email = "house.of.plaesure@gmail.com",
+    )
+    private val store = Fixtures.createStore(id = storeId)
 
     @BeforeEach
     fun setUp() {
@@ -105,15 +117,10 @@ internal class PendingTransactionJobTest {
         )
         doReturn(GetTransactionResponse(tx)).whenever(checkoutAccessApi).getTransaction(txs[0].id)
 
-        val merchant = Fixtures.createAccount(
-            id = merchantId,
-            businessId = businessId,
-            business = true,
-            displayName = "House of Pleasure",
-            email = "house.of.plaesure@gmail.com",
-        )
         doReturn(GetAccountResponse(merchant)).whenever(membershipMemberApi).getAccount(any())
         doReturn(GetAccountDeviceResponse(device)).whenever(membershipMemberApi).getAccountDevice(any())
+
+        doReturn(GetStoreResponse(store)).whenever(marketplaceAccessApi).getStore(any())
     }
 
     @Test
@@ -186,6 +193,17 @@ internal class PendingTransactionJobTest {
             event = Fixtures.createEvent(),
         )
         doReturn(SearchProductResponse(listOf(prod))).whenever(marketplaceAccessApi).searchProduct(any())
+
+        doReturn(GetAccountResponse(merchant.copy(language = "en"))).whenever(membershipMemberApi).getAccount(any())
+
+        doReturn(
+            GetStoreResponse(
+                store.copy(
+                    returnPolicy = store.returnPolicy.copy(accepted = false),
+                    cancellationPolicy = store.cancellationPolicy.copy(accepted = false)
+                )
+            )
+        ).whenever(marketplaceAccessApi).getStore(any())
 
         // WHEN
         job.run()

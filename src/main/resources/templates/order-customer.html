@@ -14,10 +14,10 @@
                 <td class="border-bottom padding" th:text="${order.id}">11111</td>
             </tr>
             <tr th:if="${order.notes}">
-                <td class="border-bottom padding" valid="top">
+                <td class="border-bottom padding" valid="top" colspan="2">
                     <b th:text="#{email.notify-customer.body.instructions}">Instructions</b>
+                    <div th:text="${order.notes}">...</div>
                 </td>
-                <td class="border-bottom padding" valign="top" th:text="${order.notes}">...</td>
             </tr>
         </table>
     </div>
@@ -177,4 +177,61 @@
             </td>
         </tr>
     </table>
+</div>
+
+<!-- THANK YOU -->
+<div class="padding" th:utext="#{email.notify-customer.body.thank-you(${merchant.name})}">
+    Thank you for your business with [Business Name]
+</div>
+
+<!-- POLICY -->
+<div class="padding">&nbsp;</div>
+<hr />
+<div class="padding text-small">
+    <h3 class="no-padding no-margin" th:text="#{email.notify-customer.body.policy}">
+        The Merchant's cancellation and return policy:
+    </h3>
+
+    <div th:if="${order.itemsWithFiles.size() GT 0}">
+        <ul class="no-margin">
+            <li th:text="#{email.notify-customer.body.policy-digital-download}">
+                No cancellation, return or exchange for digital downloads.
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${order.itemsWithFiles.size() == 0}">
+        <!-- Cancellation -->
+        <h4 class="no-padding no-margin" th:text="#{email.notify-customer.body.policy-cancellation-title}">Cancellations</h4>
+        <div>
+            <b th:if="${store.cancellationPolicy.accepted}" th:text="#{email.notify-customer.body.policy-accepted}">Accepted</b>
+            <b th:if="!${store.cancellationPolicy.accepted}" th:text="#{email.notify-customer.body.policy-not-accepted}">Not Accepted</b>
+
+            <ul class="no-margin">
+                <li th:if="${store.cancellationPolicy.accepted}" th:utext="#{email.notify-customer.body.policy-cancellation(${store.cancellationPolicy.window})}">
+                    You have <b>{0} hour(s)</b> after your purchase to cancel your order
+                </li>
+                <li th:if="${store.cancellationPolicy.message}" th:text="${store.cancellationPolicy.message}">
+                    This is the cancellation message....
+                </li>
+            </ul>
+        </div>
+
+        <!-- Returns -->
+        <div>&nbsp;</div>
+        <h4 class="no-padding no-margin" th:text="#{email.notify-customer.body.policy-return-title}">Returns</h4>
+        <div >
+            <b th:if="${store.returnPolicy.accepted}" th:text="#{email.notify-customer.body.policy-accepted}">Accepted</b>
+            <b th:if="!${store.returnPolicy.accepted}" th:text="#{email.notify-customer.body.policy-not-accepted}">Not Accepted</b>
+
+            <ul class="no-margin">
+                <li th:if="${store.returnPolicy.accepted}" th:utext="#{email.notify-customer.body.policy-return(${store.returnPolicy.contactWindow}, ${store.returnPolicy.shipBackWindow})}">
+                    You have <b>{0} day(s)</b> from the item delivery to contact the merchant, <b>{1} day(s)</b> from delivery to ship this item back to the merchant
+                </li>
+                <li th:if="${store.returnPolicy.message}" th:text="${store.returnPolicy.message}">
+                    This is the return message....
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

@@ -65,16 +65,26 @@ class SendOrderToCustomerWorkflow(
 
     private fun generateBody(order: Order, merchant: Account): String {
         val ctx = Context(Locale(merchant.language))
-        val country = regulationEngine.country(order.business.country)
 
+        val store = merchant.storeId?.let {
+            marketplaceAccessApi.getStore(it).store
+        }
+        store?.let {
+            ctx.setVariable("store", mapper.toStoreModel(it))
+        }
+
+        val country = regulationEngine.country(order.business.country)
+        val mailContext = createMailContext(merchant)
         ctx.setVariable("order", toOrderModel(order, country))
+        ctx.setVariable("merchant", mailContext.merchant)
 
         val body = templateEngine.process("order-customer.html", ctx)
         return mailFilterSet.filter(
             body = body,
-            context = createMailContext(merchant),
+            context = mailContext,
         )
     }
+
 
     private fun toOrderModel(order: Order, country: Country): OrderModel {
         val model = mapper.toOrderModel(order, country)

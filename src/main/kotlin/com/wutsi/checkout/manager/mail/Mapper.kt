@@ -11,6 +11,7 @@ import com.wutsi.marketplace.access.dto.Event
 import com.wutsi.marketplace.access.dto.FileSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
+import com.wutsi.marketplace.access.dto.Store
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.regulation.Country
 import org.springframework.beans.factory.annotation.Value
@@ -24,6 +25,21 @@ class Mapper(
     @Value("\${wutsi.application.webapp-url}") private val webappUrl: String,
     @Value("\${wutsi.application.asset-url}") private val assetUrl: String,
 ) {
+    fun toStoreModel(store: Store) = StoreModel(
+        id = store.id,
+        cancellationPolicy = CancellationPolicyModel(
+            accepted = store.cancellationPolicy.accepted,
+            window = store.cancellationPolicy.window,
+            message = store.cancellationPolicy.message,
+        ),
+        returnPolicy = ReturnPolicyModel(
+            accepted = store.returnPolicy.accepted,
+            contactWindow = store.returnPolicy.contactWindow / 24,
+            shipBackWindow = store.returnPolicy.shipBackWindow / 24,
+            message = store.returnPolicy.message,
+        ),
+    )
+
     fun toOrderModel(order: Order, country: Country): OrderModel {
         val fmt = DecimalFormat(country.monetaryFormat)
         return OrderModel(

@@ -25,6 +25,7 @@ import com.wutsi.enums.PaymentMethodType
 import com.wutsi.enums.ProductStatus
 import com.wutsi.enums.ProductType
 import com.wutsi.enums.TransactionType
+import com.wutsi.marketplace.access.dto.CancellationPolicy
 import com.wutsi.marketplace.access.dto.CategorySummary
 import com.wutsi.marketplace.access.dto.DiscountSummary
 import com.wutsi.marketplace.access.dto.Event
@@ -36,6 +37,8 @@ import com.wutsi.marketplace.access.dto.OfferSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
+import com.wutsi.marketplace.access.dto.ReturnPolicy
+import com.wutsi.marketplace.access.dto.Store
 import com.wutsi.marketplace.access.dto.StoreSummary
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.Category
@@ -56,6 +59,7 @@ object Fixtures {
         status: AccountStatus = AccountStatus.ACTIVE,
         business: Boolean = false,
         businessId: Long? = null,
+        storeId: Long? = null,
         country: String = "CM",
         phoneNumber: String = "+237670000010",
         displayName: String = "Ray Sponsible",
@@ -69,6 +73,7 @@ object Fixtures {
         business = business,
         country = country,
         businessId = businessId,
+        storeId = storeId,
         email = email,
         phone = Phone(
             number = phoneNumber,
@@ -243,6 +248,22 @@ object Fixtures {
     ) = StoreSummary(
         id = id,
         currency = "XAF",
+    )
+
+    fun createStore(id: Long = -1) = Store(
+        id = id,
+        currency = "XAF",
+        returnPolicy = ReturnPolicy(
+            accepted = true,
+            contactWindow = 24,
+            shipBackWindow = 72,
+            message = "This is the return policy message",
+        ),
+        cancellationPolicy = CancellationPolicy(
+            accepted = true,
+            window = 24,
+            message = "This is the cancellation policy message",
+        ),
     )
 
     fun createProduct(

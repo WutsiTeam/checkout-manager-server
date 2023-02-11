@@ -22,12 +22,17 @@
             </td>
         </tr>
         <tr th:if="${order.notes}">
-            <td class="border-bottom padding" valid="top">
+            <td class="padding" valid="top" colspan="2">
                 <b th:text="#{email.notify-merchant.body.instructions}">Instructions</b>
+                <br/>
+                <div th:text="${order.notes}">Instruction....</div>
             </td>
-            <td class="border-bottom padding" valign="top" th:text="${order.notes}">...</td>
         </tr>
     </table>
+</div>
+
+<div class="padding" th:text="#{email.notify-merchant.body.delivery}">
+    Please contact the customer directly to organize the delivery of the product.
 </div>
 
 <div class="padding">

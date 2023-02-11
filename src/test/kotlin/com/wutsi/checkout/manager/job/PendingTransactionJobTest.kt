@@ -200,9 +200,9 @@ internal class PendingTransactionJobTest {
             GetStoreResponse(
                 store.copy(
                     returnPolicy = store.returnPolicy.copy(accepted = false),
-                    cancellationPolicy = store.cancellationPolicy.copy(accepted = false)
-                )
-            )
+                    cancellationPolicy = store.cancellationPolicy.copy(accepted = false),
+                ),
+            ),
         ).whenever(marketplaceAccessApi).getStore(any())
 
         // WHEN

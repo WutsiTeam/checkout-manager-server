@@ -85,7 +85,6 @@ class SendOrderToCustomerWorkflow(
         )
     }
 
-
     private fun toOrderModel(order: Order, country: Country): OrderModel {
         val model = mapper.toOrderModel(order, country)
         attachEvents(model, country)

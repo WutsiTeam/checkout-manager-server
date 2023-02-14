@@ -43,7 +43,7 @@ class Mapper(
     fun toOrderModel(order: Order, country: Country): OrderModel {
         val fmt = DecimalFormat(country.monetaryFormat)
         return OrderModel(
-            id = order.id,
+            id = order.shortId,
             date = order.created.format(DateTimeFormatter.ofPattern(country.dateFormat)),
             customerEmail = order.customerEmail,
             customerName = order.customerName,

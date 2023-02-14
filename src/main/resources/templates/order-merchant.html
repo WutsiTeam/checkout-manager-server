@@ -1,5 +1,5 @@
 <div class="padding">
-    <div th:utext="#{email.notify-merchant.body.intro}">
+    <div th:utext="#{email.notify-merchant.body.intro(${merchant.name})}">
         Thank your for your order. Here is your invoice details:
     </div>
 </div>
@@ -19,6 +19,10 @@
             <td class="border-bottom padding" valign="top">
                 <div th:text="${order.customerName}">Ray Sponsible</div>
                 <div th:text="${order.customerEmail}">ray.sponsible@gmail.com</div>
+                <div th:if="${order.payment.paymentMethod.type == 'MOBILE_MONEY'}"
+                     th:text="${order.payment.paymentMethod.number}">
+                    51475555999
+                </div>
             </td>
         </tr>
         <tr th:if="${order.notes}">

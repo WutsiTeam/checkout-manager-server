@@ -182,6 +182,7 @@ object Fixtures {
         items: List<OrderItem>? = null,
     ) = Order(
         id = id,
+        shortId = id.takeLast(4),
         business = createBusinessSummary(businessId, accountId),
         totalPrice = subTotalPrice - totalDiscounts,
         totalDiscount = totalDiscounts,

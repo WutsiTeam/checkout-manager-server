@@ -37,7 +37,7 @@ class SendOrderToMerchantWorkflow(
                         displayName = merchant.displayName,
                     ),
                     subject = getText("email.notify-merchant.subject"),
-                    body = generateBody(order, merchant),
+                    body = generateBody(order, merchant, "wutsi"),
                     mimeType = "text/html;charset=UTF-8",
                 )
             }
@@ -53,15 +53,17 @@ class SendOrderToMerchantWorkflow(
             else -> null
         }
 
-    private fun generateBody(order: Order, merchant: Account): String {
+    private fun generateBody(order: Order, merchant: Account, template: String? = null): String {
         val ctx = Context(Locale(merchant.language))
         val country = regulationEngine.country(order.business.country)
+        val mailContext = createMailContext(merchant, template)
         ctx.setVariable("order", mapper.toOrderModel(order, country))
+        ctx.setVariable("merchant", mailContext.merchant)
 
         val body = templateEngine.process("order-merchant.html", ctx)
         return mailFilterSet.filter(
             body = body,
-            context = createMailContext(merchant),
+            context = mailContext,
         )
     }
 

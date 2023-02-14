@@ -101,7 +101,7 @@ abstract class AbstractSendOrderWorkflow(
     private fun getLogger(): Logger =
         LoggerFactory.getLogger(this::class.java)
 
-    protected fun createMailContext(merchant: Account) = MailContext(
+    protected fun createMailContext(merchant: Account, template: String? = null) = MailContext(
         assetUrl = assetUrl,
         merchant = Merchant(
             url = "$webappUrl/u/${merchant.id}",
@@ -118,6 +118,7 @@ abstract class AbstractSendOrderWorkflow(
             youtubeId = merchant.youtubeId,
             country = merchant.country,
         ),
+        template = template,
     )
 
     private fun sendEmail(message: Message): String? {

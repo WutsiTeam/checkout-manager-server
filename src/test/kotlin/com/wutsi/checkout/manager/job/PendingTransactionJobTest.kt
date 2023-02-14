@@ -127,7 +127,7 @@ internal class PendingTransactionJobTest {
     fun pendingCharges() {
         // GIVEN
         val order = Fixtures.createOrder(
-            id = "111",
+            id = UUID.randomUUID().toString(),
             status = OrderStatus.UNKNOWN,
             businessId = businessId,
             accountId = customerId,

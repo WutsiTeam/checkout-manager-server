@@ -110,7 +110,7 @@ abstract class AbstractSendOrderWorkflow(
         assetUrl = assetUrl,
         merchant = Merchant(
             url = "$webappUrl/u/${merchant.id}",
-            name = merchant.displayName,
+            name = merchant.displayName.uppercase(),
             logoUrl = merchant.pictureUrl,
             category = merchant.category?.title,
             location = merchant.city?.longName,

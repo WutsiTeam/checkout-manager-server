@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
+import java.util.Locale
 
 abstract class AbstractSendOrderWorkflow(
     eventStream: EventStream,
@@ -80,8 +81,12 @@ abstract class AbstractSendOrderWorkflow(
         }
     }
 
-    protected fun getText(key: String, args: Array<Any> = emptyArray()): String =
-        messages.getMessage(key, args, LocaleContextHolder.getLocale())
+    protected fun getText(
+        key: String,
+        args: Array<Any> = emptyArray(),
+        locale: Locale = LocaleContextHolder.getLocale(),
+    ): String =
+        messages.getMessage(key, args, locale)
 
     private fun debug(message: Message): Message {
         if (debugNodifications.toBoolean()) {

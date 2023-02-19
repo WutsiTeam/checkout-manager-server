@@ -34,19 +34,25 @@ class SendOrderToCustomerWorkflow(
         merchant: Account,
         type: MessagingType,
         context: WorkflowContext,
-    ): Message? =
-        when (type) {
+    ): Message? {
+        val locale = Locale(merchant.language)
+        return when (type) {
             MessagingType.EMAIL -> Message(
                 recipient = Party(
                     email = order.customerEmail,
                     displayName = order.customerName,
                 ),
-                subject = getText("email.notify-customer.subject", arrayOf(merchant.displayName.uppercase())),
-                body = generateBody(order, merchant),
+                subject = getText(
+                    "email.notify-customer.subject",
+                    arrayOf(merchant.displayName.uppercase()),
+                    locale = locale,
+                ),
+                body = generateBody(order, locale, merchant),
                 mimeType = "text/html;charset=UTF-8",
             )
             else -> null
         }
+    }
 
     override fun doExecute(orderId: String, context: WorkflowContext) {
         super.doExecute(orderId, context)
@@ -63,8 +69,8 @@ class SendOrderToCustomerWorkflow(
         }
     }
 
-    private fun generateBody(order: Order, merchant: Account): String {
-        val ctx = Context(Locale(merchant.language))
+    private fun generateBody(order: Order, locale: Locale, merchant: Account): String {
+        val ctx = Context(locale)
 
         val store = merchant.storeId?.let {
             marketplaceAccessApi.getStore(it).store

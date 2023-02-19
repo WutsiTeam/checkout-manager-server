@@ -28,16 +28,17 @@ class SendOrderToMerchantWorkflow(
         merchant: Account,
         type: MessagingType,
         context: WorkflowContext,
-    ): Message? =
-        when (type) {
+    ): Message? {
+        val locale = Locale(merchant.language)
+        return when (type) {
             MessagingType.EMAIL -> merchant.email?.let {
                 Message(
                     recipient = Party(
                         email = it,
                         displayName = merchant.displayName,
                     ),
-                    subject = getText("email.notify-merchant.subject"),
-                    body = generateBody(order, merchant, "wutsi"),
+                    subject = getText("email.notify-merchant.subject", locale = locale),
+                    body = generateBody(order, merchant, locale, "wutsi"),
                     mimeType = "text/html;charset=UTF-8",
                 )
             }
@@ -52,9 +53,10 @@ class SendOrderToMerchantWorkflow(
             }
             else -> null
         }
+    }
 
-    private fun generateBody(order: Order, merchant: Account, template: String? = null): String {
-        val ctx = Context(Locale(merchant.language))
+    private fun generateBody(order: Order, merchant: Account, locale: Locale, template: String? = null): String {
+        val ctx = Context(locale)
         val country = regulationEngine.country(order.business.country)
         val mailContext = createMailContext(merchant, template)
         ctx.setVariable("order", mapper.toOrderModel(order, country))

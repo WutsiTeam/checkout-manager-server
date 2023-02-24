@@ -109,7 +109,7 @@ abstract class AbstractSendOrderWorkflow(
     protected fun createMailContext(merchant: Account, template: String? = null) = MailContext(
         assetUrl = assetUrl,
         merchant = Merchant(
-            url = "$webappUrl/u/${merchant.id}",
+            url = if (merchant.name == null) "$webappUrl/u/${merchant.id}" else "$webappUrl/@${merchant.name}",
             name = merchant.displayName.uppercase(),
             logoUrl = merchant.pictureUrl,
             category = merchant.category?.title,

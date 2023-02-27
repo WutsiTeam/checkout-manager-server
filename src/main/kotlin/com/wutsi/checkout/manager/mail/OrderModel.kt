@@ -1,5 +1,7 @@
 package com.wutsi.checkout.manager.mail
 
+import com.wutsi.enums.ProductType
+
 data class OrderModel(
     val id: String,
     val customerName: String,
@@ -19,4 +21,7 @@ data class OrderModel(
 
     val itemsWithFiles: List<OrderItemModel>
         get() = items.filter { it.files.isNotEmpty() }
+
+    val physicalProduct: Boolean
+        get() = items.find { it.productType == ProductType.PHYSICAL_PRODUCT.name } != null
 }

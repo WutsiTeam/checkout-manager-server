@@ -22,7 +22,7 @@
         </table>
     </div>
 
-    <div class="padding" th:text="#{email.notify-customer.body.delivery}">
+    <div class="padding" th:text="#{email.notify-customer.body.delivery}" th:if="${order.physicalProduct}">
         Please contact the customer directly to organize the delivery of the product.
     </div>
 

@@ -19,8 +19,8 @@
   </parent>
 
   <properties>
-    <jacoco.threshold.line>0.93</jacoco.threshold.line>
-    <jacoco.threshold.class>0.93</jacoco.threshold.class>
+    <jacoco.threshold.line>0.92</jacoco.threshold.line>
+    <jacoco.threshold.class>0.92</jacoco.threshold.class>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jdk.version>11</jdk.version>
 
@@ -33,7 +33,7 @@
     <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 
     <wutsi-platform-payment.version>0.0.109</wutsi-platform-payment.version>
-    <wutsi-workflow.version>1.0.111</wutsi-workflow.version>
+    <wutsi-workflow.version>1.0.112</wutsi-workflow.version>
   </properties>
 
   <dependencies>

@@ -15,13 +15,10 @@ import com.wutsi.checkout.access.dto.CreatePaymentMethodResponse
 import com.wutsi.checkout.access.dto.GetPaymentMethodResponse
 import com.wutsi.checkout.access.dto.SearchPaymentMethodResponse
 import com.wutsi.checkout.access.dto.SearchPaymentProviderResponse
-import com.wutsi.checkout.access.dto.UpdateBusinessStatusRequest
 import com.wutsi.checkout.access.dto.UpdatePaymentMethodStatusRequest
 import com.wutsi.checkout.manager.Fixtures
-import com.wutsi.enums.BusinessStatus
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
-import com.wutsi.event.BusinessEventPayload
 import com.wutsi.event.EventURN
 import com.wutsi.event.MemberEventPayload
 import com.wutsi.event.PaymentMethodEventPayload
@@ -138,51 +135,6 @@ internal class MembershipEventHandlerTest {
         // THEN
         verify(checkoutAccessApi, never()).createPaymentMethod(any())
         verify(eventStream, never()).publish(any(), any())
-    }
-
-    @Test
-    fun onBusinessMemberDeleted() {
-        // GIVEN
-        val account = Fixtures.createAccount(id = payload.accountId, business = true, businessId = 222)
-        doReturn(GetAccountResponse(account)).whenever(membershipAccessApi).getAccount(any())
-
-        val paymentMethods = listOf(
-            Fixtures.createPaymentMethodSummary(token = "111"),
-            Fixtures.createPaymentMethodSummary(token = "222"),
-        )
-        doReturn(SearchPaymentMethodResponse(paymentMethods)).whenever(checkoutAccessApi).searchPaymentMethod(any())
-
-        val paymentMethod1 = Fixtures.createPaymentMethod(paymentMethods[0].token, accountId = account.id)
-        val paymentMethod2 = Fixtures.createPaymentMethod(paymentMethods[1].token, accountId = account.id)
-        doReturn(GetPaymentMethodResponse(paymentMethod1)).whenever(checkoutAccessApi)
-            .getPaymentMethod(paymentMethods[0].token)
-        doReturn(GetPaymentMethodResponse(paymentMethod2)).whenever(checkoutAccessApi)
-            .getPaymentMethod(paymentMethods[1].token)
-
-        // WHEN
-        handler.onMemberDeleted(event)
-
-        // THEN
-        verify(checkoutAccessApi).updateBusinessStatus(
-            account.businessId!!,
-            UpdateBusinessStatusRequest(status = BusinessStatus.INACTIVE.name),
-        )
-
-        val token = argumentCaptor<String>()
-        verify(checkoutAccessApi, times(2)).updatePaymentMethodStatus(
-            token.capture(),
-            eq(UpdatePaymentMethodStatusRequest(status = PaymentMethodStatus.INACTIVE.name)),
-        )
-        assertEquals(paymentMethods[0].token, token.firstValue)
-        assertEquals(paymentMethods[1].token, token.secondValue)
-
-        verify(eventStream).publish(
-            EventURN.BUSINESS_DEACTIVATED.urn,
-            BusinessEventPayload(
-                businessId = account.businessId!!,
-                accountId = account.id,
-            ),
-        )
     }
 
     @Test

@@ -6,7 +6,6 @@ import com.wutsi.checkout.access.dto.SearchPaymentMethodRequest
 import com.wutsi.checkout.access.dto.SearchPaymentProviderRequest
 import com.wutsi.checkout.manager.dto.AddPaymentMethodRequest
 import com.wutsi.checkout.manager.workflow.AddPaymentMethodWorkflow
-import com.wutsi.checkout.manager.workflow.DeactivateBusinessWorkflow
 import com.wutsi.checkout.manager.workflow.DeactivatePaymentMethodWorkflow
 import com.wutsi.enums.PaymentMethodStatus
 import com.wutsi.enums.PaymentMethodType
@@ -24,7 +23,6 @@ class MembershipEventHandler(
     private val membershipAccessApi: MembershipAccessApi,
     private val checkoutAccessApi: CheckoutAccessApi,
     private val addPaymentMethodWorkflow: AddPaymentMethodWorkflow,
-    private val deactivateBusinessWorkflow: DeactivateBusinessWorkflow,
     private val deactivatePaymentMethodWorkflow: DeactivatePaymentMethodWorkflow,
 ) {
     fun onMemberRegistered(event: Event) {
@@ -60,13 +58,6 @@ class MembershipEventHandler(
         log(payload)
 
         val context = WorkflowContext(accountId = payload.accountId)
-
-        // Deactivate Business account
-        val account = membershipAccessApi.getAccount(payload.accountId).account
-        account.businessId?.let {
-            logger.add("business_id_to_deactivate", it)
-            deactivateBusinessWorkflow.execute(it, context)
-        }
 
         // Deactivate his payment method
         checkoutAccessApi.searchPaymentMethod(

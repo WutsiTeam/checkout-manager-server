@@ -16,9 +16,6 @@ internal class EventHandlerTest {
     @MockBean
     private lateinit var membership: MembershipEventHandler
 
-    @MockBean
-    private lateinit var business: BusinessEventHandler
-
     @Autowired
     private lateinit var handler: EventHandler
 
@@ -63,31 +60,5 @@ internal class EventHandlerTest {
 
         // THEN
         verify(membership).onMemberDeleted(event)
-    }
-
-    @Test
-    fun onBusinessEnabled() {
-        // WHEN
-        val event = Event(
-            type = EventURN.BUSINESS_ACTIVATED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload),
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(business).onBusinessActivated(event)
-    }
-
-    @Test
-    fun onBusinessDisabled() {
-        // WHEN
-        val event = Event(
-            type = EventURN.BUSINESS_DEACTIVATED.urn,
-            payload = mapper.writeValueAsString(memberEventPayload),
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(business).onBusinessDeactivated(event)
     }
 }

@@ -32,6 +32,7 @@ paths:
         - Payment Method
 
 
+
   /v1/payment-methods:
     post:
       operationId: "add-payment-method"
@@ -112,6 +113,31 @@ paths:
         - Payment Method
 
 
+  /v1/business:
+    post:
+      operationId: "create-business"
+      description: Create business account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBusinessRequest'
+      responses:
+        200:
+          description: Success
+      tags:
+        - Business
+
+    delete:
+      operationId: "delete-business"
+      description: Delete business account
+      responses:
+        200:
+          description: Success
+      tags:
+        - Member
+
   /v1/businesses/{id}:
     get:
       operationId: "get-business"
@@ -135,6 +161,7 @@ paths:
           description: The business not found
       tags:
         - Business
+
 
 
   /v1/orders:
@@ -214,6 +241,7 @@ paths:
                 $ref: '#/components/schemas/SearchOrderResponse'
       tags:
         - Order
+
 
 
   /v1/transactions/charge:
@@ -307,6 +335,7 @@ paths:
           description: Transaction not found
       tags:
         - Transactions
+
 
 
   /v1/kpis/sales/search:
@@ -430,14 +459,12 @@ components:
       type: object
       properties:
         paymentMethod:
-          type: object
           $ref: "#/components/schemas/PaymentMethod"
 
     GetPaymentMethodRequest:
       type: object
       properties:
         paymentMethod:
-          type: object
           $ref: "#/components/schemas/PaymentMethod"
 
     SearchPaymentMethodRequest:
@@ -1001,7 +1028,6 @@ components:
           format: uuid
           description: ID of the transaction
         business:
-          type: object
           $ref: "#/components/schemas/BusinessSummary"
         customerAccountId:
           type: integer
@@ -1084,7 +1110,6 @@ components:
           description: Email
           nullable: true
         paymentMethod:
-          type: object
           $ref: "#/components/schemas/PaymentMethodSummary"
 
 
@@ -1408,3 +1433,36 @@ components:
           type: integer
           format: int64
           description: Value of the total views
+
+
+    CreateBusinessRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: Account's display name
+          maxLength: 50
+        categoryId:
+          type: number
+          format: int64
+          description: ID of the business category
+        cityId:
+          type: number
+          format: int64
+          description: ID of the city
+        biography:
+          type: string
+          nullable: true
+          maxLength: 160
+        whatsapp:
+          type: boolean
+          default: false
+          description: TRUE this account is associated with WhatsApp
+        email:
+          type: string
+          description: Email address
+      required:
+        - displayName
+        - categoryId
+        - cityId
+        - email

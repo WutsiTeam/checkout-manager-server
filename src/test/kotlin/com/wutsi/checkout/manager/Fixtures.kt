@@ -37,6 +37,7 @@ import com.wutsi.marketplace.access.dto.OfferSummary
 import com.wutsi.marketplace.access.dto.PictureSummary
 import com.wutsi.marketplace.access.dto.Product
 import com.wutsi.marketplace.access.dto.ProductSummary
+import com.wutsi.marketplace.access.dto.ReservationSummary
 import com.wutsi.marketplace.access.dto.ReturnPolicy
 import com.wutsi.marketplace.access.dto.Store
 import com.wutsi.marketplace.access.dto.StoreSummary
@@ -437,5 +438,9 @@ object Fixtures {
         name = "FIN25",
         rate = 25,
         type = DiscountType.SALES.name,
+    )
+
+    fun createReservationSummary(id: Long) = ReservationSummary(
+        id = id,
     )
 }

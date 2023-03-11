@@ -41,12 +41,14 @@ class OrderEventHandler(
         log(payload)
 
         val order = checkoutAccessApi.getOrder(payload.orderId).order
-        val context = WorkflowContext(accountId = order.business.accountId)
-        val request = UpdateOrderStatusRequest(
-            orderId = payload.orderId,
-            status = OrderStatus.COMPLETED.name,
+        val context = WorkflowContext(
+            accountId = order.business.accountId,
+            input = UpdateOrderStatusRequest(
+                orderId = payload.orderId,
+                status = OrderStatus.COMPLETED.name,
+            ),
         )
-        updateOrderStatusWorkflow.execute(request, context)
+        updateOrderStatusWorkflow.execute(context)
     }
 
     private fun toOrderEventPayload(event: Event): OrderEventPayload =

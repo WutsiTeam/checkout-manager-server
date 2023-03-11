@@ -1,8 +1,7 @@
 package com.wutsi.checkout.manager.workflow
 
-import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.manager.dto.CreateBusinessRequest
-import com.wutsi.checkout.manager.workflow.task.UpdateAccountAttributeTask
+import com.wutsi.checkout.manager.workflow.task.CreateBusinessTask
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.membership.access.dto.EnableBusinessRequest
@@ -21,7 +20,6 @@ import javax.annotation.PostConstruct
 class CreateBusinessWorkflow(
     private val regulationEngine: RegulationEngine,
     private val membershipAccessApi: MembershipAccessApi,
-    private val checkoutAccessApi: CheckoutAccessApi,
     private val workflowEngine: WorkflowEngine,
 ) : Workflow {
     companion object {
@@ -35,12 +33,10 @@ class CreateBusinessWorkflow(
 
     override fun execute(context: WorkflowContext) {
         val account = getCurrentAccount(context)
-
         validate(account)
 
         enableBusinessAccount(account, context.input as CreateBusinessRequest)
-        val businessId = createBusiness(account)
-        setAccountBusinessId(businessId, context)
+        createBusiness(account)
     }
 
     private fun getCurrentAccount(context: WorkflowContext): Account =
@@ -69,24 +65,11 @@ class CreateBusinessWorkflow(
             ),
         )
 
-    private fun createBusiness(account: Account): Long =
-        checkoutAccessApi.createBusiness(
-            request = com.wutsi.checkout.access.dto.CreateBusinessRequest(
-                accountId = account.id,
-                country = account.country,
-                currency = regulationEngine.country(account.country).currency,
-            ),
-        ).businessId
-
-    private fun setAccountBusinessId(businessId: Long, context: WorkflowContext) =
+    private fun createBusiness(account: Account) =
         workflowEngine.executeAsync(
-            id = UpdateAccountAttributeTask.ID,
+            id = CreateBusinessTask.ID,
             context = WorkflowContext(
-                accountId = context.accountId,
-                data = mutableMapOf(
-                    UpdateAccountAttributeTask.CONTEXT_ATTR_NAME to "business-id",
-                    UpdateAccountAttributeTask.CONTEXT_ATTR_VALUE to businessId,
-                ),
+                accountId = account.id,
             ),
         )
 }

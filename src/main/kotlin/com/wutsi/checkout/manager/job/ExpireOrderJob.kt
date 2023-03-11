@@ -2,12 +2,13 @@ package com.wutsi.checkout.manager.job
 
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchOrderRequest
-import com.wutsi.checkout.manager.workflow.ExpireOrderWorkflow
+import com.wutsi.checkout.manager.workflow.task.ExpireOrderTask
 import com.wutsi.enums.OrderStatus
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
 import com.wutsi.platform.core.logging.DefaultKVLogger
 import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.engine.WorkflowEngine
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -15,7 +16,7 @@ import java.time.OffsetDateTime
 @Service
 class ExpireOrderJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val workflow: ExpireOrderWorkflow,
+    private val workflowEngine: WorkflowEngine,
     lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
     override fun getJobName() = "expire-order"
@@ -60,11 +61,13 @@ class ExpireOrderJob(
         logger.add("job", getJobName())
         logger.add("order_id", orderId)
         try {
-            workflow.execute(orderId, WorkflowContext())
+            workflowEngine.execute(
+                ExpireOrderTask.ID,
+                WorkflowContext(
+                    input = orderId,
+                ),
+            )
             return true
-        } catch (ex: Exception) {
-            logger.setException(ex)
-            return false
         } finally {
             logger.log()
         }

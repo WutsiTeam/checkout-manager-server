@@ -3,6 +3,7 @@ package com.wutsi.checkout.manager.workflow.task
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.Account
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.regulation.RegulationEngine
 import com.wutsi.workflow.WorkflowContext
 import com.wutsi.workflow.engine.Workflow
@@ -17,6 +18,7 @@ class CreateBusinessTask(
     private val checkoutAccessApi: CheckoutAccessApi,
     private val membershipAccessApi: MembershipAccessApi,
     private val regulationEngine: RegulationEngine,
+    private val logger: KVLogger,
 ) : Workflow {
     companion object {
         val ID = WorkflowIdGenerator.generate("marketplace", "create-business")
@@ -27,14 +29,19 @@ class CreateBusinessTask(
         workflowEngine.register(ID, this)
     }
 
-    private fun getCurrentAccount(context: WorkflowContext): Account =
-        membershipAccessApi.getAccount(context.accountId!!).account
-
     override fun execute(context: WorkflowContext) {
         val account = getCurrentAccount(context)
+        logger.add("account_business_id", account.businessId)
+        if (account.businessId != null) {
+            return
+        }
+
         val businessId = createBusiness(account)
         setAccountBusinessId(account, businessId, context)
     }
+
+    private fun getCurrentAccount(context: WorkflowContext): Account =
+        membershipAccessApi.getAccount(context.accountId!!).account
 
     private fun createBusiness(account: Account): Long =
         checkoutAccessApi.createBusiness(

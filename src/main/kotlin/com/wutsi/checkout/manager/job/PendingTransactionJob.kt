@@ -3,22 +3,23 @@ package com.wutsi.checkout.manager.job
 import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.SearchTransactionRequest
 import com.wutsi.checkout.access.dto.TransactionSummary
-import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.task.ProcessPendingTransactionTask
 import com.wutsi.platform.core.cron.AbstractCronJob
 import com.wutsi.platform.core.cron.CronLockManager
 import com.wutsi.platform.core.logging.DefaultKVLogger
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.engine.WorkflowEngine
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
 class PendingTransactionJob(
     private val checkoutAccessApi: CheckoutAccessApi,
-    private val workflow: ProcessPendingTransactionWorkflow,
+    private val workflowEngine: WorkflowEngine,
     lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
-    override fun getJobName() = "pending-transaction"
+    override fun getJobName() = "pending-transaction-job"
 
     @Scheduled(cron = "\${wutsi.application.jobs.pending-transaction.cron}")
     override fun run() {
@@ -53,15 +54,20 @@ class PendingTransactionJob(
     private fun sync(tx: TransactionSummary): Boolean {
         val logger = DefaultKVLogger()
         logger.add("job", getJobName())
-        logger.add("transaction_status", tx.id)
+        logger.add("transaction_id", tx.id)
+        logger.add("transaction_status", tx.status)
         try {
-            workflow.execute(tx.id, WorkflowContext())
-            return true
+            workflowEngine.execute(
+                ProcessPendingTransactionTask.ID,
+                WorkflowContext(
+                    data = mutableMapOf(ProcessPendingTransactionTask.CONTEXT_TRANSACTION_ID to tx.id),
+                ),
+            )
         } catch (ex: Exception) {
             logger.setException(ex)
-            return false
         } finally {
             logger.log()
         }
+        return false
     }
 }

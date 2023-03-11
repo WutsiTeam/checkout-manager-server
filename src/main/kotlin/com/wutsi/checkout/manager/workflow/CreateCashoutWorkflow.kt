@@ -2,10 +2,7 @@ package com.wutsi.checkout.manager.workflow
 
 import com.wutsi.checkout.manager.dto.CreateCashoutRequest
 import com.wutsi.checkout.manager.dto.CreateCashoutResponse
-import com.wutsi.checkout.manager.event.InternalEventURN
-import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.membership.access.dto.Account
-import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.RuleSet
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateCashoutWorkflow(
-    private val logger: KVLogger,
     eventStream: EventStream,
 ) : AbstractTransactionWorkflow<CreateCashoutRequest, CreateCashoutResponse>(eventStream) {
     override fun getValidationRules(request: CreateCashoutRequest, context: WorkflowContext): RuleSet {
@@ -46,10 +42,7 @@ class CreateCashoutWorkflow(
         logger.add("transaction_status", response.status)
 
         if (response.status == Status.SUCCESSFUL.name) {
-            eventStream.enqueue(
-                InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-                TransactionEventPayload(transactionId = response.transactionId),
-            )
+            handleSuccessfulTrransaction(response.transactionId, context)
         }
         return CreateCashoutResponse(
             transactionId = response.transactionId,

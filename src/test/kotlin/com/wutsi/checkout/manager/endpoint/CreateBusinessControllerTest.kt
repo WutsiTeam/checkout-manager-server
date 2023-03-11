@@ -51,7 +51,6 @@ public class CreateBusinessControllerTest : AbstractSecuredController2Test() {
         assertEquals(request.biography, req.firstValue.biography)
         assertEquals(request.email, req.firstValue.email)
 
-        Thread.sleep(20000) // Wait for async processing
         verify(checkoutAccessApi).createBusiness(
             com.wutsi.checkout.access.dto.CreateBusinessRequest(
                 accountId = account.id,
@@ -59,6 +58,8 @@ public class CreateBusinessControllerTest : AbstractSecuredController2Test() {
                 currency = "XAF",
             ),
         )
+
+        Thread.sleep(20000) // Wait for async processing
         verify(membershipAccessApi).updateAccountAttribute(
             account.id,
             UpdateAccountAttributeRequest("business-id", businessId.toString()),

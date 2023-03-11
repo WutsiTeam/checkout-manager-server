@@ -142,14 +142,13 @@ internal class PendingTransactionJobTest {
 
         // WHEN
         job.run()
-        Thread.sleep(10000)
+        Thread.sleep(30000)
 
         // THEN
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
-        Thread.sleep(20000)
         val email = argumentCaptor<Message>()
         verify(mail, times(2)).send(email.capture())
 
@@ -207,14 +206,13 @@ internal class PendingTransactionJobTest {
 
         // WHEN
         job.run()
-        Thread.sleep(10000)
+        Thread.sleep(30000)
 
         // THEN
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
-        Thread.sleep(10000)
         val email = argumentCaptor<Message>()
         verify(mail, times(2)).send(email.capture())
 
@@ -222,7 +220,6 @@ internal class PendingTransactionJobTest {
         verify(push).send(pushNotification.capture())
         assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
 
-        Thread.sleep(20000)
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.COMPLETED.name))
     }
 
@@ -265,14 +262,13 @@ internal class PendingTransactionJobTest {
 
         // WHEN
         job.run()
-        Thread.sleep(10000)
+        Thread.sleep(30000)
 
         // THEN
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.IN_PROGRESS.name))
         verify(checkoutAccessApi, never()).updateOrderStatus(eq("222"), any())
 
         // Email notification
-        Thread.sleep(10000)
         val email = argumentCaptor<Message>()
         verify(mail, times(2)).send(email.capture())
 
@@ -280,7 +276,6 @@ internal class PendingTransactionJobTest {
         verify(push).send(pushNotification.capture())
         assertEquals(device.token, pushNotification.firstValue.recipient.deviceToken)
 
-        Thread.sleep(20000)
         verify(checkoutAccessApi).updateOrderStatus("111", UpdateOrderStatusRequest(OrderStatus.COMPLETED.name))
     }
 }

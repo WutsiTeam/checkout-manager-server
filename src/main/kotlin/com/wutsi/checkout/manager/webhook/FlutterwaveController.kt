@@ -1,9 +1,10 @@
 package com.wutsi.checkout.manager.webhook
 
-import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.task.ProcessPendingTransactionTask
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.payment.provider.flutterwave.model.FWWebhookRequest
 import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.engine.WorkflowEngine
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/flutterwave")
 public class FlutterwaveController(
     private val logger: KVLogger,
-    private val workflow: ProcessPendingTransactionWorkflow,
+    private val workflowEngine: WorkflowEngine,
     @Value("\${wutsi.flutterwave.secret-hash}") private val secretHash: String,
 ) {
     @PostMapping("/webhook")
@@ -42,7 +43,12 @@ public class FlutterwaveController(
     private fun handleNotification(request: FWWebhookRequest) {
         val transactionId = request.data.tx_ref
         if (transactionId != null) {
-            workflow.execute(transactionId, WorkflowContext())
+            workflowEngine.executeAsync(
+                ProcessPendingTransactionTask.ID,
+                WorkflowContext(
+                    data = mutableMapOf(ProcessPendingTransactionTask.CONTEXT_TRANSACTION_ID to transactionId),
+                ),
+            )
         }
     }
 

@@ -1,17 +1,19 @@
-package com.wutsi.checkout.manager.workflow
+package com.wutsi.checkout.manager.workflow.task
 
+import com.wutsi.checkout.access.CheckoutAccessApi
 import com.wutsi.checkout.access.dto.Order
-import com.wutsi.event.OrderEventPayload
 import com.wutsi.mail.MailContext
 import com.wutsi.mail.Merchant
+import com.wutsi.marketplace.access.MarketplaceAccessApi
+import com.wutsi.membership.access.MembershipAccessApi
 import com.wutsi.membership.access.dto.Account
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.messaging.Message
 import com.wutsi.platform.core.messaging.MessagingServiceProvider
 import com.wutsi.platform.core.messaging.MessagingType
-import com.wutsi.platform.core.stream.EventStream
-import com.wutsi.workflow.RuleSet
 import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.engine.Workflow
+import com.wutsi.workflow.engine.WorkflowEngine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,10 +21,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import java.util.Locale
+import javax.annotation.PostConstruct
 
-abstract class AbstractSendOrderWorkflow(
-    eventStream: EventStream,
-) : AbstractOrderWorkflow<String, Unit>(eventStream) {
+abstract class AbstractSendOrderTask : Workflow {
+    companion object {
+        const val CONTEXT_ORDER_ID = "order-id"
+    }
+
     @Value("\${wutsi.application.asset-url}")
     private lateinit var assetUrl: String
 
@@ -41,6 +46,25 @@ abstract class AbstractSendOrderWorkflow(
     @Autowired
     private lateinit var messages: MessageSource
 
+    @Autowired
+    protected lateinit var workflowEngine: WorkflowEngine
+
+    @Autowired
+    protected lateinit var membershipAccessApi: MembershipAccessApi
+
+    @Autowired
+    private lateinit var checkoutAccessApi: CheckoutAccessApi
+
+    @Autowired
+    protected lateinit var marketplaceAccessApi: MarketplaceAccessApi
+
+    @PostConstruct
+    fun init() {
+        workflowEngine.register(id(), this)
+    }
+
+    protected abstract fun id(): String
+
     protected abstract fun createMessage(
         order: Order,
         merchant: Account,
@@ -48,15 +72,11 @@ abstract class AbstractSendOrderWorkflow(
         context: WorkflowContext,
     ): Message?
 
-    override fun getEventType(orderId: String, response: Unit, context: WorkflowContext): String? = null
-
-    override fun toEventPayload(orderId: String, response: Unit, context: WorkflowContext): OrderEventPayload? = null
-
-    override fun getValidationRules(orderId: String, context: WorkflowContext) = RuleSet.NONE
-
-    override fun doExecute(orderId: String, context: WorkflowContext) {
+    override fun execute(context: WorkflowContext) {
         // Order
-        val order = getOrder(orderId, context)
+        val orderId = context.data[CONTEXT_ORDER_ID] as String
+
+        val order = getOrder(orderId)
         logger.add("order_customer_name", order.customerName)
         logger.add("order_customer_email", order.customerEmail)
         logger.add("merchant_id", order.business.accountId)
@@ -141,4 +161,7 @@ abstract class AbstractSendOrderWorkflow(
         val sender = messagingServiceProvider.get(MessagingType.PUSH_NOTIFICATION)
         return sender.send(message)
     }
+
+    protected fun getOrder(orderId: String): Order =
+        checkoutAccessApi.getOrder(orderId).order
 }

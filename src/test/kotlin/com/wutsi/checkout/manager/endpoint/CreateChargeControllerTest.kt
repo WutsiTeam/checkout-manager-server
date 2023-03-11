@@ -13,8 +13,6 @@ import com.wutsi.checkout.access.error.ErrorURN
 import com.wutsi.checkout.manager.Fixtures
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
-import com.wutsi.checkout.manager.event.InternalEventURN
-import com.wutsi.checkout.manager.event.TransactionEventPayload
 import com.wutsi.enums.PaymentMethodType
 import com.wutsi.marketplace.access.dto.CreateReservationResponse
 import com.wutsi.membership.access.dto.GetAccountResponse
@@ -136,10 +134,10 @@ class CreateChargeControllerTest : AbstractSecuredControllerTest() {
         assertEquals(transactionResponse.transactionId, result.transactionId)
         assertEquals(transactionResponse.status, result.status)
 
-        verify(eventStream).enqueue(
-            InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-            TransactionEventPayload(transactionResponse.transactionId),
-        )
+//        verify(eventStream).enqueue(
+//            InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
+//            TransactionEventPayload(transactionResponse.transactionId),
+//        )
         verify(eventStream, never()).publish(any(), any())
     }
 

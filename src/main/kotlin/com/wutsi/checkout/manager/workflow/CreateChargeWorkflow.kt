@@ -4,9 +4,6 @@ import com.wutsi.checkout.access.dto.Business
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.dto.CreateChargeRequest
 import com.wutsi.checkout.manager.dto.CreateChargeResponse
-import com.wutsi.checkout.manager.event.InternalEventURN
-import com.wutsi.checkout.manager.event.TransactionEventPayload
-import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.payment.core.Status
 import com.wutsi.workflow.RuleSet
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateChargeWorkflow(
-    private val logger: KVLogger,
     eventStream: EventStream,
 ) : AbstractTransactionWorkflow<CreateChargeRequest, CreateChargeResponse>(eventStream) {
     override fun getValidationRules(request: CreateChargeRequest, context: WorkflowContext): RuleSet {
@@ -48,10 +44,7 @@ class CreateChargeWorkflow(
         logger.add("transaction_status", response.status)
 
         if (response.status == Status.SUCCESSFUL.name) {
-            eventStream.enqueue(
-                InternalEventURN.TRANSACTION_SUCCESSFUL.urn,
-                TransactionEventPayload(transactionId = response.transactionId),
-            )
+            handleSuccessfulTrransaction(response.transactionId, context)
         }
         return CreateChargeResponse(
             transactionId = response.transactionId,

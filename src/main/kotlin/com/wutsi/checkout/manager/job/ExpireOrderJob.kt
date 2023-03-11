@@ -19,7 +19,7 @@ class ExpireOrderJob(
     private val workflowEngine: WorkflowEngine,
     lockManager: CronLockManager,
 ) : AbstractCronJob(lockManager) {
-    override fun getJobName() = "expire-order"
+    override fun getJobName() = "expire-order-job"
 
     @Scheduled(cron = "\${wutsi.application.jobs.pending-transaction.cron}")
     override fun run() {

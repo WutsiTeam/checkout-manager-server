@@ -1,4 +1,4 @@
-package com.wutsi.checkout.manager.workflow
+package com.wutsi.checkout.manager.workflow.task
 
 import com.wutsi.checkout.access.dto.Order
 import com.wutsi.checkout.manager.mail.Mapper
@@ -7,22 +7,27 @@ import com.wutsi.membership.access.dto.Account
 import com.wutsi.platform.core.messaging.Message
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.messaging.Party
-import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.regulation.RegulationEngine
 import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.util.WorkflowIdGenerator
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.util.Locale
 
 @Service
-class SendOrderToMerchantWorkflow(
-    eventStream: EventStream,
+class SendOrderToMerchantTask(
     private val mapper: Mapper,
     private val templateEngine: TemplateEngine,
     private val regulationEngine: RegulationEngine,
     private val mailFilterSet: MailFilterSet,
-) : AbstractSendOrderWorkflow(eventStream) {
+) : AbstractSendOrderTask() {
+    companion object {
+        val ID = WorkflowIdGenerator.generate("marketplace", "send-order-to-merchant")
+    }
+
+    override fun id() = ID
+
     override fun createMessage(
         order: Order,
         merchant: Account,

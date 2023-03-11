@@ -1,12 +1,13 @@
 package com.wutsi.checkout.manager.webhook
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
-import com.wutsi.checkout.manager.workflow.ProcessPendingTransactionWorkflow
+import com.wutsi.checkout.manager.workflow.task.ProcessPendingTransactionTask
 import com.wutsi.platform.payment.provider.flutterwave.model.FWResponseData
 import com.wutsi.platform.payment.provider.flutterwave.model.FWWebhookRequest
+import com.wutsi.workflow.WorkflowContext
+import com.wutsi.workflow.engine.WorkflowEngine
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
@@ -25,7 +26,7 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
     public val port: Int = 0
 
     @MockBean
-    private lateinit var workflow: ProcessPendingTransactionWorkflow
+    private lateinit var workflowEngine: WorkflowEngine
 
     @Value("\${wutsi.flutterwave.secret-hash}")
     private lateinit var secretHash: String
@@ -57,7 +58,14 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
         )
         rest.postForEntity(url(), request, Any::class.java)
 
-        verify(workflow).execute(eq(request.data.tx_ref!!), any())
+        verify(workflowEngine).executeAsync(
+            ProcessPendingTransactionTask.ID,
+            WorkflowContext(
+                data = mutableMapOf(
+                    ProcessPendingTransactionTask.CONTEXT_TRANSACTION_ID to request.data.tx_ref!!,
+                ),
+            ),
+        )
     }
 
     @Test
@@ -71,7 +79,7 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
         )
         RestTemplate().postForEntity(url(), request, Any::class.java)
 
-        verify(workflow, never()).execute(any(), any())
+        verify(workflowEngine, never()).executeAsync(any(), any())
     }
 
     @Test
@@ -85,7 +93,7 @@ internal class FWWebhookControllerTest : ClientHttpRequestInterceptor {
         )
         rest.postForEntity(url(), request, Any::class.java)
 
-        verify(workflow, never()).execute(any(), any())
+        verify(workflowEngine, never()).executeAsync(any(), any())
     }
 
     private fun url() = "http://localhost:$port/flutterwave/webhook"
